@@ -1,12 +1,17 @@
 import {MongoClient} from "mongodb";
 import {Database} from "../lib/types";
 
-const url = `mongodb://${process.env.DB_URL}`;
+const url = `mongodb+srv://${process.env.DB_USER}:${
+    process.env.DB_USER_PASSWORD
+}@${process.env.DB_CLUSTER}.mongodb.net`;
 const dbName = process.env.DB_NAME;
 
 export const connectDatabase = async (): Promise<Database> => {
+
+    console.log("[mongodb]: Starting db init...")
+
     const client = await MongoClient.connect(url, {
-        //useNewUrlParser: true,
+        useNewUrlParser: true,
         useUnifiedTopology: true
     });
 
@@ -15,6 +20,6 @@ export const connectDatabase = async (): Promise<Database> => {
     const db = client.db(dbName);
 
     return {
-        listings: db.collection('test_listings')
+        users: db.collection('users')
     }
 };

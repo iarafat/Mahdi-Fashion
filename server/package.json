@@ -1,5 +1,5 @@
 {
-  "name": "tinyhouse-v1-server",
+  "name": "pickbazar-server",
   "version": "0.1.0",
   "dependencies": {
     "apollo-server-express": "^2.16.0",

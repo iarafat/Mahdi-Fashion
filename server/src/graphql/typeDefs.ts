@@ -1,23 +1,46 @@
 import {gql} from 'apollo-server-express';
 
 export const typeDefs = gql`
-    type Listing {
+    type Phone {
+        number: String!
+        status: Boolean
+        is_primary: Boolean
+    }
+    type DeliveryAddress {
+        title: String
+        address: String 
+        division: String 
+        district: String
+        region: String 
+        is_primary: Boolean
+    }
+    
+    type User {
         id: ID!
-        title: String!
-        image: String!
-        address: String!
-        price: Int!
-        numOfGuests: Int!
-        numOfBeds: Int!
-        numOfBaths: Int!
-        rating: Int!
+        name: String
+        email: String
+        password: String!
+        phones: [Phone]
+        delivery_address: [DeliveryAddress]
+        created_at: String
+    }
+    
+    type UserAuth  {
+        user: User!
+        access_token: String!
+    }
+    
+    input SignupInput {
+        phone: String!
+        password: String!
     }
     
     type Query {
-        listings: [Listing!]!
+        users: [User!]!
     }
     
     type Mutation {
-        deleteListing(id: ID!): Listing!
+        login(phone: String!, password: String!): UserAuth!
+        signUp(phone: String!, password: String!): UserAuth!
     }
 `;
