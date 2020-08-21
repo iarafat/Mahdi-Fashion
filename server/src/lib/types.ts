@@ -29,6 +29,19 @@ export interface IUserAuth {
     access_token: string;
 }
 
+export interface IType {
+    _id?: ObjectId;
+    name: string;
+    slug?: string;
+    image: string;
+    icon: string;
+    meta_title?: string;
+    meta_keyword?: string;
+    meta_description?: string;
+    created_at: string;
+}
+
 export interface Database {
     users: Collection<IUser>
+    types: Collection<IType>
 }
