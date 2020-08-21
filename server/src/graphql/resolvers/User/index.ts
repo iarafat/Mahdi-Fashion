@@ -35,6 +35,10 @@ export const usersResolvers: IResolvers = {
             {phone, password}: { phone: string, password: string },
             {db}: { db: Database }
         ): Promise<IUserAuth> => {
+            const userResult = await db.users.findOne({"phones.number": phone});
+            if (userResult) {
+                throw new Error("User already registered.");
+            }
 
             const address = {
                 title: "",
