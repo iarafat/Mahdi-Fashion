@@ -30,11 +30,6 @@ export const typeDefs = gql`
         access_token: String!
     }
     
-    input SignupInput {
-        phone: String!
-        password: String!
-    }
-    
     type Query {
         users: [User!]!
     }
