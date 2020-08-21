@@ -20,6 +20,7 @@ export const connectDatabase = async (): Promise<Database> => {
     const db = client.db(dbName);
 
     return {
-        users: db.collection('users')
+        users: db.collection('users'),
+        types: db.collection('types'),
     }
 };

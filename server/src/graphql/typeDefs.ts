@@ -35,12 +35,35 @@ export const typeDefs = gql`
         password: String!
     }
     
+    input MainTypeInput {
+        name: String!
+        image: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    type MainType {
+        id: ID!
+        name: String!
+        slug: String!
+        image: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    
     type Query {
         users: [User!]!
+        types: [MainType!]!
     }
     
     type Mutation {
         login(phone: String!, password: String!): UserAuth!
         signUp(phone: String!, password: String!): UserAuth!
+        createType(input: MainTypeInput): MainType!
+        updateType(id: ID!, input: MainTypeInput): MainType!
+        deleteType(id: ID!): MainType!
     }
 `;
