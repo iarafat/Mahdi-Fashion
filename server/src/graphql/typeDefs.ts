@@ -25,17 +25,40 @@ export const typeDefs = gql`
         created_at: String
     }
     
-    type UserAuth  {
+    type UserAuthPayload  {
         user: User!
         access_token: String!
     }
     
+    input MainTypeInput {
+        name: String!
+        image: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    type MainType {
+        id: ID!
+        name: String!
+        slug: String!
+        image: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+
     type Query {
         users: [User!]!
+        types: [MainType!]!
     }
     
     type Mutation {
-        login(phone: String!, password: String!): UserAuth!
-        signUp(phone: String!, password: String!): UserAuth!
+        login(phone: String!, password: String!): UserAuthPayload!
+        signUp(phone: String!, password: String!): UserAuthPayload!
+        createType(input: MainTypeInput): MainType!
+        updateType(id: ID!, input: MainTypeInput): MainType!
+        deleteType(id: ID!): MainType!
     }
 `;
