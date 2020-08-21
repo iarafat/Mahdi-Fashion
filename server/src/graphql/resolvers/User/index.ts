@@ -12,7 +12,7 @@ const validatePassword = async (plainPassword: string, hashPassword: string) => 
   return await bcrypt.compare(plainPassword, hashPassword);
 };
 
-const accessToken = (id: ObjectId) => {
+const accessToken = (id: any) => {
     const secret: any = process.env.JWT_SECRET;
   return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
 };
@@ -22,7 +22,7 @@ export const usersResolvers: IResolvers = {
     Query: {
         users: async (
             _root: undefined,
-            _args: {},
+            _args: undefined,
             {db}: { db: Database }
         ): Promise<IUser[]> => {
             return await db.users.find({}).toArray();
@@ -62,10 +62,27 @@ export const usersResolvers: IResolvers = {
                 user: insertedUser,
                 access_token: accessToken(insertedUser._id),
             }
+        },
+        login: async (
+            _root: undefined,
+            {phone, password}: { phone: string, password: string },
+            {db}: { db: Database }
+        ): Promise<IUserAuth> => {
+            const userResult = await db.users.findOne({"phones.number": phone});
+
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            const validatePass = await validatePassword(password, userResult.password);
+            if (!validatePass) {
+                throw new Error("Password dose not match.")
+            }
+
+            return  {
+                user: userResult,
+                access_token: accessToken(userResult._id),
+            }
         }
     },
-
-    /*User: {
-        id: (user: IUser): string => user._id.toString()
-    }*/
 }
