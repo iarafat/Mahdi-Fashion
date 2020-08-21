@@ -14,6 +14,7 @@ export const typesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<IType[]> => {
             await authorize(req, db);
+
             return await db.types.find({}).toArray();
         }
     },
@@ -25,6 +26,7 @@ export const typesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request  }
         ): Promise<IType> => {
             await authorize(req, db);
+
             const typeResult = await db.types.findOne({slug: slugify(input.name)});
 
             if (typeResult) {
@@ -53,6 +55,7 @@ export const typesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request  }
         ): Promise<IType> => {
             await authorize(req, db);
+
             const typeResult = await db.types.findOne({name: input.name, slug: slugify(input.name)});
 
             if (typeResult) {
@@ -77,6 +80,24 @@ export const typesResolvers: IResolvers = {
 
             // @ts-ignore
             return typeUpdateResult;
+        },
+
+        deleteType: async (
+            __root: undefined,
+            {id}: {id: string},
+            {db, req}: { db: Database, req: Request  }
+        ): Promise<IType> => {
+            await authorize(req, db);
+
+            const deleteResult = await db.types.findOneAndDelete({
+                _id: new ObjectId(id)
+            });
+
+            if (!deleteResult.value) {
+                throw new Error("Failed to delete resource.")
+            }
+
+            return deleteResult.value;
         },
     },
 

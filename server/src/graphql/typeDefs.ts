@@ -64,6 +64,6 @@ export const typeDefs = gql`
         signUp(phone: String!, password: String!): UserAuth!
         createType(input: MainTypeInput): MainType!
         updateType(id: ID!, input: MainTypeInput): MainType!
-        deleteType(id: ID!): String!
+        deleteType(id: ID!): MainType!
     }
 `;
