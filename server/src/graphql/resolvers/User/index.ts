@@ -1,20 +1,22 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
+import {Request} from "express";
 import {Database, IUser, IUserAuth} from "../../../lib/types";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import {authorize} from "../../../lib/utils";
 
 const hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10)
 };
 
 const validatePassword = async (plainPassword: string, hashPassword: string) => {
-  return await bcrypt.compare(plainPassword, hashPassword);
+    return await bcrypt.compare(plainPassword, hashPassword);
 };
 
 const accessToken = (id: any) => {
-    const secret: any = process.env.JWT_SECRET;
-  return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
+    const secret = <string>process.env.JWT_SECRET;
+    return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
 };
 
 
@@ -23,8 +25,9 @@ export const usersResolvers: IResolvers = {
         users: async (
             _root: undefined,
             _args: undefined,
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<IUser[]> => {
+            await authorize(req, db);
             return await db.users.find({}).toArray();
         }
     },
@@ -62,7 +65,7 @@ export const usersResolvers: IResolvers = {
 
             const insertResult = await db.users.insertOne(user);
             const insertedUser = insertResult.ops[0];
-            return  {
+            return {
                 user: insertedUser,
                 access_token: accessToken(insertedUser._id),
             }
@@ -83,7 +86,7 @@ export const usersResolvers: IResolvers = {
                 throw new Error("Password dose not match.")
             }
 
-            return  {
+            return {
                 user: userResult,
                 access_token: accessToken(userResult._id),
             }
