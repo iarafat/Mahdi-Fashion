@@ -8,5 +8,6 @@ export interface ITypeInput {
 }
 
 export interface ITypeInputArgs {
+    id?: string;
     input: ITypeInput;
 }
