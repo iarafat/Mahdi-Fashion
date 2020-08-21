@@ -15,7 +15,7 @@ const mount = async (app: Application) => {
     const server = new ApolloServer({
         typeDefs,
         resolvers,
-        context: () => ({db})
+        context: ({req, res}) => ({db, req, res}),
     });
     server.applyMiddleware({app, path: '/api'});
 
