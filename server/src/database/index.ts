@@ -1,9 +1,15 @@
 import {MongoClient} from "mongodb";
 import {Database} from "../lib/types";
+let url: string;
 
-const url = `mongodb+srv://${process.env.DB_USER}:${
-    process.env.DB_USER_PASSWORD
-}@${process.env.DB_CLUSTER}.mongodb.net`;
+if (process.env.APP_ENV == 'production') {
+    url = `mongodb+srv://${process.env.DB_USER}:${
+        process.env.DB_USER_PASSWORD
+    }@${process.env.DB_CLUSTER}.mongodb.net`;
+} else if (process.env.APP_ENV == 'local') {
+    url = <string>process.env.DB_URL;
+}
+
 const dbName = process.env.DB_NAME;
 
 export const connectDatabase = async (): Promise<Database> => {

@@ -19,7 +19,6 @@ export const typeDefs = gql`
         id: ID!
         name: String
         email: String
-        password: String!
         phones: [Phone]
         delivery_address: [DeliveryAddress]
         created_at: String
