@@ -54,8 +54,29 @@ export interface ICategory {
     created_at?: string;
 }
 
+export interface IProduct {
+    _id?: ObjectId;
+    type_id: string;
+    category_id: string;
+    name: string;
+    slug?: string;
+    description?: string;
+    images: [string];
+    unit?: number;
+    price: number;
+    sale_price?: number;
+    discount_in_percent?: number;
+    product_quantity: number;
+    meta_title?: string;
+    meta_keyword?: string;
+    meta_description?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Database {
     users: Collection<IUser>
     types: Collection<IType>
     categories: Collection<ICategory>
+    products: Collection<IProduct>
 }

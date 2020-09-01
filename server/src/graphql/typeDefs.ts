@@ -47,8 +47,8 @@ export const typeDefs = gql`
         meta_keyword: String
         meta_description: String
     }
-
-
+    
+    
     input CategoryInput {
         parent_id: String
         name: String!
@@ -69,11 +69,61 @@ export const typeDefs = gql`
         meta_keyword: String
         meta_description: String
     }
+    
+    #scalar Upload
+    input ProductInput {
+        type_id: String!
+        category_id: String!
+        name: String!
+        description: String
+        images: [String!]! # it should be Upload type
+        unit: Int
+        price: Float!
+        sale_price: Float
+        discount_in_percent: Int
+        product_quantity: Int!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    input ProductUpdateInput {
+        type_id: String
+        category_id: String
+        name: String
+        description: String
+        images: [String] # it should be Upload type
+        unit: Int
+        price: Float
+        sale_price: Float
+        discount_in_percent: Int
+        product_quantity: Int
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    type Product {
+        id: ID!
+        type_id: String!
+        category_id: String!
+        name: String!
+        slug: String!
+        description: String
+        images: [String!]!
+        unit: Int
+        price: Float!
+        sale_price: Float
+        discount_in_percent: Int
+        product_quantity: Int!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
 
     type Query {
         users: [User!]!
         types: [MainType!]!
         categories: [Category!]!
+        products: [Product!]!
     }
     
     type Mutation {
@@ -85,5 +135,8 @@ export const typeDefs = gql`
         createCategory(input: CategoryInput): Category!
         updateCategory(id: ID!, input: CategoryInput): Category!
         deleteCategory(id: ID!): Category!
+        createProduct(input: ProductInput): Product!
+        updateProduct(id: ID!, input: ProductUpdateInput): Product!
+        deleteProduct(id: ID!): Product!
     }
 `;
