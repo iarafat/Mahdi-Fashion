@@ -13,8 +13,6 @@ export const typesResolvers: IResolvers = {
             _args: undefined,
             {db, req}: { db: Database, req: Request }
         ): Promise<IType[]> => {
-            await authorize(req, db);
-
             return await db.types.find({}).toArray();
         }
     },
