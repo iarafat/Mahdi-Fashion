@@ -48,9 +48,32 @@ export const typeDefs = gql`
         meta_description: String
     }
 
+
+    input CategoryInput {
+        parent_id: String
+        name: String!
+        banner: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+    type Category {
+        id: ID!
+        parent_id: String!
+        name: String!
+        slug: String!
+        banner: String!
+        icon: String!
+        meta_title: String
+        meta_keyword: String
+        meta_description: String
+    }
+
     type Query {
         users: [User!]!
         types: [MainType!]!
+        categories: [Category!]!
     }
     
     type Mutation {
@@ -59,5 +82,8 @@ export const typeDefs = gql`
         createType(input: MainTypeInput): MainType!
         updateType(id: ID!, input: MainTypeInput): MainType!
         deleteType(id: ID!): MainType!
+        createCategory(input: CategoryInput): Category!
+        updateCategory(id: ID!, input: CategoryInput): Category!
+        deleteCategory(id: ID!): Category!
     }
 `;
