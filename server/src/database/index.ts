@@ -28,5 +28,6 @@ export const connectDatabase = async (): Promise<Database> => {
     return {
         users: db.collection('users'),
         types: db.collection('types'),
+        categories: db.collection('categories'),
     }
 };

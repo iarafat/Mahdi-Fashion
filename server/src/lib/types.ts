@@ -41,7 +41,21 @@ export interface IType {
     created_at?: string;
 }
 
+export interface ICategory {
+    _id?: ObjectId;
+    parent_id?: string;
+    name: string;
+    slug?: string;
+    banner: string;
+    icon: string;
+    meta_title?: string;
+    meta_keyword?: string;
+    meta_description?: string;
+    created_at?: string;
+}
+
 export interface Database {
     users: Collection<IUser>
     types: Collection<IType>
+    categories: Collection<ICategory>
 }
