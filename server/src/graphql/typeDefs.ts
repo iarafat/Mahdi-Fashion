@@ -123,6 +123,14 @@ export const typeDefs = gql`
         id: ID!
         name: String!
         details: String!
+    }  
+    
+    type PaymentOption {
+        id: ID!
+        name: String!
+        type: String!
+        image: String!
+        details: String
     }
 
     type Query {
@@ -131,6 +139,7 @@ export const typeDefs = gql`
         categories: [Category!]!
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!
+        paymentOptions: [PaymentOption!]!
     }
     
     type Mutation {
@@ -148,5 +157,8 @@ export const typeDefs = gql`
         createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
         updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
         deleteDeliveryMethod(id: ID!): DeliveryMethod!
+        createPaymentOption(name: String!, type: String!, image: String!, details: String): PaymentOption!
+        updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, details: String): PaymentOption!
+        deletePaymentOption(id: ID!): PaymentOption!
     }
 `;
