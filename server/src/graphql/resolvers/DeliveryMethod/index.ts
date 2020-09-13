@@ -6,7 +6,7 @@ import {authorize} from "../../../lib/utils";
 
 export const deliveryMethodsResolvers: IResolvers = {
     Query: {
-        delivery_methods: async (
+        deliveryMethods: async (
             _root: undefined,
             _args: undefined,
             {db, req}: { db: Database, req: Request }
