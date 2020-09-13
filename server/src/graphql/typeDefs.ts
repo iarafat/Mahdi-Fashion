@@ -138,7 +138,7 @@ export const typeDefs = gql`
         types: [MainType!]!
         categories: [Category!]!
         products: [Product!]!
-        delivery_methods: [DeliveryMethod!]!
+        deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
     }
     
