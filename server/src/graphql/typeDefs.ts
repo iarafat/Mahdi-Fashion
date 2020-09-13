@@ -118,12 +118,19 @@ export const typeDefs = gql`
         meta_keyword: String
         meta_description: String
     }
+    
+    type DeliveryMethod {
+        id: ID!
+        name: String!
+        details: String!
+    }
 
     type Query {
         users: [User!]!
         types: [MainType!]!
         categories: [Category!]!
         products: [Product!]!
+        delivery_methods: [DeliveryMethod!]!
     }
     
     type Mutation {
@@ -138,5 +145,8 @@ export const typeDefs = gql`
         createProduct(input: ProductInput): Product!
         updateProduct(id: ID!, input: ProductUpdateInput): Product!
         deleteProduct(id: ID!): Product!
+        createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
+        updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
+        deleteDeliveryMethod(id: ID!): DeliveryMethod!
     }
 `;

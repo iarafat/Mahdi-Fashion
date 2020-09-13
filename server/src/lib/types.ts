@@ -74,9 +74,18 @@ export interface IProduct {
     updated_at?: string;
 }
 
+export interface IDeliveryMethod {
+    _id?: ObjectId;
+    name: string;
+    details: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Database {
-    users: Collection<IUser>
-    types: Collection<IType>
-    categories: Collection<ICategory>
-    products: Collection<IProduct>
+    users: Collection<IUser>;
+    types: Collection<IType>;
+    categories: Collection<ICategory>;
+    products: Collection<IProduct>;
+    delivery_methods: Collection<IDeliveryMethod>;
 }
