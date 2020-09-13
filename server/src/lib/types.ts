@@ -82,10 +82,21 @@ export interface IDeliveryMethod {
     updated_at?: string;
 }
 
+export interface IPaymentOption {
+    _id?: ObjectId;
+    name: string;
+    type: string;
+    image: string;
+    details?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;
     categories: Collection<ICategory>;
     products: Collection<IProduct>;
     delivery_methods: Collection<IDeliveryMethod>;
+    payment_options: Collection<IPaymentOption>;
 }
