@@ -132,6 +132,48 @@ export const typeDefs = gql`
         image: String!
         details: String
     }
+    
+    
+    # Orders
+    input OrderInput {
+        customer_id: String!
+        contact_number: String!
+        payment_option_id: String!
+        delivery_address: String!
+        amount: Int!
+        product_ids: [String!]!
+        payment_id:  String
+    }
+    
+    type OrderTracker {
+        status: String!
+        ordering: Int!
+        is_current: Boolean!
+    }
+
+    type OrderProducts {
+        product_id: String!
+        quantity: Int!
+        price: Int!
+    }
+    
+    type Order {
+    id: ID!
+    customer_id: String!
+    contact_number: String!
+    payment_option_id: String
+    datetime: String
+    delivery_address: String!
+    amount: Int!
+    payment_id:  String
+    payment_method: String!
+    payment_status: String!
+    status: String!
+    order_tracking: [OrderTracker]
+    order_products: [OrderProducts]
+    created_at: String
+    updated_at: String
+    }
 
     type Query {
         users: [User!]!
@@ -140,6 +182,7 @@ export const typeDefs = gql`
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
+        orders: [Order!]!
     }
     
     type Mutation {
@@ -160,5 +203,6 @@ export const typeDefs = gql`
         createPaymentOption(name: String!, type: String!, image: String!, details: String): PaymentOption!
         updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, details: String): PaymentOption!
         deletePaymentOption(id: ID!): PaymentOption!
+        createOrder(input: OrderInput): Order!
     }
 `;
