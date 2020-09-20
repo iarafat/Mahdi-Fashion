@@ -98,9 +98,10 @@ export interface IOrderTracker {
     is_current: boolean;
 }
 
-interface OrderProducts {
+export interface OrderProducts {
     product_id: string;
     quantity: number;
+    unit?: string;
     price: number;
 }
 

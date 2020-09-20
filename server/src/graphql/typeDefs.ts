@@ -135,13 +135,19 @@ export const typeDefs = gql`
     
     
     # Orders
+    input OrderProductInput {
+        product_id: String!
+        quantity: Int!
+        unit: String
+        price: Int!
+    }
     input OrderInput {
         customer_id: String!
         contact_number: String!
         payment_option_id: String!
         delivery_address: String!
         amount: Int!
-        product_ids: [String!]!
+        products: [OrderProductInput!]!
         payment_id:  String
     }
     
@@ -154,6 +160,7 @@ export const typeDefs = gql`
     type OrderProducts {
         product_id: String!
         quantity: Int!
+        unit: String
         price: Int!
     }
     

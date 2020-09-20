@@ -3,7 +3,7 @@ import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
 import {Database, IOrder, IOrderTracker} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
-import {IOrderInputArgs} from "./types";
+import {IOrderInputArgs, IOrderProductInput} from "./types";
 
 
 const oderTracker: Array<IOrderTracker> = [
@@ -44,11 +44,12 @@ const oderTracker: Array<IOrderTracker> = [
     }
 ];
 
-const makeObjectIds =  (ids: [string]) =>  {
-    let objIds: Array<ObjectId> = [];
 
-    ids.forEach(item => {
-       objIds.push(new ObjectId(item))
+const makeObjectIds =  (productsInput: IOrderProductInput[]) =>  {
+    const objIds: Array<ObjectId> = [];
+
+    productsInput.forEach(item => {
+       objIds.push(new ObjectId(item.product_id))
     });
 
     return objIds;
@@ -62,6 +63,7 @@ export const ordersResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<IOrder[]> => {
             await authorize(req, db);
+            console.dir(req);
             return await db.orders.find({}).toArray();
         }
     },
@@ -75,18 +77,18 @@ export const ordersResolvers: IResolvers = {
             await authorize(req, db);
 
             const paymentOption = await db.payment_options.findOne({_id: new ObjectId(input.payment_option_id)});
-            const products = await db.products.find({ _id: {$in: makeObjectIds(input.product_ids)}})
+            //const products = await db.products.find({ _id: {$in: makeObjectIds(input.products)}})
 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            const {type: paymentType} = paymentOption;
-            let paymentStatus;
+            const {name: PaymentName, type: paymentType} = paymentOption;
+            /*let paymentStatus = "";
             if (paymentType.toLowerCase() == 'cod' || paymentType.toLowerCase() == 'cash on delivery') {
                 paymentStatus = "Unpaid";
             } else {
                 paymentStatus = "Paid";
-            }
+            }*/
 
-            // @ts-ignore
             const insertData: IOrder = {
                 _id: new ObjectId(),
                 customer_id: input.customer_id,
@@ -96,11 +98,11 @@ export const ordersResolvers: IResolvers = {
                 delivery_address: input.delivery_address,
                 amount: input.amount,
                 payment_id: input.payment_id,
-                payment_method: paymentType,
-                payment_status: paymentStatus,
+                payment_method: PaymentName,
+                payment_status: "Unpaid",
                 status: "Pending",
                 order_tracking: oderTracker,
-                order_products: [OrderProducts];
+                order_products: input.products,
                 created_at: new Date().toUTCString(),
             };
 
@@ -108,7 +110,7 @@ export const ordersResolvers: IResolvers = {
             return insertResult.ops[0];
         },
 
-        updatePaymentOption: async (
+       /* updatePaymentOption: async (
             _root: undefined,
             {id, name, type, image, details}: { id: string, name: string, type: string, image: string, details: string },
             {db, req}: { db: Database, req: Request }
@@ -136,12 +138,12 @@ export const ordersResolvers: IResolvers = {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             return await db.payment_options.findOne({_id: new ObjectId(id)});
-        },
+        },*/
     },
 
-    PaymentOption: {
+    Order: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        id: (type: IPaymentOption): string => type._id.toString(),
+        id: (type: IOrder): string => type._id.toString(),
     }
 }
