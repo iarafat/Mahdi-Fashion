@@ -1,0 +1,1 @@
+{"ast":null,"code":"export function customerDistance() {\n  var calculateDistance = Math.floor(Math.random() * 1000) + 100;\n  return calculateDistance;\n}","map":null,"metadata":{},"sourceType":"module"}
