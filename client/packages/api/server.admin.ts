@@ -10,7 +10,7 @@ import OrderResolver from './admin/services/order/order.resolver';
 import StaffResolver from './admin/services/staff/staff.resolver';
 const app: express.Application = express();
 const path = '/admin/graphql';
-const PORT = process.env.PORT || 4000;
+const PORT = 4000; //process.env.PORT || 4000;
 
 const main = async () => {
   const schema = await buildSchema({

@@ -73,10 +73,10 @@ yarn dev:shop
 
 ```bash
 # build admin for production
-yarn build:admin
+yarn build:admin => port: 5000
 
 # build api which in needed for local testing
-yarn build:api
+yarn build:api => port: 4000
 
 #start admin in production mode
 yarn serve:admin
@@ -88,10 +88,10 @@ yarn serve:admin
 
 ```bash
 # build shop for production
-yarn build:shop => port: 5000
+yarn build:shop => port: 9000
 
 # build api which in needed for local testing
-yarn build:api => port: 7000
+yarn build:api => port: 8000
 
 # start shop in production mode
 yarn serve:shop
