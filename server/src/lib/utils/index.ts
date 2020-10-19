@@ -6,12 +6,18 @@ import {Database, IUser} from "../../lib/types";
 export const authorize = async (req: Request, db: Database): Promise<IUser | null> => {
     //Get the jwt token from the head
     const token = <string>req.headers["x-access-token"];
+    const secret = <string>process.env.JWT_SECRET;
 
     if (!token) {
         throw new Error("Unauthorized!");
     }
 
-    const secret = <string>process.env.JWT_SECRET;
+    try {
+        jwt.verify(token, secret);
+    } catch(err) {
+        throw new Error("Unauthorized!");
+    }
+
     const {userId, exp} = <any>jwt.verify(token, secret);
 
     if (exp < Date.now().valueOf() / 1000) {
