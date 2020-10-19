@@ -132,10 +132,16 @@ export const typeDefs = gql`
         image: String!
         details: String
     }
+    
+    type MainTypePaginationType {
+        items: [MainType]
+        totalCount: Int
+        hasMore: Boolean
+    }
 
     type Query {
         users: [User!]!
-        types: [MainType!]!
+        types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories: [Category!]!
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!

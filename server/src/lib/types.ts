@@ -92,6 +92,18 @@ export interface IPaymentOption {
     updated_at?: string;
 }
 
+export interface ICommonPaginationArgs {
+    limit: number;
+    offset: number;
+    searchText?: string;
+}
+
+export interface ICommonPaginationReturnType {
+    items: Array<any>;
+    totalCount: number;
+    hasMore: boolean;
+}
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;

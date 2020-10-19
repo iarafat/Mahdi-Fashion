@@ -9,6 +9,7 @@ import {
 } from './Sidebar.style';
 import {
   DASHBOARD,
+  TYPES,
   PRODUCTS,
   CATEGORY,
   ORDERS,
@@ -34,6 +35,12 @@ const sidebarMenus = [
     path: DASHBOARD,
     exact: true,
     icon: <DashboardIcon />,
+  },
+  {
+    name: 'Types',
+    path: TYPES,
+    exact: false,
+    icon: <ProductIcon />,
   },
   {
     name: 'Products',

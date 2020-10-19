@@ -1,19 +1,28 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IType} from "../../../lib/types";
+import {Database, IType, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
+import {search} from "../../../lib/utils/search"
 
 export const typesResolvers: IResolvers = {
     Query: {
         types: async (
             _root: undefined,
-            _args: undefined,
+            { limit, offset, searchText }: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<IType[]> => {
-            return await db.types.find({}).toArray();
+        ): Promise<ICommonPaginationReturnType> => {
+            let types =  await db.types.find({}).sort({created_at: 1}).toArray();
+            types = search(types, ['name', 'slug'], searchText);
+            const hasMore = types.length > offset + limit;
+
+            return {
+                items: types.slice(offset, offset + limit),
+                totalCount: types.length,
+                hasMore,
+            }
         }
     },
 
