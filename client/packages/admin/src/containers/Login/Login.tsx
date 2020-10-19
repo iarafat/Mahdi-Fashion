@@ -15,13 +15,13 @@ import Button from '../../components/Button/Button';
 import Logoimage from '../../assets/image/PickBazar.png';
 
 const initialValues = {
-  username: '',
+    phone: '',
   password: '',
 };
 
 const getLoginValidationSchema = () => {
   return Yup.object().shape({
-    username: Yup.string().required('Username is Required!'),
+      phone: Yup.string().required('Phone Number is Required!'),
     password: Yup.string().required('Password is Required!'),
   });
 };
@@ -37,8 +37,8 @@ export default () => {
   if (isAuthenticated) return <Redirect to={{ pathname: '/' }} />;
 
   let { from } = (location.state as any) || { from: { pathname: '/' } };
-  let login = ({ username, password }) => {
-    authenticate({ username, password }, () => {
+  let login = ({ phone, password }) => {
+    authenticate({ phone, password }, () => {
       history.replace(from);
     });
   };
@@ -58,15 +58,15 @@ export default () => {
               </FormFields>
 
               <FormFields>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Phone</FormLabel>
                 <Field
-                  type='email'
-                  name='username'
+                  type='text'
+                  name='phone'
                   component={MyInput}
-                  placeholder='Ex: demo@demo.com'
+                  placeholder='Ex: 01610010101'
                 />
-                {errors.username && touched.username && (
-                  <Error>{errors.username}</Error>
+                {errors.phone && touched.phone && (
+                  <Error>{errors.phone}</Error>
                 )}
               </FormFields>
               <FormFields>
