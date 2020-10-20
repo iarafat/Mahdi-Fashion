@@ -5,6 +5,7 @@ import { CloseIcon } from '../../assets/icons/CloseIcon';
 import { useDrawerState, useDrawerDispatch } from '../../context/DrawerContext';
 
 /** Drawer Components */
+import TypeForm from '../TypeForm/TypeForm';
 import ProductForm from '../ProductForm/ProductForm';
 import ProductUpdateForm from '../ProductForm/ProductUpdateForm';
 import CampaingForm from '../CampaingForm/CampaingForm';
@@ -14,6 +15,7 @@ import Sidebar from '../Layout/Sidebar/Sidebar';
 
 /** Components Name Constants */
 const DRAWER_COMPONENTS = {
+  TYPE_FORM: TypeForm,
   PRODUCT_FORM: ProductForm,
   PRODUCT_UPDATE_FORM: ProductUpdateForm,
   CAMPAING_FORM: CampaingForm,

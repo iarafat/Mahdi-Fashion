@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import dayjs from 'dayjs';
 import { withStyle } from 'baseui';
 import {
@@ -14,7 +14,7 @@ import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { Wrapper, Header, Heading } from '../../components/WrapperStyle';
 
-import {AllIcons, Icon} from "../../assets/icons/all-icons";
+import {AllIcons} from "../../assets/icons/all-icons";
 
 import {
   TableWrapper,
@@ -26,6 +26,8 @@ import {
   IconWrapper,
 } from './Types.style';
 import NoResult from '../../components/NoResult/NoResult';
+import {Plus} from "../../components/AllSvgIcon";
+import {useDrawerDispatch} from "../../context/DrawerContext";
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -73,6 +75,12 @@ export default function Coupons() {
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const { data, error, refetch } = useQuery(GET_TYPES);
+  const dispatch = useDrawerDispatch();
+
+  const openDrawer = useCallback(
+      () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'TYPE_FORM' }),
+      [dispatch]
+  );
 
   if (error) {
     return <div>Error! {error.message}</div>;
@@ -99,6 +107,11 @@ export default function Coupons() {
     });
   }
 
+  const Icon = ({ icon }) => {
+    let Component =  AllIcons.hasOwnProperty(icon) ? AllIcons[icon] : 'span';
+    return <Component/>;
+  }
+
   return (
       <Grid fluid={true}>
         <Row>
@@ -120,6 +133,25 @@ export default function Coupons() {
                     onChange={handleSearch}
                     clearable
                 />
+              </Col>
+              <Col md={2}>
+                <Button
+                    onClick={openDrawer}
+                    startEnhancer={() => <Plus />}
+                    overrides={{
+                      BaseButton: {
+                        style: () => ({
+                          width: '100%',
+                          borderTopLeftRadius: '3px',
+                          borderTopRightRadius: '3px',
+                          borderBottomLeftRadius: '3px',
+                          borderBottomRightRadius: '3px',
+                        }),
+                      },
+                    }}
+                >
+                  Add Type
+                </Button>
               </Col>
             </Header>
 

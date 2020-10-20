@@ -32,6 +32,10 @@ export const typesResolvers: IResolvers = {
             {input}: ITypeInputArgs,
             {db, req}: { db: Database, req: Request  }
         ): Promise<IType> => {
+
+            console.dir(input)
+
+
             await authorize(req, db);
 
             const typeResult = await db.types.findOne({slug: slugify(input.name)});

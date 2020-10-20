@@ -27,6 +27,7 @@ import {
   CouponIcon,
   SettingIcon,
   LogoutIcon,
+    MenuIcon,
 } from '../../../components/AllSvgIcon';
 
 const sidebarMenus = [
@@ -40,7 +41,7 @@ const sidebarMenus = [
     name: 'Types',
     path: TYPES,
     exact: false,
-    icon: <ProductIcon />,
+    icon: <MenuIcon />,
   },
   {
     name: 'Products',
