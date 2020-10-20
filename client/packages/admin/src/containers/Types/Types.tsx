@@ -1,71 +1,31 @@
 import React, { useState } from 'react';
-import { styled, withStyle } from 'baseui';
-import Button from '../../components/Button/Button';
+import dayjs from 'dayjs';
+import { withStyle } from 'baseui';
 import {
   Grid,
   Row as Rows,
   Col as Column,
 } from '../../components/FlexBox/FlexBox';
+
 import Input from '../../components/Input/Input';
+import Button from '../../components/Button/Button';
+
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
-import Fade from 'react-reveal/Fade';
-import TypeCard from '../../components/TypeCard/TypeCard';
 import { Wrapper, Header, Heading } from '../../components/WrapperStyle';
+
+import {AllIcons, Icon} from "../../assets/icons/all-icons";
+
+import {
+  TableWrapper,
+  StyledTable,
+  StyledHeadCell,
+  StyledBodyCell,
+  Image,
+  ImageWrapper,
+  IconWrapper,
+} from './Types.style';
 import NoResult from '../../components/NoResult/NoResult';
-import Placeholder from '../../components/Placeholder/Placeholder';
-import Select from "../../components/Select/Select";
-import {Plus} from "../../components/AllSvgIcon";
-import {ImageWrapper, StyledCell, StyledHeadCell, StyledTable, TableWrapper} from "../Category/Category.style";
-import Checkbox from "../../components/CheckBox/CheckBox";
-
-export const TypesRow = styled('div', ({ $theme }) => ({
-  display: 'flex',
-  flexWrap: 'wrap',
-  marginTop: '25px',
-  backgroundColor: $theme.colors.backgroundF7,
-  position: 'relative',
-  zIndex: '1',
-
-  '@media only screen and (max-width: 767px)': {
-    marginLeft: '-7.5px',
-    marginRight: '-7.5px',
-    marginTop: '15px',
-  },
-}));
-
-export const Col = withStyle(Column, () => ({
-  '@media only screen and (max-width: 767px)': {
-    marginBottom: '20px',
-
-    ':last-child': {
-      marginBottom: 0,
-    },
-  },
-}));
-
-const Row = withStyle(Rows, () => ({
-  '@media only screen and (min-width: 768px) and (max-width: 991px)': {
-    alignItems: 'center',
-  },
-}));
-
-export const TypeCardWrapper = styled('div', () => ({
-  height: '100%',
-}));
-
-export const LoaderWrapper = styled('div', () => ({
-  width: '100%',
-  height: '100vh',
-  display: 'flex',
-  flexWrap: 'wrap',
-}));
-
-export const LoaderItem = styled('div', () => ({
-  width: '25%',
-  padding: '0 15px',
-  marginBottom: '30px',
-}));
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -80,6 +40,12 @@ const GET_TYPES = gql`
         id
         name
         slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
       }
       totalCount
       hasMore
@@ -87,178 +53,144 @@ const GET_TYPES = gql`
   }
 `;
 
+const Col = withStyle(Column, () => ({
+  '@media only screen and (max-width: 767px)': {
+    marginBottom: '20px',
 
-export default function Types() {
-  const { data, error, refetch, fetchMore } = useQuery(GET_TYPES);
-  const [loadingMore, toggleLoading] = useState(false);
-  const [search, setSearch] = useState([]);
+    ':last-child': {
+      marginBottom: 0,
+    },
+  },
+}));
+const Row = withStyle(Rows, () => ({
+  '@media only screen and (min-width: 768px)': {
+    alignItems: 'center',
+  },
+}));
+
+
+export default function Coupons() {
+  const [search, setSearch] = useState('');
+  const [offset, setOffset] = useState(0);
+  const { data, error, refetch } = useQuery(GET_TYPES);
 
   if (error) {
     return <div>Error! {error.message}</div>;
   }
-  function loadMore() {
-    toggleLoading(true);
-    fetchMore({
-      variables: {
-        offset: data.types.items.length,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        toggleLoading(false);
-        if (!fetchMoreResult) return prev;
-        return Object.assign({}, prev, {
-          types: {
-            __typename: prev.types.__typename,
-            items: [...prev.types.items, ...fetchMoreResult.types.items],
-            hasMore: fetchMoreResult.types.hasMore,
-          },
-        });
-      },
-    });
-  }
+
   function handleSearch(event) {
     const value = event.currentTarget.value;
     setSearch(value);
-    refetch({ searchText: value });
+    refetch({
+      searchText: value,
+    });
   }
-  /*<Grid fluid={true}>
-       <Row>
-         <Col md={12}>
-           <Header style={{ marginBottom: 15 }}>
-             <Col md={2} xs={12}>
-               <Heading>Types</Heading>
-             </Col>
+  function handlePrevious() {
+    setOffset(offset-1);
+    refetch({
+      offset: offset - 1,
+    });
+  }
 
-             <Col md={10} xs={12}>
-               <Row>
-                 <Col md={6} xs={12}>
-                   <Input
-                     value={search}
-                     placeholder='Ex: Search By Name'
-                     onChange={handleSearch}
-                     clearable
-                   />
-                 </Col>
-               </Row>
-             </Col>
-           </Header>
+  function handleNext() {
+    setOffset(offset+1);
+    refetch({
+      offset: offset + 1,
+    });
+  }
 
-           <Row>
-             {data ? (
-               data.types && data.types.items.length !== 0 ? (
-                 data.types.items.map((item: any, index: number) => (
-                   <Col
-                     md={4}
-                     lg={3}
-                     sm={6}
-                     xs={12}
-                     key={index}
-                     style={{ margin: '15px 0' }}
-                   >
-                     <Fade bottom duration={800} delay={index * 10}>
-                       <TypeCard
-                         name={item.name}
-                         slug={item.slug}
-                         data={item}
-                       />
-                     </Fade>
-                   </Col>
-                 ))
-               ) : (
-                 <NoResult />
-               )
-             ) : (
-               <LoaderWrapper>
-                 <LoaderItem>
-                   <Placeholder />
-                 </LoaderItem>
-                 <LoaderItem>
-                   <Placeholder />
-                 </LoaderItem>
-                 <LoaderItem>
-                   <Placeholder />
-                 </LoaderItem>
-                 <LoaderItem>
-                   <Placeholder />
-                 </LoaderItem>
-               </LoaderWrapper>
-             )}
-           </Row>
-           {data && data.types && data.types.hasMore && (
-             <Row>
-               <Col
-                 md={12}
-                 style={{ display: 'flex', justifyContent: 'center' }}
-               >
-                 <Button onClick={loadMore} isLoading={loadingMore}>
-                   Load More
-                 </Button>
-               </Col>
-             </Row>
-           )}
-         </Col>
-       </Row>
-     </Grid>*/
   return (
-    <Grid fluid={true}>
-    <Row>
-      <Col md={12}>
-        <Header
-            style={{
-              marginBottom: 30,
-              boxShadow: '0 0 5px rgba(0, 0 ,0, 0.05)',
-            }}
-        >
-          <Col md={2}>
-            <Heading>Types</Heading>
-          </Col>
+      <Grid fluid={true}>
+        <Row>
+          <Col md={12}>
+            <Header
+                style={{
+                  marginBottom: 30,
+                  boxShadow: '0 0 5px rgba(0, 0 ,0, 0.05)',
+                }}
+            >
+              <Col md={2}>
+                <Heading>Types</Heading>
+              </Col>
 
-          <Col md={10}>
-            <Row>
-
-              <Col md={5} lg={6}>
+              <Col md={6}>
                 <Input
                     value={search}
-                    placeholder='Ex: Search By Name'
+                    placeholder="Ex: Search By Name"
                     onChange={handleSearch}
                     clearable
                 />
               </Col>
+            </Header>
+
+            <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
+              <TableWrapper>
+                <StyledTable $gridTemplateColumns="minmax(70px, 70px) minmax(200px, auto) minmax(200px, auto) minmax(70px, 70px) minmax(70px, 70px) minmax(150px, auto)">
+                  <StyledHeadCell>#</StyledHeadCell>
+                  <StyledHeadCell>Name</StyledHeadCell>
+                  <StyledHeadCell>Slug</StyledHeadCell>
+                  <StyledHeadCell>Image</StyledHeadCell>
+                  <StyledHeadCell>Icon</StyledHeadCell>
+                  <StyledHeadCell>Created At</StyledHeadCell>
+
+                  {data ? (
+                      data.types.items.length ? (
+                          data.types.items
+                              .map((item) => Object.values(item))
+                              .map((row, index) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                      <StyledBodyCell>{index+1}</StyledBodyCell>
+                                      <StyledBodyCell>{row[1]}</StyledBodyCell>
+                                      <StyledBodyCell>{row[2]}</StyledBodyCell>
+                                      <ImageWrapper>
+                                        <Image src={row[3]} />
+                                      </ImageWrapper>
+                                      <IconWrapper>
+                                        <Icon icon={row[4]} />
+                                      </IconWrapper>
+                                      <StyledBodyCell>
+                                        {dayjs(row[8]).format('DD MMM YYYY HH:mm:ss')}
+                                      </StyledBodyCell>
+                                    </React.Fragment>
+                                );
+                              })
+                      ) : (
+                          <NoResult
+                              hideButton={false}
+                              style={{
+                                gridColumnStart: '1',
+                                gridColumnEnd: 'one',
+                              }}
+                          />
+                      )
+                  ) : null}
+                </StyledTable>
+              </TableWrapper>
+            </Wrapper>
+
+            <Row>
+              <Col md={8}>
+              </Col>
+              <Col md={4}
+                   style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}
+              >
+                <Button
+                    style={{ width: '90px', marginRight: '10px', color: '#6f6f6f', backgroundColor: '#d8d8d8' }}
+                    disabled={(data ? data.types.totalCount === 0 : false) || offset === 0}
+                    onClick={handlePrevious}>
+                  Previous
+                </Button>
+                <Button
+                    style={{ width: '90px', color: '#6f6f6f', backgroundColor: '#d8d8d8' }}
+                    disabled={data ? !data.types.hasMore : true}
+                    onClick={handleNext}>
+                  Next
+                </Button>
+              </Col>
             </Row>
           </Col>
-        </Header>
-
-        <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
-          <TableWrapper>
-            <StyledTable $gridTemplateColumns='minmax(150px, auto) minmax(150px, auto) auto'>
-              <StyledHeadCell>Name</StyledHeadCell>
-              <StyledHeadCell>Slug</StyledHeadCell>
-              {data ? (
-                  data.types.length ? (
-                      data.types
-                          .map((item) => Object.values(item))
-                          .map((row, index) => (
-                              <React.Fragment key={index}>
-                                <StyledCell>{row[0]}</StyledCell>
-                                <StyledCell>{row[2]}</StyledCell>
-                                <StyledCell>{row[3]}</StyledCell>
-                                <StyledCell>{row[4]}</StyledCell>
-                              </React.Fragment>
-                          ))
-                  ) : (
-                      <NoResult
-                          hideButton={false}
-                          style={{
-                            gridColumnStart: '1',
-                            gridColumnEnd: 'one',
-                          }}
-                      />
-                  )
-              ) : null}
-            </StyledTable>
-          </TableWrapper>
-        </Wrapper>
-      </Col>
-    </Row>
-  </Grid>
+        </Row>
+      </Grid>
   );
 }

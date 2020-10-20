@@ -1,5 +1,5 @@
 import React from 'react';
-export const MinusSquareO = (props) => (
+export const MinusSquare = (props) => (
   <svg {...props} viewBox='64 -65 897 897'>
     <g>
       <path

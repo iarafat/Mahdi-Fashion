@@ -46,6 +46,8 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        created_at: String
+        updated_at: String
     }
     
     

@@ -39,6 +39,7 @@ export interface IType {
     meta_keyword?: string;
     meta_description?: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface ICategory {

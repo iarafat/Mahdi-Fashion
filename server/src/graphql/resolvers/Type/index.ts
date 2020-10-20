@@ -77,6 +77,7 @@ export const typesResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
+                updated_at: new Date().toUTCString(),
             };
 
             await db.types.updateOne(
