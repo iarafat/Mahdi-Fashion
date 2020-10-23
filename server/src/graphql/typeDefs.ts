@@ -1,6 +1,6 @@
 import {gql} from 'apollo-server-express';
 
-export const typeDefs = gql`
+export const typeDefs = gql`    
     type Phone {
         number: String!
         status: Boolean
@@ -31,7 +31,7 @@ export const typeDefs = gql`
     
     input MainTypeInput {
         name: String!
-        image: String!
+        image: Upload!
         icon: String!
         meta_title: String
         meta_keyword: String
@@ -72,7 +72,6 @@ export const typeDefs = gql`
         meta_description: String
     }
     
-    #scalar Upload
     input ProductInput {
         type_id: String!
         category_id: String!

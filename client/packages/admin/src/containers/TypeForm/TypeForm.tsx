@@ -21,25 +21,43 @@ import {
 import { FormFields, FormLabel } from '../../components/FormFields/FormFields';
 import {AllIconArray} from "../../assets/icons/all-icons";
 
-const GET_CATEGORIES = gql`
-  query getCategories($type: String, $searchBy: String) {
-    categories(type: $type, searchBy: $searchBy) {
-      id
-      icon
-      name
-      slug
-      type
+const GET_TYPES = gql`
+  query GetTypes(
+    $searchText: String
+    $offset: Int
+  ) {
+    types(
+      searchText: $searchText
+      offset: $offset
+    ) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
+      }
+      totalCount
+      hasMore
     }
   }
 `;
+
 const CREATE_TYPE = gql`
   mutation CreateType($input: MainTypeInput!) {
     createType(input: $input) {
       id
-      slug
       name
+      slug
       image
       icon
+      meta_title
+      meta_keyword
+      meta_description
       created_at
     }
   }
@@ -53,21 +71,27 @@ const AddType: React.FC<Props> = props => {
     dispatch,
   ]);
   const { register, handleSubmit, setValue } = useForm();
+  const [meta_title, setMetaTitle] = useState('');
+  const [meta_keyword, setMetaKeyword] = useState('');
   const [meta_description, setMetaDescription] = useState('');
   const [icon, setIcon] = useState([]);
   React.useEffect(() => {
-    register({ name: 'icon' });
-    register({ name: 'image' });
+    register({ name: 'icon', required: true  });
+    register({ name: 'image', required: true });
+    register({ name: 'meta_title' });
+    register({ name: 'meta_keyword' });
+    register({ name: 'meta_description' });
   }, [register]);
   const [createType] = useMutation(CREATE_TYPE, {
-    update(cache, { data: { createCategory } }) {
-      const { categories } = cache.readQuery({
-        query: GET_CATEGORIES,
+    update(cache, { data: { createType } }) {
+      const { types } = cache.readQuery({
+        query: GET_TYPES,
       });
+      console.dir(types);
 
       cache.writeQuery({
-        query: GET_CATEGORIES,
-        data: { categories: categories.concat([createCategory]) },
+        query: GET_TYPES,
+        data: { types: types.items.concat([createType]) },
       });
     },
   });
@@ -91,7 +115,19 @@ const AddType: React.FC<Props> = props => {
     setIcon(value);
   };
   const handleUploader = files => {
-    setValue('image', files[0].path);
+    console.dir(files);
+    setValue('image', files[0]);
+  };
+
+  const handleMetaTitleChange = e => {
+    const value = e.target.value;
+    setValue('meta_title', value);
+    setMetaTitle(value);
+  };
+  const handleMetaKeywordChange = e => {
+    const value = e.target.value;
+    setValue('meta_keyword', value);
+    setMetaKeyword(value);
   };
 
   const handleMetaDescriptionChange = e => {
@@ -106,7 +142,7 @@ const AddType: React.FC<Props> = props => {
         <DrawerTitle>Add Type</DrawerTitle>
       </DrawerTitleWrapper>
 
-      <Form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
+      <Form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }} encType={'multipart/form-data'}>
         <Scrollbars
           autoHide
           renderView={props => (
@@ -141,7 +177,7 @@ const AddType: React.FC<Props> = props => {
                   },
                 }}
               >
-                <Uploader onChange={handleUploader} />
+                <Uploader type={'file'} required={true} onChange={handleUploader} />
               </DrawerBox>
             </Col>
           </Row>
@@ -160,6 +196,7 @@ const AddType: React.FC<Props> = props => {
                   <Input
                     inputRef={register({ required: true })}
                     name="name"
+                    required={true}
                   />
                 </FormFields>
 
@@ -171,6 +208,7 @@ const AddType: React.FC<Props> = props => {
                     valueKey="value"
                     placeholder="Ex: Choose type icon"
                     value={icon}
+                    required={true}
                     searchable={true}
                     onChange={handleChange}
                     overrides={{
@@ -226,20 +264,27 @@ const AddType: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Meta Title</FormLabel>
                   <Input
+                      inputRef={register({ required: false })}
                       name="meta_title"
+                      value={meta_title}
+                      onChange={handleMetaTitleChange}
                   />
                 </FormFields>
 
                 <FormFields>
                   <FormLabel>Meta Keyword</FormLabel>
                   <Input
+                      inputRef={register({ required: false })}
                       name="meta_keyword"
+                      value={meta_keyword}
+                      onChange={handleMetaKeywordChange}
                   />
                 </FormFields>
 
                 <FormFields>
                   <FormLabel>Meta Description</FormLabel>
                   <Textarea
+                      inputRef={register({ required: false })}
                       name="meta_description"
                       value={meta_description}
                       onChange={handleMetaDescriptionChange}

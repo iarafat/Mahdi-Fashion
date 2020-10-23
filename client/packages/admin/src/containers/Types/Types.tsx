@@ -182,7 +182,7 @@ export default function Coupons() {
                                         <Icon icon={row[4]} />
                                       </IconWrapper>
                                       <StyledBodyCell>
-                                        {dayjs(row[8]).format('DD MMM YYYY HH:mm:ss')}
+                                        {dayjs(row[8]).format('DD MMM YYYY hh:mm:ss A')}
                                       </StyledBodyCell>
                                     </React.Fragment>
                                 );

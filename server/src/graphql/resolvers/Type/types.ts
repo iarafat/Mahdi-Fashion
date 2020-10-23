@@ -1,6 +1,6 @@
 export interface ITypeInput {
     name: string;
-    image: string;
+    image: any;
     icon: string;
     meta_title?: string;
     meta_keyword?: string;
