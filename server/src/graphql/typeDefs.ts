@@ -1,6 +1,11 @@
 import {gql} from 'apollo-server-express';
 
 export const typeDefs = gql`    
+    input File {
+        name: String!
+        size: Int!
+        type: String!
+    }   
     type Phone {
         number: String!
         status: Boolean
@@ -31,7 +36,8 @@ export const typeDefs = gql`
     
     input MainTypeInput {
         name: String!
-        image: Upload!
+        image_data: File!
+        image: String!
         icon: String!
         meta_title: String
         meta_keyword: String

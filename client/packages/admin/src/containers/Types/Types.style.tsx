@@ -26,10 +26,6 @@ export const ImageWrapper = styled('div', ({ $theme }) => ({
   height: '38px',
   overflow: 'hidden',
   display: 'inline-block',
-  borderTopLeftRadius: '20px',
-  borderTopRightRadius: '20px',
-  borderBottomRightRadius: '20px',
-  borderBottomLeftRadius: '20px',
   backgroundColor: $theme.colors.backgroundF7,
 }));
 

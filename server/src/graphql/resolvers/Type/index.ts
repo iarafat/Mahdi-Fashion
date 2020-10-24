@@ -6,27 +6,8 @@ import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
 import {search} from "../../../lib/utils/search"
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const fs = require('fs');
+import {storeImage} from "../../../lib/utils/image-store";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const storeFS = ({ stream, filename }) => {
-    const uploadDir = '../../../backend/photos';
-    const path = `${uploadDir}/${filename}`;
-    return new Promise((resolve, reject) =>
-        stream
-            .on('error', (error: any) => {
-                if (stream.truncated)
-                    // delete the truncated file
-                    fs.unlinkSync(path);
-                reject(error);
-            })
-            .pipe(fs.createWriteStream(path))
-            .on('error', (error: any) => reject(error))
-            .on('finish', () => resolve({ path }))
-    );
-}
 
 export const typesResolvers: IResolvers = {
     Query: {
@@ -52,21 +33,8 @@ export const typesResolvers: IResolvers = {
             _root: undefined,
             {input}: ITypeInputArgs,
             {db, req}: { db: Database, req: Request  }
-        )/*: Promise<IType>*/ => {
-            console.dir(input.image);
-            const { filename, mimetype, createReadStream } = await input.image;
-            const stream = createReadStream();
-            const pathObj = await storeFS({ stream, filename });
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const fileLocation = pathObj.path;
-
-            console.log(fileLocation);
-            console.dir(input.image);
-
-
-            /*await authorize(req, db);
+        ): Promise<IType> => {
+            await authorize(req, db);
 
             const typeResult = await db.types.findOne({slug: slugify(input.name)});
 
@@ -74,11 +42,13 @@ export const typesResolvers: IResolvers = {
                 throw new Error("Type already exits.");
             }
 
+            const imagePath = storeImage(input.image, input.image_data.name);
+
             const typeData: IType = {
                 _id: new ObjectId(),
                 name: input.name,
                 slug: slugify(input.name),
-                image: input.image,
+                image: imagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
@@ -87,7 +57,7 @@ export const typesResolvers: IResolvers = {
             };
 
             const insertResult = await db.types.insertOne(typeData);
-            return insertResult.ops[0];*/
+            return insertResult.ops[0];
         },
 
         updateType: async (

@@ -70,6 +70,19 @@ const Row = withStyle(Rows, () => ({
   },
 }));
 
+const prevButtonDisabledStyles = {
+  width: '90px',
+  marginRight: '10px',
+  color: '#6f6f6f',
+  backgroundColor: '#d8d8d8'
+};
+const nextButtonDisabledStyles = {
+  width: '90px',
+  marginLeft: '10px',
+  color: '#6f6f6f',
+  backgroundColor: '#d8d8d8'
+};
+
 
 export default function Coupons() {
   const [search, setSearch] = useState('');
@@ -94,17 +107,24 @@ export default function Coupons() {
     });
   }
   function handlePrevious() {
-    setOffset(offset-1);
+    setOffset(offset-12);
     refetch({
-      offset: offset - 1,
+      offset: offset - 12,
     });
   }
-
+  function handlePreviousDisabled(data) {
+    const result = (data ? data.types.totalCount === 0 : false) || offset === 0;
+    return result;
+  }
   function handleNext() {
-    setOffset(offset+1);
+    setOffset(offset+12);
     refetch({
-      offset: offset + 1,
+      offset: offset + 12,
     });
+  }
+  function handleNextDisabled(data) {
+    const result = data ? !data.types.hasMore : true;
+    return result;
   }
 
   const Icon = ({ icon }) => {
@@ -176,7 +196,7 @@ export default function Coupons() {
                                       <StyledBodyCell>{row[1]}</StyledBodyCell>
                                       <StyledBodyCell>{row[2]}</StyledBodyCell>
                                       <ImageWrapper>
-                                        <Image src={row[3]} />
+                                        <Image src={`${ row[3]}`} />
                                       </ImageWrapper>
                                       <IconWrapper>
                                         <Icon icon={row[4]} />
@@ -208,14 +228,14 @@ export default function Coupons() {
                    style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}
               >
                 <Button
-                    style={{ width: '90px', marginRight: '10px', color: '#6f6f6f', backgroundColor: '#d8d8d8' }}
-                    disabled={(data ? data.types.totalCount === 0 : false) || offset === 0}
+                    style={ handlePreviousDisabled(data) ? prevButtonDisabledStyles : {marginRight: '10px'}}
+                    disabled={handlePreviousDisabled(data)}
                     onClick={handlePrevious}>
                   Previous
                 </Button>
                 <Button
-                    style={{ width: '90px', color: '#6f6f6f', backgroundColor: '#d8d8d8' }}
-                    disabled={data ? !data.types.hasMore : true}
+                    style={ handleNextDisabled(data) ? nextButtonDisabledStyles : null}
+                    disabled={handleNextDisabled(data)}
                     onClick={handleNext}>
                   Next
                 </Button>

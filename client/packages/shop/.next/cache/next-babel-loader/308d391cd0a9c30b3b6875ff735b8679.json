@@ -1,1 +1,0 @@
-{"ast":null,"code":"export function groupBy(objectArray, property) {\n  return objectArray.reduce(function (acc, obj) {\n    var key = obj[property];\n\n    if (!acc[key]) {\n      acc[key] = [];\n    }\n\n    acc[key].push(obj);\n    return acc;\n  }, {});\n}","map":null,"metadata":{},"sourceType":"module"}

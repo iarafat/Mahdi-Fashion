@@ -20,6 +20,7 @@ import {
 } from '../DrawerItems/DrawerItems.style';
 import { FormFields, FormLabel } from '../../components/FormFields/FormFields';
 import {AllIconArray} from "../../assets/icons/all-icons";
+import {getBase64Value} from "../../helpers/convert-image-base64";
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -48,6 +49,7 @@ const GET_TYPES = gql`
 `;
 
 const CREATE_TYPE = gql`
+  
   mutation CreateType($input: MainTypeInput!) {
     createType(input: $input) {
       id
@@ -77,6 +79,7 @@ const AddType: React.FC<Props> = props => {
   const [icon, setIcon] = useState([]);
   React.useEffect(() => {
     register({ name: 'icon', required: true  });
+    register({ name: 'image_data' });
     register({ name: 'image', required: true });
     register({ name: 'meta_title' });
     register({ name: 'meta_keyword' });
@@ -88,17 +91,27 @@ const AddType: React.FC<Props> = props => {
         query: GET_TYPES,
       });
       console.dir(types);
+      console.dir(createType);
+      console.dir(types.items.concat([createType]));
 
       cache.writeQuery({
         query: GET_TYPES,
-        data: { types: types.items.concat([createType]) },
+        data: {
+          types: {
+            __typename: types.__typename,
+            items: [createType, ...types.items],
+            hasMore: types.items.length + 1 >= 12,
+            totalCount: types.items.length + 1,
+          },
+        },
       });
     },
   });
 
-  const onSubmit = ({ name, icon, meta_title, meta_keyword, meta_description, image }) => {
+  const onSubmit = ({ name, icon, meta_title, meta_keyword, meta_description, image, image_data }) => {
     const newType = {
       name: name,
+      image_data: image_data,
       image: image,
       icon: icon[0].value,
       meta_title: meta_title,
@@ -115,8 +128,11 @@ const AddType: React.FC<Props> = props => {
     setIcon(value);
   };
   const handleUploader = files => {
-    console.dir(files);
-    setValue('image', files[0]);
+    setValue('image_data', {name: files[0].name, size: files[0].size, type: files[0].type});
+
+    getBase64Value(files[0], imageBase64Value => {
+      setValue('image', imageBase64Value);
+    })
   };
 
   const handleMetaTitleChange = e => {
@@ -264,7 +280,6 @@ const AddType: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Meta Title</FormLabel>
                   <Input
-                      inputRef={register({ required: false })}
                       name="meta_title"
                       value={meta_title}
                       onChange={handleMetaTitleChange}
@@ -274,7 +289,6 @@ const AddType: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Meta Keyword</FormLabel>
                   <Input
-                      inputRef={register({ required: false })}
                       name="meta_keyword"
                       value={meta_keyword}
                       onChange={handleMetaKeywordChange}
@@ -284,7 +298,6 @@ const AddType: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Meta Description</FormLabel>
                   <Textarea
-                      inputRef={register({ required: false })}
                       name="meta_description"
                       value={meta_description}
                       onChange={handleMetaDescriptionChange}
