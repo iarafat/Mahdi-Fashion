@@ -92,6 +92,37 @@ export interface IPaymentOption {
     updated_at?: string;
 }
 
+export interface IOrderTracker {
+    status: string;
+    ordering: number;
+    is_current: boolean;
+}
+
+export interface OrderProducts {
+    product_id: string;
+    quantity: number;
+    unit?: string;
+    price: number;
+}
+
+export interface IOrder {
+    _id?: ObjectId;
+    customer_id: string;
+    contact_number: string;
+    payment_option_id: string;
+    datetime: string;
+    delivery_address: string;
+    amount: number;
+    payment_id?: string;
+    payment_method: string;
+    payment_status: string;
+    status: string;
+    order_tracking: Array<IOrderTracker>;
+    order_products: Array<OrderProducts>;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;
@@ -99,4 +130,5 @@ export interface Database {
     products: Collection<IProduct>;
     delivery_methods: Collection<IDeliveryMethod>;
     payment_options: Collection<IPaymentOption>;
+    orders: Collection<IOrder>;
 }
