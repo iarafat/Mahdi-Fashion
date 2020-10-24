@@ -1,6 +1,7 @@
 // **************** ROUTE CONSTANT START **************************
 // General Page Section
 export const DASHBOARD = '/';
+export const TYPES = '/types';
 export const PRODUCTS = '/products';
 export const CATEGORY = '/category';
 export const LOGIN = '/login';

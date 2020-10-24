@@ -1,19 +1,30 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IType} from "../../../lib/types";
+import {Database, IType, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
+import {search} from "../../../lib/utils/search"
+import {storeImage} from "../../../lib/utils/image-store";
+
 
 export const typesResolvers: IResolvers = {
     Query: {
         types: async (
             _root: undefined,
-            _args: undefined,
+            { limit, offset, searchText }: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<IType[]> => {
-            return await db.types.find({}).toArray();
+        ): Promise<ICommonPaginationReturnType> => {
+            let types =  await db.types.find({}).sort({_id: -1}).toArray();
+            types = search(types, ['name', 'slug'], searchText);
+            const hasMore = types.length > offset + limit;
+
+            return {
+                items: types.slice(offset, offset + limit),
+                totalCount: types.length,
+                hasMore,
+            }
         }
     },
 
@@ -31,11 +42,13 @@ export const typesResolvers: IResolvers = {
                 throw new Error("Type already exits.");
             }
 
+            const imagePath = storeImage(input.image, input.image_data.name);
+
             const typeData: IType = {
                 _id: new ObjectId(),
                 name: input.name,
                 slug: slugify(input.name),
-                image: input.image,
+                image: imagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
@@ -68,6 +81,7 @@ export const typesResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
+                updated_at: new Date().toUTCString(),
             };
 
             await db.types.updateOne(

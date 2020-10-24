@@ -2,6 +2,7 @@ import React, { useContext, lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import {
   LOGIN,
+  TYPES,
   PRODUCTS,
   CATEGORY,
   DASHBOARD,
@@ -14,6 +15,7 @@ import {
 } from './settings/constants';
 import AuthProvider, { AuthContext } from './context/auth';
 import { InLineLoader } from './components/InlineLoader/InlineLoader';
+const Types = lazy(() => import('./containers/Types/Types'));
 const Products = lazy(() => import('./containers/Products/Products'));
 const AdminLayout = lazy(() => import('./containers/Layout/Layout'));
 const Dashboard = lazy(() => import('./containers/Dashboard/Dashboard'));
@@ -69,6 +71,13 @@ const Routes = () => {
             <AdminLayout>
               <Suspense fallback={<InLineLoader />}>
                 <Dashboard />
+              </Suspense>
+            </AdminLayout>
+          </PrivateRoute>
+          <PrivateRoute path={TYPES}>
+            <AdminLayout>
+              <Suspense fallback={<InLineLoader />}>
+                <Types />
               </Suspense>
             </AdminLayout>
           </PrivateRoute>

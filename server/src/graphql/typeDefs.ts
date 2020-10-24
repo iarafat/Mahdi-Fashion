@@ -1,6 +1,11 @@
 import {gql} from 'apollo-server-express';
 
-export const typeDefs = gql`
+export const typeDefs = gql`    
+    input File {
+        name: String!
+        size: Int!
+        type: String!
+    }   
     type Phone {
         number: String!
         status: Boolean
@@ -31,6 +36,7 @@ export const typeDefs = gql`
     
     input MainTypeInput {
         name: String!
+        image_data: File!
         image: String!
         icon: String!
         meta_title: String
@@ -46,6 +52,8 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        created_at: String
+        updated_at: String
     }
     
     
@@ -70,7 +78,6 @@ export const typeDefs = gql`
         meta_description: String
     }
     
-    #scalar Upload
     input ProductInput {
         type_id: String!
         category_id: String!
@@ -133,6 +140,11 @@ export const typeDefs = gql`
         details: String
     }
     
+    type MainTypePaginationType {
+        items: [MainType]
+        totalCount: Int
+        hasMore: Boolean
+    }
     
     # Orders
     input OrderProductInput {
@@ -165,26 +177,26 @@ export const typeDefs = gql`
     }
     
     type Order {
-    id: ID!
-    customer_id: String!
-    contact_number: String!
-    payment_option_id: String
-    datetime: String
-    delivery_address: String!
-    amount: Int!
-    payment_id:  String
-    payment_method: String!
-    payment_status: String!
-    status: String!
-    order_tracking: [OrderTracker]
-    order_products: [OrderProducts]
-    created_at: String
-    updated_at: String
+      id: ID!
+      customer_id: String!
+      contact_number: String!
+      payment_option_id: String
+      datetime: String
+      delivery_address: String!
+      amount: Int!
+      payment_id:  String
+      payment_method: String!
+      payment_status: String!
+      status: String!
+      order_tracking: [OrderTracker]
+      order_products: [OrderProducts]
+      created_at: String
+      updated_at: String
     }
 
     type Query {
         users: [User!]!
-        types: [MainType!]!
+        types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories: [Category!]!
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!

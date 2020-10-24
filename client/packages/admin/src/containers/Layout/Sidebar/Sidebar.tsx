@@ -9,6 +9,7 @@ import {
 } from './Sidebar.style';
 import {
   DASHBOARD,
+  TYPES,
   PRODUCTS,
   CATEGORY,
   ORDERS,
@@ -26,6 +27,7 @@ import {
   CouponIcon,
   SettingIcon,
   LogoutIcon,
+    MenuIcon,
 } from '../../../components/AllSvgIcon';
 
 const sidebarMenus = [
@@ -34,6 +36,12 @@ const sidebarMenus = [
     path: DASHBOARD,
     exact: true,
     icon: <DashboardIcon />,
+  },
+  {
+    name: 'Types',
+    path: TYPES,
+    exact: false,
+    icon: <MenuIcon />,
   },
   {
     name: 'Products',

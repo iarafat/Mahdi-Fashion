@@ -7,12 +7,31 @@ import { BaseProvider } from 'baseui';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { theme } from './theme';
 import Routes from './routes';
-import ApolloClient from 'apollo-boost';
+import {ApolloClient, ApolloLink, HttpLink, InMemoryCache} from 'apollo-boost';
 import * as serviceWorker from './serviceWorker';
 import './theme/global.css';
 
+const httpLink = new HttpLink({ uri: process.env.REACT_APP_API_URL });
+
+const authLink = new ApolloLink((operation, forward) => {
+  // Retrieve the authorization token from local storage.
+  const token = localStorage.getItem('admin_access_token');
+
+  // Use the setContext method to set the HTTP headers.
+  operation.setContext({
+    headers: {
+      'x-access-token': token ? token : ''
+    }
+  });
+
+  // Call the next link in the middleware chain.
+  return forward(operation);
+});
+
+
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_URL,
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
 });
 
 function App() {

@@ -39,6 +39,7 @@ export interface IType {
     meta_keyword?: string;
     meta_description?: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface ICategory {
@@ -90,6 +91,18 @@ export interface IPaymentOption {
     details?: string;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface ICommonPaginationArgs {
+    limit: number;
+    offset: number;
+    searchText?: string;
+}
+
+export interface ICommonPaginationReturnType {
+    items: Array<any>;
+    totalCount: number;
+    hasMore: boolean;
 }
 
 export interface IOrderTracker {
