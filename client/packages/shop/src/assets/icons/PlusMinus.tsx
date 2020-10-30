@@ -2,8 +2,8 @@ import React from 'react';
 // SVG plus icon
 export const Plus = ({
   color = 'currentColor',
-  width = '12px',
-  height = '12px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

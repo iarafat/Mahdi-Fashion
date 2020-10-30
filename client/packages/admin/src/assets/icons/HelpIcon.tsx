@@ -1,8 +1,8 @@
 import React from 'react';
 export const HelpIcon = ({
   color = 'currentColor',
-  width = '14px',
-  height = '14px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

@@ -1,8 +1,8 @@
 import React from 'react';
 export const ArrowDown = ({
   color = 'currentColor',
-  width = '12px',
-  height = '12px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

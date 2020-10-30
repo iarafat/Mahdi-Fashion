@@ -1,5 +1,5 @@
 import React from 'react';
-export const CoinIcon = ({ width = '48px', height = '48px' }) => {
+export const CoinIcon = ({ width = '18px', height = '18px' }) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

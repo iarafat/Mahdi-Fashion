@@ -2,7 +2,7 @@ import React from 'react';
 export const ArrowLeftRound = ({
   color = 'currentColor',
   width = '18px',
-  height = '14px',
+  height = '18px',
 }) => {
   return (
     <svg

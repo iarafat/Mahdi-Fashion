@@ -1,7 +1,7 @@
 import React from 'react';
 export const MedicineIcon = ({
-  width = '15px',
-  height = '13px',
+  width = '18px',
+  height = '18px',
   color = 'currentColor',
 }) => {
   return (
