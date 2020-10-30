@@ -1,7 +1,13 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonPaginationArgs, ICommonPaginationReturnType, IType} from "../../../lib/types";
+import {
+    Database,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType,
+    IType,
+    ICommonDeleteReturnType
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -13,10 +19,10 @@ export const typesResolvers: IResolvers = {
     Query: {
         types: async (
             _root: undefined,
-            { limit, offset, searchText }: ICommonPaginationArgs,
+            {limit, offset, searchText}: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
-            let types =  await db.types.find({}).sort({_id: -1}).toArray();
+            let types = await db.types.find({}).sort({_id: -1}).toArray();
             types = search(types, ['name', 'slug'], searchText);
             const hasMore = types.length > offset + limit;
 
@@ -32,7 +38,7 @@ export const typesResolvers: IResolvers = {
         createType: async (
             _root: undefined,
             {input}: ITypeInputArgs,
-            {db, req}: { db: Database, req: Request  }
+            {db, req}: { db: Database, req: Request }
         ): Promise<IType> => {
             await authorize(req, db);
             let imagePath = '';
@@ -67,7 +73,7 @@ export const typesResolvers: IResolvers = {
         updateType: async (
             _root: undefined,
             {id, input}: ITypeInputArgs,
-            {db, req}: { db: Database, req: Request  }
+            {db, req}: { db: Database, req: Request }
         ): Promise<IType> => {
             await authorize(req, db);
             let imagePath = '';
@@ -103,9 +109,9 @@ export const typesResolvers: IResolvers = {
 
         deleteType: async (
             __root: undefined,
-            {id}: {id: string},
-            {db, req}: { db: Database, req: Request  }
-        ): Promise<IType> => {
+            {id}: { id: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonDeleteReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.types.findOneAndDelete({
@@ -116,12 +122,15 @@ export const typesResolvers: IResolvers = {
                 throw new Error("Failed to delete resource.")
             }
 
-            return deleteResult.value;
+            return {
+                message: 'Resource successfully deleted.',
+                status: true
+            };
         },
     },
 
     MainType: {
         // @ts-ignore
-        id: (type: IType): string =>  type._id.toString(),
+        id: (type: IType): string => type._id.toString(),
     }
 }

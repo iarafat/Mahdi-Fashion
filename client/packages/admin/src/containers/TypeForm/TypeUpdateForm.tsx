@@ -108,10 +108,6 @@ const UpdateType: React.FC<Props> = props => {
     updateType({
       variables: { id: itemData.id, input: typeValue },
     });
-
-    /*refetch({
-      offset: 0,
-    });*/
     closeDrawer();
   };
   const handleChange = ({ value }) => {

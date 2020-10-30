@@ -136,6 +136,11 @@ export interface IOrder {
     updated_at?: string;
 }
 
+export interface ICommonDeleteReturnType {
+    message: string;
+    status: boolean;
+}
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;

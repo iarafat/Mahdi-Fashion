@@ -24,7 +24,6 @@ import {
   Image,
   ImageWrapper,
   IconWrapper,
-  ActionStyle,
 } from './Types.style';
 import NoResult from '../../components/NoResult/NoResult';
 import {Plus} from "../../components/AllSvgIcon";
@@ -87,7 +86,6 @@ const nextButtonDisabledStyles = {
 
 
 export default function Coupons() {
-  const [typeItem, setTypeItem] = useState(null);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const { data, error, refetch } = useQuery(GET_TYPES);
@@ -98,11 +96,6 @@ export default function Coupons() {
       [dispatch]
   );
 
-
-  const openUpdateForm = (itemIndex) => {
-    const item = data.types.items[itemIndex];
-    setTypeItem(item);
-  }
 
   if (error) {
     return <div>Error! {error.message}</div>;
@@ -220,7 +213,7 @@ export default function Coupons() {
                                       </StyledBodyCell>
 
                                       <StyledBodyCell>
-                                        <ActionWrapper data={item}/>
+                                        <ActionWrapper itemsOffset={offset} itemData={item}/>
                                       </StyledBodyCell>
                                     </React.Fragment>
                                 );
