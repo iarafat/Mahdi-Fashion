@@ -36,8 +36,8 @@ export const typeDefs = gql`
     
     input MainTypeInput {
         name: String!
-        image_data: File!
-        image: String!
+        image_data: File
+        image: String
         icon: String!
         meta_title: String
         meta_keyword: String
@@ -149,7 +149,7 @@ export const typeDefs = gql`
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
-        categories: [Category!]!
+        categories(limit: Int = 12, offset: Int = 0, searchText: String): [Category!]!
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!

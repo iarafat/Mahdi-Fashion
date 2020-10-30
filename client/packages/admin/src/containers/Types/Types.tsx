@@ -24,10 +24,12 @@ import {
   Image,
   ImageWrapper,
   IconWrapper,
+  ActionStyle,
 } from './Types.style';
 import NoResult from '../../components/NoResult/NoResult';
 import {Plus} from "../../components/AllSvgIcon";
 import {useDrawerDispatch} from "../../context/DrawerContext";
+import ActionWrapper from "../TypeForm/ActionWrapper";
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -85,6 +87,7 @@ const nextButtonDisabledStyles = {
 
 
 export default function Coupons() {
+  const [typeItem, setTypeItem] = useState(null);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const { data, error, refetch } = useQuery(GET_TYPES);
@@ -94,6 +97,12 @@ export default function Coupons() {
       () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'TYPE_FORM' }),
       [dispatch]
   );
+
+
+  const openUpdateForm = (itemIndex) => {
+    const item = data.types.items[itemIndex];
+    setTypeItem(item);
+  }
 
   if (error) {
     return <div>Error! {error.message}</div>;
@@ -129,7 +138,7 @@ export default function Coupons() {
 
   const Icon = ({ icon }) => {
     let Component =  AllIcons.hasOwnProperty(icon) ? AllIcons[icon] : 'span';
-    return <Component/>;
+    return <Component />;
   }
 
   return (
@@ -177,32 +186,41 @@ export default function Coupons() {
 
             <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
               <TableWrapper>
-                <StyledTable $gridTemplateColumns="minmax(70px, 70px) minmax(200px, auto) minmax(200px, auto) minmax(70px, 70px) minmax(70px, 70px) minmax(150px, auto)">
+                <StyledTable $gridTemplateColumns="minmax(70px, 70px) minmax(150px, auto) minmax(150px, auto) minmax(70px, 70px) minmax(70px, 70px) minmax(120px, auto) minmax(160px, 160px)">
                   <StyledHeadCell>#</StyledHeadCell>
                   <StyledHeadCell>Name</StyledHeadCell>
                   <StyledHeadCell>Slug</StyledHeadCell>
                   <StyledHeadCell>Image</StyledHeadCell>
                   <StyledHeadCell>Icon</StyledHeadCell>
                   <StyledHeadCell>Created At</StyledHeadCell>
+                  <StyledHeadCell>Action</StyledHeadCell>
 
                   {data ? (
                       data.types.items.length ? (
-                          data.types.items
-                              .map((item) => Object.values(item))
-                              .map((row, index) => {
+                          data.types.items.map((item: any, index: number) => {
                                 return (
                                     <React.Fragment key={index}>
                                       <StyledBodyCell>{index+1}</StyledBodyCell>
-                                      <StyledBodyCell>{row[1]}</StyledBodyCell>
-                                      <StyledBodyCell>{row[2]}</StyledBodyCell>
-                                      <ImageWrapper>
-                                        <Image src={`${ row[3]}`} />
-                                      </ImageWrapper>
-                                      <IconWrapper>
-                                        <Icon icon={row[4]} />
-                                      </IconWrapper>
+                                      <StyledBodyCell>{item.name}</StyledBodyCell>
+                                      <StyledBodyCell>{item.slug}</StyledBodyCell>
+
                                       <StyledBodyCell>
-                                        {dayjs(row[8]).format('DD MMM YYYY hh:mm:ss A')}
+                                        <ImageWrapper>
+                                          <Image src={`${item.image}`} />
+                                        </ImageWrapper>
+                                      </StyledBodyCell>
+                                      <StyledBodyCell>
+                                        <IconWrapper>
+                                          <Icon icon={item.icon} />
+                                        </IconWrapper>
+                                      </StyledBodyCell>
+
+                                      <StyledBodyCell>
+                                        {dayjs(item.created_at).format('DD MMM YYYY hh:mm:ss A')}
+                                      </StyledBodyCell>
+
+                                      <StyledBodyCell>
+                                        <ActionWrapper data={item}/>
                                       </StyledBodyCell>
                                     </React.Fragment>
                                 );

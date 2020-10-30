@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
-import { useDrawerDispatch } from '../../context/DrawerContext';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import { useDrawerDispatch, useDrawerState } from '../../context/DrawerContext';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Uploader from '../../components/Uploader/Uploader';
 import Input from '../../components/Input/Input';
@@ -48,10 +48,9 @@ const GET_TYPES = gql`
   }
 `;
 
-const CREATE_TYPE = gql`
-  
-  mutation CreateType($input: MainTypeInput!) {
-    createType(input: $input) {
+const UPDATE_TYPE = gql`  
+  mutation UpdateType($id: ID!, $input: MainTypeInput!) {
+    updateType(id: $id, input: $input) {
       id
       name
       slug
@@ -67,57 +66,52 @@ const CREATE_TYPE = gql`
 
 type Props = any;
 
-const AddType: React.FC<Props> = props => {
+const UpdateType: React.FC<Props> = props => {
   const dispatch = useDrawerDispatch();
+  const itemData = useDrawerState('data');
+
   const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [
     dispatch,
   ]);
-  const { register, handleSubmit, setValue } = useForm();
-  const [meta_title, setMetaTitle] = useState('');
-  const [meta_keyword, setMetaKeyword] = useState('');
-  const [meta_description, setMetaDescription] = useState('');
-  const [icon, setIcon] = useState([]);
+  const { register, handleSubmit, setValue } = useForm({
+    defaultValues: itemData,
+  });
+  const [meta_title, setMetaTitle] = useState(itemData.meta_title);
+  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword);
+  const [meta_description, setMetaDescription] = useState(itemData.meta_description);
+  const [icon, setIcon] = useState([{ value: itemData.icon }]);
+
   React.useEffect(() => {
-    register({ name: 'icon', required: true  });
+    register({ name: 'icon' });
     register({ name: 'image_data' });
     register({ name: 'image', required: true });
     register({ name: 'meta_title' });
     register({ name: 'meta_keyword' });
     register({ name: 'meta_description' });
   }, [register]);
-  const [createType] = useMutation(CREATE_TYPE, {
-    update(cache, { data: { createType } }) {
-      const { types } = cache.readQuery({
-        query: GET_TYPES,
-      });
 
-      cache.writeQuery({
-        query: GET_TYPES,
-        data: {
-          types: {
-            __typename: types.__typename,
-            items: [createType, ...types.items],
-            hasMore: types.items.length + 1 >= 12,
-            totalCount: types.items.length + 1,
-          },
-        },
-      });
-    },
-  });
+  const { data, error, refetch } = useQuery(GET_TYPES);
+
+  const [updateType] = useMutation(UPDATE_TYPE);
 
   const onSubmit = ({ name, icon, meta_title, meta_keyword, meta_description, image, image_data }) => {
-    const newType = {
+    const typeValue = {
       name: name,
       image_data: image_data,
       image: image,
-      icon: icon[0].value,
+      icon: icon[0].value ? icon[0].value : itemData.icon,
       meta_title: meta_title,
       meta_keyword: meta_keyword,
       meta_description: meta_description,
     };
-    createType({
-      variables: { input: newType },
+
+    updateType({
+      variables: { id: itemData.id, input: typeValue },
     });
+
+    /*refetch({
+      offset: 0,
+    });*/
     closeDrawer();
   };
   const handleChange = ({ value }) => {
@@ -152,7 +146,7 @@ const AddType: React.FC<Props> = props => {
   return (
     <>
       <DrawerTitleWrapper>
-        <DrawerTitle>Add Type</DrawerTitle>
+        <DrawerTitle>Update Type</DrawerTitle>
       </DrawerTitleWrapper>
 
       <Form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }} encType={'multipart/form-data'}>
@@ -190,7 +184,7 @@ const AddType: React.FC<Props> = props => {
                   },
                 }}
               >
-                <Uploader type={'file'} required={true} onChange={handleUploader} />
+                <Uploader type={'file'} required={true} onChange={handleUploader} imageURL={itemData.image} />
               </DrawerBox>
             </Col>
           </Row>
@@ -198,7 +192,7 @@ const AddType: React.FC<Props> = props => {
           <Row>
             <Col lg={4}>
               <FieldDetails>
-                Add your type and necessary information's from here
+                Update your type and necessary information's from here
               </FieldDetails>
             </Col>
 
@@ -340,7 +334,7 @@ const AddType: React.FC<Props> = props => {
               },
             }}
           >
-            Create Type
+            Update Type
           </Button>
         </ButtonGroup>
       </Form>
@@ -348,4 +342,4 @@ const AddType: React.FC<Props> = props => {
   );
 };
 
-export default AddType;
+export default UpdateType;

@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IType, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
+import {Database, ICommonPaginationArgs, ICommonPaginationReturnType, IType} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -35,14 +35,18 @@ export const typesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request  }
         ): Promise<IType> => {
             await authorize(req, db);
-
+            let imagePath = '';
             const typeResult = await db.types.findOne({slug: slugify(input.name)});
 
             if (typeResult) {
                 throw new Error("Type already exits.");
             }
 
-            const imagePath = storeImage(input.image, input.image_data.name);
+            if (input.image_data) {
+                imagePath = storeImage(input.image, input.image_data.name);
+            } else {
+                imagePath = 'images/grocery-default-image.png';
+            }
 
             const typeData: IType = {
                 _id: new ObjectId(),
@@ -66,17 +70,20 @@ export const typesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request  }
         ): Promise<IType> => {
             await authorize(req, db);
+            let imagePath = '';
 
-            const typeResult = await db.types.findOne({name: input.name, slug: slugify(input.name)});
-
-            if (typeResult) {
-                throw new Error("Try with new value...");
+            if (input.image_data) {
+                imagePath = storeImage(input.image, input.image_data.name);
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                imagePath = input.image;
             }
 
             const typeData: IType = {
                 name: input.name,
                 slug: slugify(input.name),
-                image: input.image,
+                image: imagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
@@ -88,10 +95,10 @@ export const typesResolvers: IResolvers = {
                 {_id: new ObjectId(id)},
                 {$set: typeData}
             );
-            const typeUpdateResult = await db.types.findOne({_id: new ObjectId(id)});
 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            return typeUpdateResult;
+            return await db.types.findOne({_id: new ObjectId(id)});
         },
 
         deleteType: async (
