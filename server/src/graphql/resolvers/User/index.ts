@@ -92,4 +92,9 @@ export const usersResolvers: IResolvers = {
             }
         }
     },
+    User: {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        id: (type: IUser): string => type._id.toString(),
+    }
 }
