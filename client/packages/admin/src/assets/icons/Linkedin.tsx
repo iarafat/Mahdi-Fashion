@@ -1,7 +1,7 @@
 import React from 'react';
 export const Linkedin = ({
-  width = '60px',
-  height = '60px',
+  width = '18px',
+  height = '18px',
   color = 'currentColor',
 }) => {
   return (

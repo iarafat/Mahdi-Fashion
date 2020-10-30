@@ -1,7 +1,13 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IType, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
+import {
+    Database,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType,
+    IType,
+    ICommonDeleteReturnType
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -13,10 +19,10 @@ export const typesResolvers: IResolvers = {
     Query: {
         types: async (
             _root: undefined,
-            { limit, offset, searchText }: ICommonPaginationArgs,
+            {limit, offset, searchText}: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
-            let types =  await db.types.find({}).sort({_id: -1}).toArray();
+            let types = await db.types.find({}).sort({_id: -1}).toArray();
             types = search(types, ['name', 'slug'], searchText);
             const hasMore = types.length > offset + limit;
 
@@ -32,17 +38,21 @@ export const typesResolvers: IResolvers = {
         createType: async (
             _root: undefined,
             {input}: ITypeInputArgs,
-            {db, req}: { db: Database, req: Request  }
+            {db, req}: { db: Database, req: Request }
         ): Promise<IType> => {
             await authorize(req, db);
-
+            let imagePath = '';
             const typeResult = await db.types.findOne({slug: slugify(input.name)});
 
             if (typeResult) {
                 throw new Error("Type already exits.");
             }
 
-            const imagePath = storeImage(input.image, input.image_data.name);
+            if (input.image_data) {
+                imagePath = storeImage(input.image, input.image_data.name);
+            } else {
+                imagePath = 'images/grocery-default-image.png';
+            }
 
             const typeData: IType = {
                 _id: new ObjectId(),
@@ -63,20 +73,23 @@ export const typesResolvers: IResolvers = {
         updateType: async (
             _root: undefined,
             {id, input}: ITypeInputArgs,
-            {db, req}: { db: Database, req: Request  }
+            {db, req}: { db: Database, req: Request }
         ): Promise<IType> => {
             await authorize(req, db);
+            let imagePath = '';
 
-            const typeResult = await db.types.findOne({name: input.name, slug: slugify(input.name)});
-
-            if (typeResult) {
-                throw new Error("Try with new value...");
+            if (input.image_data) {
+                imagePath = storeImage(input.image, input.image_data.name);
+            } else {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                imagePath = input.image;
             }
 
             const typeData: IType = {
                 name: input.name,
                 slug: slugify(input.name),
-                image: input.image,
+                image: imagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
@@ -88,17 +101,17 @@ export const typesResolvers: IResolvers = {
                 {_id: new ObjectId(id)},
                 {$set: typeData}
             );
-            const typeUpdateResult = await db.types.findOne({_id: new ObjectId(id)});
 
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            return typeUpdateResult;
+            return await db.types.findOne({_id: new ObjectId(id)});
         },
 
         deleteType: async (
             __root: undefined,
-            {id}: {id: string},
-            {db, req}: { db: Database, req: Request  }
-        ): Promise<IType> => {
+            {id}: { id: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonDeleteReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.types.findOneAndDelete({
@@ -109,12 +122,15 @@ export const typesResolvers: IResolvers = {
                 throw new Error("Failed to delete resource.")
             }
 
-            return deleteResult.value;
+            return {
+                message: 'Resource successfully deleted.',
+                status: true
+            };
         },
     },
 
     MainType: {
         // @ts-ignore
-        id: (type: IType): string =>  type._id.toString(),
+        id: (type: IType): string => type._id.toString(),
     }
 }

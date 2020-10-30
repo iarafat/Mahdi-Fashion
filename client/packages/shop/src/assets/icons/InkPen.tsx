@@ -1,7 +1,7 @@
 import React from 'react';
 export const InkPen = ({
-  width = '13px',
-  height = '20px',
+  width = '18px',
+  height = '18px',
   color = 'currentColor',
 }) => {
   return (

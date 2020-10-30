@@ -1,8 +1,8 @@
 import React from 'react';
 export const GooglePlus = ({
   color = 'currentColor',
-  width = '17px',
-  height = '11px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

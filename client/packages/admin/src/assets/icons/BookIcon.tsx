@@ -1,7 +1,7 @@
 import React from 'react';
 export const BookIcon = ({
-  width = '30px',
-  height = '25px',
+  width = '18px',
+  height = '18px',
   color = 'currentColor',
 }) => {
   return (

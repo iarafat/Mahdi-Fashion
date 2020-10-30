@@ -1,7 +1,7 @@
 import React from 'react';
 export const FurnitureIcon = ({
-  width = '30px',
-  height = '26px',
+  width = '18px',
+  height = '18px',
   color = 'currentColor',
 }) => {
   return (

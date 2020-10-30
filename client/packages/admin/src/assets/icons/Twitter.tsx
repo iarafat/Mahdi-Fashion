@@ -1,8 +1,8 @@
 import React from 'react';
 export const Twitter = ({
   color = 'currentColor',
-  width = '30px',
-  height = '24px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

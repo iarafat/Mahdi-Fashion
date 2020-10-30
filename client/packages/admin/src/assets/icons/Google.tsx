@@ -1,8 +1,8 @@
 import React from 'react';
 export const Google = ({
   color = 'currentColor',
-  width = '17px',
-  height = '17px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

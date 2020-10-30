@@ -1,8 +1,8 @@
 import React from 'react';
 export const Restaurant = ({
   color = 'currentColor',
-  width = '9px',
-  height = '14px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

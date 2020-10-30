@@ -1,13 +1,18 @@
 import React from 'react';
-export const Handbag = () => {
+export const Handbag = ({
+  color = 'currentColor',
+  width = '18px',
+  height = '18px',
+}) => {
   return (
     <svg
       version='1.1'
       x='0px'
       y='0px'
       viewBox='0 0 511.999 511.999'
-      width='15'
-      fill='currentColor'
+      width={width}
+      height={height}
+      fill={color}
     >
       <g>
         <g>

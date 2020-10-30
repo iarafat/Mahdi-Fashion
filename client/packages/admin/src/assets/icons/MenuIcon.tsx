@@ -1,7 +1,7 @@
 import React from 'react';
 export const MenuIcon = ({
   color = 'currentColor',
-  width = '26px',
+  width = '18px',
   height = '18px',
 }) => {
   return (

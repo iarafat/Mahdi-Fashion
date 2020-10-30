@@ -1,10 +1,14 @@
 import React from 'react';
-export const AlertDotIcon = () => {
+export const AlertDotIcon = ({
+   color = 'currentColor',
+   width = '10px',
+   height = '10px',
+}) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      width='10'
-      height='10'
+      width={width}
+      height={height}
       viewBox='0 0 10 10'
     >
       <g data-name='Group 2830' transform='translate(-1598 -32)'>
@@ -22,7 +26,7 @@ export const AlertDotIcon = () => {
           data-name='Path 2700'
           d='M2,0A2,2,0,1,1,0,2,2,2,0,0,1,2,0Z'
           transform='translate(1601 35)'
-          fill='currentColor'
+          fill={color}
         />
       </g>
     </svg>
