@@ -1,8 +1,8 @@
 import React from 'react';
 export const PlusOutline = ({
   color = 'currentColor',
-  width = '16px',
-  height = '16px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

@@ -5,9 +5,15 @@ import {
   StyledBodyCell as BaseStyledCell,
 } from 'baseui/table-grid';
 
+export const ActionStyle = styled('div', ({ $theme }) => ({
+  overflow: 'hidden',
+  display: 'inline-block',
+  height: '38px',
+}));
+
 export const IconWrapper = styled('div', ({ $theme }) => ({
-  width: '40px',
-  height: '40px',
+  width: '38px',
+  height: '38px',
   overflow: 'hidden',
   display: 'flex',
   alignItems: 'center',
@@ -80,6 +86,9 @@ export const StyledBodyCell = withStyle(BaseStyledCell, () => ({
   fontWeight: 400,
   color: '#161F6A !important',
   alignSelf: 'center',
+  borderBottom: '1px solid #ccc',
+  height: '60px',
+  paddingTop: '12px',
 }));
 
 export const ProgressWrapper = styled('div', () => ({

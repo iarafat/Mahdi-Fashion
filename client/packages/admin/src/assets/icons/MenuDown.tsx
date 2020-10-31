@@ -1,8 +1,8 @@
 import React from 'react';
 export const MenuDown = ({
   color = 'currentColor',
-  width = '12px',
-  height = '6px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

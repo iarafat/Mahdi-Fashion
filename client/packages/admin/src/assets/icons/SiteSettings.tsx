@@ -1,8 +1,8 @@
 import React from 'react';
 export const SiteSettings = ({
   color = 'currentColor',
-  width = '56px',
-  height = '56px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

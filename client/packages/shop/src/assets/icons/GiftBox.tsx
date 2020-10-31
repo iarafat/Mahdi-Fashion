@@ -1,10 +1,14 @@
 import React from 'react';
-export const GiftBox = () => {
+export const GiftBox = ({
+  width = '18px',
+  height = '18px',
+  color = 'currentColor',
+}) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      width='14.857'
-      height='16'
+      width={width}
+      height={height}
       viewBox='0 0 14.857 16'
     >
       <g data-name='Group 2485' transform='translate(-81.5 40)'>

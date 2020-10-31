@@ -36,8 +36,8 @@ export const typeDefs = gql`
     
     input MainTypeInput {
         name: String!
-        image_data: File!
-        image: String!
+        image_data: File
+        image: String
         icon: String!
         meta_title: String
         meta_keyword: String
@@ -193,11 +193,16 @@ export const typeDefs = gql`
       created_at: String
       updated_at: String
     }
+    
+    type DefaultDeleteType {
+        message: String!
+        status: Boolean!
+    }
 
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
-        categories: [Category!]!
+        categories(limit: Int = 12, offset: Int = 0, searchText: String): [Category!]!
         products: [Product!]!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
@@ -209,7 +214,7 @@ export const typeDefs = gql`
         signUp(phone: String!, password: String!): UserAuthPayload!
         createType(input: MainTypeInput): MainType!
         updateType(id: ID!, input: MainTypeInput): MainType!
-        deleteType(id: ID!): MainType!
+        deleteType(id: ID!): DefaultDeleteType!
         createCategory(input: CategoryInput): Category!
         updateCategory(id: ID!, input: CategoryInput): Category!
         deleteCategory(id: ID!): Category!

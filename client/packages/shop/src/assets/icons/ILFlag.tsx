@@ -1,5 +1,5 @@
 import React from 'react';
-export const ILFlag = ({ width = '640px', height = '480px' }) => {
+export const ILFlag = ({ width = '18px', height = '18px' }) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

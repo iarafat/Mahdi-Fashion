@@ -1,8 +1,8 @@
 import React from 'react';
 export const IosArrowDown = ({
   color = 'currentColor',
-  width = '7px',
-  height = '10px',
+  width = '18px',
+  height = '18px',
 }) => {
   return (
     <svg

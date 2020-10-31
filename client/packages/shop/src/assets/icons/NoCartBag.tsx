@@ -1,10 +1,14 @@
 import React from 'react';
-export const NoCartBag = () => {
+export const NoCartBag = ({
+  color = 'currentColor',
+  width = '18px',
+  height = '18px',
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="231.91"
-      height="292"
+      width={width}
+      height={height}
       viewBox="0 0 231.91 292"
     >
       <defs>
