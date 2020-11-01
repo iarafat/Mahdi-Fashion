@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import uuidv4 from 'uuid/v4';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import { useDrawerDispatch } from '../../context/DrawerContext';
+import {useMutation, useQuery} from '@apollo/react-hooks';
+import { useDrawerDispatch, useDrawerState } from '../../context/DrawerContext';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Uploader from '../../components/Uploader/Uploader';
 import Input from '../../components/Input/Input';
-import Select from '../../components/Select/Select';
+import {Textarea} from '../../components/Textarea/Textarea';
+import { Select, TYPE } from 'baseui/select';
 import Button, { KIND } from '../../components/Button/Button';
 import DrawerBox from '../../components/DrawerBox/DrawerBox';
 import { Row, Col } from '../../components/FlexBox/FlexBox';
@@ -19,11 +19,8 @@ import {
   ButtonGroup,
 } from '../DrawerItems/DrawerItems.style';
 import { FormFields, FormLabel } from '../../components/FormFields/FormFields';
-import { getBase64Value } from '../../helpers/convert-image-base64';
-import { displayErrorMessage, displaySuccessNotification } from '../../helpers/custom-message';
-import { AllIconArray } from '../../assets/icons/all-icons';
-import { TYPE } from 'baseui/select';
-import { Textarea } from '../../components/Textarea/Textarea';
+import {AllIconArray} from "../../assets/icons/all-icons";
+import {getBase64Value} from "../../helpers/convert-image-base64";
 
 const GET_CATEGORIES = gql`
   query getCategories($searchText: String, $offset: Int) {
@@ -32,19 +29,18 @@ const GET_CATEGORIES = gql`
         id
         name
         slug
-        banner
         icon
-        meta_title
-        meta_keyword
-        meta_description
+        banner
       }
+      totalCount
+      hasMore
     }
   }
 `;
 
-const CREATE_CATEGORY = gql`
-  mutation createCategory($category: CategoryInput!) {
-    createCategory(input: $category) {
+const UPDATE_CATEGORIES = gql`  
+  mutation UpdateCategory($id: ID!, $input: CategoryInput!) {
+    updateCategory(id: $id, input: $input) {
       id
       name
       slug
@@ -59,18 +55,23 @@ const CREATE_CATEGORY = gql`
 
 type Props = any;
 
-const AddCategory: React.FC<Props> = props => {
+const UpdateCategory: React.FC<Props> = props => {
   const dispatch = useDrawerDispatch();
-  const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [
-    dispatch,
-  ]);
-  const { register, handleSubmit, setValue } = useForm();
-  const [category, setCategory] = useState({});
-  const [parentCategoryOptions, setParentCategoryOptions] = useState([]);
-  const [meta_title, setMetaTitle] = useState('');
-  const [meta_keyword, setMetaKeyword] = useState('');
-  const [meta_description, setMetaDescription] = useState('');
-  const [icon, setIcon] = useState([]);
+  const itemData = useDrawerState('data');
+
+  console.log(itemData);
+  
+  
+  const [category, setCategory] = useState(itemData.parent_id);
+
+  const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [ dispatch]);
+  const { register, handleSubmit, setValue } = useForm({
+    defaultValues: itemData,
+  });
+  const [meta_title, setMetaTitle] = useState(itemData.meta_title);
+  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword);
+  const [meta_description, setMetaDescription] = useState(itemData.meta_description);
+  const [icon, setIcon] = useState([{ value: itemData.icon }]);
 
   React.useEffect(() => {
     register({ name: 'parent' });
@@ -84,82 +85,37 @@ const AddCategory: React.FC<Props> = props => {
 
   const { data, error, refetch } = useQuery(GET_CATEGORIES);
 
-  React.useEffect(() => {
-    data && data.categories && data.categories.items
-      && setParentCategoryOptions(data.categories.items.map(category => ({
-        value: category.id,
-        name: category.name,
-      })))
-  }, [data]);
+  const [updateCategories] = useMutation(UPDATE_CATEGORIES);
 
-  const [createCategory] = useMutation(CREATE_CATEGORY, {
-
-    onCompleted: () => {
-      displaySuccessNotification("You've successfully created your type!");
-    },
-    onError: (e) => {
-      
-      displayErrorMessage(
-        "Sorry! We weren't able to create your type. Please try again later."
-      );
-    },
-    update(cache, { data: { createCategory } }) {
-      const { categories } = cache.readQuery({
-        query: GET_CATEGORIES,
-      });
-
-      cache.writeQuery({
-        query: GET_CATEGORIES,
-        data: {
-          types: {
-            __typename: categories.__typename,
-            items: [createCategory, ...categories.items],
-            hasMore: categories.items.length + 1 >= 12,
-            totalCount: categories.items.length + 1,
-          },
-        },
-      });
-    }
-  });
-
-
-  const onSubmit = (data) => {
-
-    const { name, meta_title, meta_keyword, meta_description, banner, banner_data }  = data ;
-    const newCategory = {
+  const onSubmit = ({ name, meta_title, meta_keyword, meta_description, banner, banner_data  }) => {
+    const typeValue = {
       name: name,
       parent_id: category && category[0].value,
       banner_data: banner_data,
       banner: banner,
-      icon: icon[0].value,
+      icon: icon[0].value ? icon[0].value : itemData.icon,
       meta_title: meta_title,
       meta_keyword: meta_keyword,
       meta_description: meta_description,
     };
 
-    createCategory({
-      variables: { category: newCategory },
+    updateCategories({
+      variables: { id: itemData.id, input: typeValue },
     });
     closeDrawer();
   };
-
-  const handleParentCategoryChange = ({ value }) => {
-    setValue('parent', value);
-    setCategory(value);
-  };
-
-  const handleUploader = files => {
-
-    setValue('banner_data', { name: files[0].name, size: files[0].size, type: files[0].type });
-
-    getBase64Value(files[0], imageBase64Value => setValue('banner', imageBase64Value))
-  };
-
-
-  const handleIconChange = ({ value }) => {
+  const handleChange = ({ value }) => {
     setValue('icon', value);
     setIcon(value);
   };
+  const handleUploader = files => {
+    setValue('image_data', {name: files[0].name, size: files[0].size, type: files[0].type});
+
+    getBase64Value(files[0], imageBase64Value => {
+      setValue('image', imageBase64Value);
+    })
+  };
+
   const handleMetaTitleChange = e => {
     const value = e.target.value;
     setValue('meta_title', value);
@@ -180,10 +136,10 @@ const AddCategory: React.FC<Props> = props => {
   return (
     <>
       <DrawerTitleWrapper>
-        <DrawerTitle>Add Category</DrawerTitle>
+        <DrawerTitle>Update Category</DrawerTitle>
       </DrawerTitleWrapper>
 
-      <Form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
+      <Form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }} encType={'multipart/form-data'}>
         <Scrollbars
           autoHide
           renderView={props => (
@@ -199,7 +155,7 @@ const AddCategory: React.FC<Props> = props => {
         >
           <Row>
             <Col lg={4}>
-              <FieldDetails>Upload your Category image here</FieldDetails>
+              <FieldDetails>Upload your Type image here</FieldDetails>
             </Col>
             <Col lg={8}>
               <DrawerBox
@@ -218,7 +174,7 @@ const AddCategory: React.FC<Props> = props => {
                   },
                 }}
               >
-                <Uploader onChange={handleUploader} />
+                <Uploader type={'file'} required={true} onChange={handleUploader} imageURL={itemData.image} />
               </DrawerBox>
             </Col>
           </Row>
@@ -226,78 +182,21 @@ const AddCategory: React.FC<Props> = props => {
           <Row>
             <Col lg={4}>
               <FieldDetails>
-                Add your category description and necessary informations from
-                here
+                Update your type and necessary information's from here
               </FieldDetails>
             </Col>
 
             <Col lg={8}>
               <DrawerBox>
                 <FormFields>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel>Type Name</FormLabel>
                   <Input
-                    inputRef={register({ required: true, maxLength: 20 })}
+                    inputRef={register({ required: true })}
                     name="name"
+                    required={true}
                   />
                 </FormFields>
 
-                <FormFields>
-                  <FormLabel>Parent</FormLabel>
-                  <Select
-                    options={parentCategoryOptions}
-                    labelKey="name"
-                    valueKey="value"
-                    placeholder="Ex: Choose parent category"
-                    value={category}
-                    searchable={false}
-                    onChange={handleParentCategoryChange}
-                    overrides={{
-                      Placeholder: {
-                        style: ({ $theme }) => {
-                          return {
-                            ...$theme.typography.fontBold14,
-                            color: $theme.colors.textNormal,
-                          };
-                        },
-                      },
-                      DropdownListItem: {
-                        style: ({ $theme }) => {
-                          return {
-                            ...$theme.typography.fontBold14,
-                            color: $theme.colors.textNormal,
-                          };
-                        },
-                      },
-                      OptionContent: {
-                        style: ({ $theme, $selected }) => {
-                          return {
-                            ...$theme.typography.fontBold14,
-                            color: $selected
-                              ? $theme.colors.textDark
-                              : $theme.colors.textNormal,
-                          };
-                        },
-                      },
-                      SingleValue: {
-                        style: ({ $theme }) => {
-                          return {
-                            ...$theme.typography.fontBold14,
-                            color: $theme.colors.textNormal,
-                          };
-                        },
-                      },
-                      Popover: {
-                        props: {
-                          overrides: {
-                            Body: {
-                              style: { zIndex: 5 },
-                            },
-                          },
-                        },
-                      },
-                    }}
-                  />
-                </FormFields>
                 <FormFields>
                   <FormLabel>Icon</FormLabel>
                   <Select
@@ -305,11 +204,10 @@ const AddCategory: React.FC<Props> = props => {
                     labelKey="value"
                     valueKey="value"
                     placeholder="Ex: Choose type icon"
-                    name="parent"
                     value={icon}
                     required={true}
                     searchable={true}
-                    onChange={handleIconChange}
+                    onChange={handleChange}
                     overrides={{
                       Placeholder: {
                         style: ({ $theme }) => {
@@ -359,33 +257,33 @@ const AddCategory: React.FC<Props> = props => {
                     type={TYPE.search}
                   />
                 </FormFields>
+
                 <FormFields>
                   <FormLabel>Meta Title</FormLabel>
                   <Input
-                    name="meta_title"
-                    value={meta_title}
-                    onChange={handleMetaTitleChange}
+                      name="meta_title"
+                      value={meta_title}
+                      onChange={handleMetaTitleChange}
                   />
                 </FormFields>
 
                 <FormFields>
                   <FormLabel>Meta Keyword</FormLabel>
                   <Input
-                    name="meta_keyword"
-                    value={meta_keyword}
-                    onChange={handleMetaKeywordChange}
+                      name="meta_keyword"
+                      value={meta_keyword}
+                      onChange={handleMetaKeywordChange}
                   />
                 </FormFields>
 
                 <FormFields>
                   <FormLabel>Meta Description</FormLabel>
                   <Textarea
-                    name="meta_description"
-                    value={meta_description}
-                    onChange={handleMetaDescriptionChange}
+                      name="meta_description"
+                      value={meta_description}
+                      onChange={handleMetaDescriptionChange}
                   />
                 </FormFields>
-
               </DrawerBox>
             </Col>
           </Row>
@@ -426,7 +324,7 @@ const AddCategory: React.FC<Props> = props => {
               },
             }}
           >
-            Create Category
+            Update Type
           </Button>
         </ButtonGroup>
       </Form>
@@ -434,4 +332,4 @@ const AddCategory: React.FC<Props> = props => {
   );
 };
 
-export default AddCategory;
+export default UpdateCategory;

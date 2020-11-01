@@ -1,19 +1,28 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICategory} from "../../../lib/types";
+import {Database, ICategory, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICategoryInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
+import {search} from "../../../lib/utils/search";
+import {storeImage} from "../../../lib/utils/image-store";
 
 export const categoriesResolvers: IResolvers = {
     Query: {
         categories: async (
             _root: undefined,
-            _args: undefined,
+            { limit, offset, searchText }: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICategory[]> => {
-            return await db.categories.find({}).toArray();
+        ): Promise<ICommonPaginationReturnType> => {
+            let categories =  await db.categories.find({}).sort({_id: -1}).toArray();
+            categories = search(categories, ['name', 'slug'], searchText);
+            const hasMore = categories.length > offset + limit;
+            return {
+                items: categories.slice(offset, offset + limit),
+                totalCount: categories.length,
+                hasMore,
+            }
         }
     },
 
@@ -24,11 +33,17 @@ export const categoriesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICategory> => {
             await authorize(req, db);
-
+            let bannerImagePath = '';
             const existsData = await db.categories.findOne({slug: slugify(input.name)});
 
             if (existsData) {
                 throw new Error("Resource already exits.");
+            }
+
+            if (input.banner_data) {
+                bannerImagePath = storeImage(input.banner, input.banner_data.name);
+            } else {
+                bannerImagePath = 'images/grocery-default-image.png';
             }
 
             const insertData: ICategory = {
@@ -36,7 +51,7 @@ export const categoriesResolvers: IResolvers = {
                 parent_id: input.parent_id,
                 name: input.name,
                 slug: slugify(input.name),
-                banner: input.banner,
+                banner: bannerImagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
