@@ -55,10 +55,18 @@ export interface ICategory {
     created_at?: string;
 }
 
+export interface IProductCategory {
+    id: string;
+    slug: string;
+}
+export interface IProductType {
+    id: string;
+    slug: string;
+}
 export interface IProduct {
     _id?: ObjectId;
-    type_id: string;
-    category_id: string;
+    type: IProductType;
+    categories: Array<IProductCategory>;
     name: string;
     slug?: string;
     description?: string;
@@ -71,6 +79,7 @@ export interface IProduct {
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;
+    is_featured: boolean;
     created_at?: string;
     updated_at?: string;
 }
