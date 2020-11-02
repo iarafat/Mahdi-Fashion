@@ -64,6 +64,7 @@ export const typeDefs = gql`
     input CategoryInput {
         parent_id: String
         name: String!
+        banner_data: File
         banner: String!
         icon: String!
         meta_title: String
@@ -171,6 +172,12 @@ export const typeDefs = gql`
         details: String
     }
     
+    type CatetgoryPaginationType {
+        items: [Category]
+        totalCount: Int
+        hasMore: Boolean
+    }
+
     # Orders
     input OrderProductInput {
         product_id: String!
@@ -227,7 +234,7 @@ export const typeDefs = gql`
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
-        categories(limit: Int = 12, offset: Int = 0, searchText: String): [Category!]!
+        categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
