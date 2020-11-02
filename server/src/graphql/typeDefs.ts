@@ -55,7 +55,11 @@ export const typeDefs = gql`
         created_at: String
         updated_at: String
     }
-    
+    type MainTypePaginationType {
+        items: [MainType]
+        totalCount: Int
+        hasMore: Boolean
+    }
     
     input CategoryInput {
         parent_id: String
@@ -79,12 +83,20 @@ export const typeDefs = gql`
         meta_description: String
     }
     
+    input ProductCategoryInput {
+        id: String
+        slug: String
+    }
+    input ProductTypeInput {
+        id: String
+        slug: String
+    }
     input ProductInput {
-        type_id: String!
-        category_id: String!
+        type: ProductTypeInput!
+        categories: [ProductCategoryInput!]!
         name: String!
         description: String
-        images: [String!]! # it should be Upload type
+        images: [String!]!
         unit: Int
         price: Float!
         sale_price: Float
@@ -93,13 +105,14 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        is_featured: Boolean!
     }
     input ProductUpdateInput {
-        type_id: String
-        category_id: String
+        type: ProductTypeInput!
+        categories: [ProductCategoryInput!]!
         name: String
         description: String
-        images: [String] # it should be Upload type
+        images: [String]
         unit: Int
         price: Float
         sale_price: Float
@@ -108,11 +121,21 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        is_featured: Boolean!
+    }
+    
+    type ProductCategory {
+        id: String
+        slug: String
+    }
+    type ProductType {
+        id: String
+        slug: String
     }
     type Product {
         id: ID!
-        type_id: String!
-        category_id: String!
+        type: ProductType!
+        categories: [ProductCategory!]!
         name: String!
         slug: String!
         description: String
@@ -125,6 +148,14 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        is_featured: Boolean!
+        created_at: String
+        updated_at: String
+    }
+    type ProductPaginationType {
+        items: [Product]
+        totalCount: Int
+        hasMore: Boolean
     }
     
     type DeliveryMethod {
@@ -141,18 +172,12 @@ export const typeDefs = gql`
         details: String
     }
     
-    type MainTypePaginationType {
-        items: [MainType]
-        totalCount: Int
-        hasMore: Boolean
-    }
-    
     type CatetgoryPaginationType {
         items: [Category]
         totalCount: Int
         hasMore: Boolean
     }
-    
+
     # Orders
     input OrderProductInput {
         product_id: String!
@@ -210,7 +235,7 @@ export const typeDefs = gql`
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
-        products: [Product!]!
+        products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
         orders: [Order!]!
@@ -227,7 +252,7 @@ export const typeDefs = gql`
         deleteCategory(id: ID!): Category!
         createProduct(input: ProductInput): Product!
         updateProduct(id: ID!, input: ProductUpdateInput): Product!
-        deleteProduct(id: ID!): Product!
+        deleteProduct(id: ID!): DefaultDeleteType!
         createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
         updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
         deleteDeliveryMethod(id: ID!): DeliveryMethod!

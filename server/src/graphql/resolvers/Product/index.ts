@@ -1,19 +1,43 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IProduct} from "../../../lib/types";
+import {Database, ICommonPaginationReturnType, IProduct} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
-import {IProductInput, IUpdateProductInputArgs} from "./types";
+import {IProductInput, IProductsArgs, IUpdateProductInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
+import {search} from "../../../lib/utils/search";
 
 export const productsResolvers: IResolvers = {
     Query: {
         products: async (
             _root: undefined,
-            _args: undefined,
+            {type, category, limit, offset, searchText}: IProductsArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<IProduct[]> => {
-            return await db.products.find({}).toArray();
+        ): Promise<ICommonPaginationReturnType> => {
+
+            console.log('Request from shop: products');
+
+            let products = await db.products.find({}).sort({_id: -1}).toArray();
+
+            if (category) {
+                products = products.filter((product) =>
+                    product.categories.find(
+                        (category_item) => category_item.slug === category
+                    )
+                );
+            }
+            if (type) {
+                products = products.filter((product) => product.type.slug === type);
+            }
+
+            products = search(products, ['name', 'slug'], searchText);
+            const hasMore = products.length > offset + limit;
+
+            return {
+                items: products.slice(offset, offset + limit),
+                totalCount: products.length,
+                hasMore,
+            }
         }
     },
 
@@ -33,8 +57,8 @@ export const productsResolvers: IResolvers = {
 
             const insertData: IProduct = {
                 _id: new ObjectId(),
-                type_id: input.type_id,
-                category_id: input.category_id,
+                type: input.type,
+                categories: input.categories,
                 name: input.name,
                 slug: slugify(input.name),
                 description: input.description,
@@ -47,6 +71,7 @@ export const productsResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
+                is_featured: input.is_featured,
                 created_at: new Date().toUTCString(),
             };
 
@@ -66,23 +91,22 @@ export const productsResolvers: IResolvers = {
                 throw new Error("Resource not found.");
             }
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             const updateData: IProduct = {
-                type_id: input.type_id ? input.type_id : existsData.type_id,
-                category_id: input.category_id ? input.category_id : existsData.category_id,
-                name: input.name ? input.name : existsData.name,
-                slug: input.name ? slugify(input.name) : existsData.slug,
-                description: input.description ? input.description : existsData.description,
-                images: input.images ? input.images : existsData.images,
-                unit: input.unit ? input.unit : existsData.unit,
-                price: input.price ? input.price : existsData.price,
-                sale_price: input.sale_price ? input.sale_price : existsData.sale_price,
-                discount_in_percent: input.discount_in_percent ? input.discount_in_percent : existsData.discount_in_percent,
-                product_quantity: input.product_quantity ? input.product_quantity : existsData.product_quantity,
-                meta_title: input.meta_title ? input.meta_title : existsData.meta_title,
-                meta_keyword: input.meta_keyword ? input.meta_keyword : existsData.meta_keyword,
-                meta_description: input.meta_description ? input.meta_description : existsData.meta_description,
+                type: input.type,
+                categories: input.categories,
+                name: input.name,
+                slug: slugify(input.name),
+                description: input.description,
+                images: input.images,
+                unit: input.unit,
+                price: input.price,
+                sale_price: input.sale_price,
+                discount_in_percent: input.discount_in_percent,
+                product_quantity: input.product_quantity,
+                meta_title: input.meta_title,
+                meta_keyword: input.meta_keyword,
+                meta_description: input.meta_description,
+                is_featured: input.is_featured,
                 updated_at: new Date().toUTCString(),
             };
 

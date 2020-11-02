@@ -66,28 +66,40 @@ export const LoaderItem = styled('div', () => ({
 }));
 
 const GET_PRODUCTS = gql`
-  query getProducts(
+  query GetProducts(
     $type: String
-    $sortByPrice: String
+    $category: String
     $searchText: String
     $offset: Int
   ) {
     products(
       type: $type
-      sortByPrice: $sortByPrice
+      category: $category
       searchText: $searchText
       offset: $offset
     ) {
       items {
         id
+        type {
+          id
+          slug
+        }
+        categories {
+          id
+          slug
+        }
         name
+        slug
         description
-        image
-        type
-        price
+        images
         unit
-        salePrice
-        discountInPercent
+        price
+        sale_price
+        discount_in_percent
+        product_quantity
+        meta_title
+        meta_keyword
+        meta_description
       }
       totalCount
       hasMore
@@ -95,32 +107,63 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-const typeSelectOptions = [
-  { value: 'grocery', label: 'Grocery' },
-  { value: 'women-cloths', label: 'Women Cloths' },
-  { value: 'bags', label: 'Bags' },
-  { value: 'makeup', label: 'Makeup' },
-];
-const priceSelectOptions = [
-  { value: 'highestToLowest', label: 'Highest To Lowest' },
-  { value: 'lowestToHighest', label: 'Lowest To Highest' },
-];
+const GET_TYPES = gql`
+  query GetTypes(
+    $limit: Int
+    $offset: Int
+  ) {
+    types(
+      limit: $limit
+      offset: $offset
+    ) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
 
 export default function Products() {
+  const [offset, setOffset] = useState(0);
+  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
   const { data, error, refetch, fetchMore } = useQuery(GET_PRODUCTS);
+
   const [loadingMore, toggleLoading] = useState(false);
   const [type, setType] = useState([]);
-  const [priceOrder, setPriceOrder] = useState([]);
+  const [category, setCategory] = useState([]);
   const [search, setSearch] = useState([]);
 
   if (error) {
     return <div>Error! {error.message}</div>;
   }
+
+
+  function renderTypes() {
+    if (!typeData) return;
+
+    let typesTotal = typeData.types.totalCount;
+    typeRefetch({
+      limit: typesTotal,
+    })
+  }
+  renderTypes();
+
   function loadMore() {
     toggleLoading(true);
     fetchMore({
       variables: {
-        offset: data.products.items.length,
+        offset: offset + 12,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         toggleLoading(false);
@@ -135,23 +178,11 @@ export default function Products() {
       },
     });
   }
-  function handlePriceSort({ value }) {
-    setPriceOrder(value);
-    if (value.length) {
-      refetch({
-        sortByPrice: value[0].value,
-      });
-    } else {
-      refetch({
-        sortByPrice: null,
-      });
-    }
-  }
-  function handleCategoryType({ value }) {
+  function handleType({ value }) {
     setType(value);
     if (value.length) {
       refetch({
-        type: value[0].value,
+        type: value[0].slug,
       });
     } else {
       refetch({
@@ -178,25 +209,24 @@ export default function Products() {
               <Row>
                 <Col md={3} xs={12}>
                   <Select
-                    options={typeSelectOptions}
-                    labelKey='label'
-                    valueKey='value'
-                    placeholder='Category Type'
+                    options={typeData ? typeData.types.items : [] }
+                    labelKey='name'
+                    valueKey='slug'
+                    placeholder='Select Type'
                     value={type}
-                    searchable={false}
-                    onChange={handleCategoryType}
+                    searchable={true}
+                    onChange={handleType}
                   />
                 </Col>
-
                 <Col md={3} xs={12}>
                   <Select
-                    options={priceSelectOptions}
-                    labelKey='label'
-                    valueKey='value'
-                    value={priceOrder}
-                    placeholder='Price'
-                    searchable={false}
-                    onChange={handlePriceSort}
+                    options={typeData ? typeData.types.items : [] }
+                    labelKey='name'
+                    valueKey='slug'
+                    placeholder='Select Category'
+                    value={type}
+                    searchable={true}
+                    onChange={handleType}
                   />
                 </Col>
 
