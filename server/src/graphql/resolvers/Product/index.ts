@@ -6,6 +6,7 @@ import {authorize} from "../../../lib/utils";
 import {IProductInput, IProductsArgs, IUpdateProductInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
 import {search} from "../../../lib/utils/search";
+import {storeImage} from "../../../lib/utils/image-store";
 
 export const productsResolvers: IResolvers = {
     Query: {
@@ -14,9 +15,6 @@ export const productsResolvers: IResolvers = {
             {type, category, limit, offset, searchText}: IProductsArgs,
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
-
-            console.log('Request from shop: products');
-
             let products = await db.products.find({}).sort({_id: -1}).toArray();
 
             if (category) {
@@ -34,7 +32,7 @@ export const productsResolvers: IResolvers = {
             const hasMore = products.length > offset + limit;
 
             return {
-                items: products.slice(offset, offset + limit),
+                items: limit == 0 ? products: products.slice(offset, offset + limit),
                 totalCount: products.length,
                 hasMore,
             }
@@ -48,21 +46,31 @@ export const productsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<IProduct> => {
             await authorize(req, db);
-
+            const imagesPath = [];
+            const imagesData = JSON.parse(input.images_data);
             const existsData = await db.products.findOne({slug: slugify(input.name)});
 
             if (existsData) {
                 throw new Error("Resource already exits with this name.");
             }
 
+            if (imagesData.length) {
+                for (let i = 0; i < input.images.length; i++) {
+                    imagesPath.push(storeImage(input.images[i], imagesData[i].name));
+                }
+            } else {
+                imagesPath.push('images/grocery-default-image.png');
+            }
+
+
             const insertData: IProduct = {
                 _id: new ObjectId(),
                 type: input.type,
-                categories: input.categories,
+                categories: JSON.parse(input.categories),
                 name: input.name,
                 slug: slugify(input.name),
                 description: input.description,
-                images: input.images,
+                images: imagesPath,
                 unit: input.unit,
                 price: input.price,
                 sale_price: input.sale_price,
@@ -93,7 +101,7 @@ export const productsResolvers: IResolvers = {
 
             const updateData: IProduct = {
                 type: input.type,
-                categories: input.categories,
+                categories: JSON.parse(input.categories),
                 name: input.name,
                 slug: slugify(input.name),
                 description: input.description,

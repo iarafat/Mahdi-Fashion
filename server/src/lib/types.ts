@@ -57,10 +57,12 @@ export interface ICategory {
 
 export interface IProductCategory {
     id: string;
+    name: string;
     slug: string;
 }
 export interface IProductType {
     id: string;
+    name: string;
     slug: string;
 }
 export interface IProduct {
@@ -70,8 +72,8 @@ export interface IProduct {
     name: string;
     slug?: string;
     description?: string;
-    images: [string];
-    unit?: number;
+    images: Array<string>;
+    unit?: string;
     price: number;
     sale_price?: number;
     discount_in_percent?: number;

@@ -2,10 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import uuidv4 from 'uuid/v4';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import {useMutation, useQuery} from '@apollo/react-hooks';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useDrawerDispatch } from '../../context/DrawerContext';
-import Uploader from '../../components/Uploader/Uploader';
 import Button, { KIND } from '../../components/Button/Button';
 import DrawerBox from '../../components/DrawerBox/DrawerBox';
 import { Row, Col } from '../../components/FlexBox/FlexBox';
@@ -21,90 +20,147 @@ import {
   FieldDetails,
   ButtonGroup,
 } from '../DrawerItems/DrawerItems.style';
+import {getBase64Value} from "../../helpers/convert-image-base64";
+import MultiUploader from "../../components/Uploader/Multi-Uploader";
+import Checkbox, {LABEL_PLACEMENT} from "../../components/CheckBox/CheckBox";
 
-const options = [
-  { value: 'Fruits & Vegetables', name: 'Fruits & Vegetables', id: '1' },
-  { value: 'Meat & Fish', name: 'Meat & Fish', id: '2' },
-  { value: 'Purse', name: 'Purse', id: '3' },
-  { value: 'Hand bags', name: 'Hand bags', id: '4' },
-  { value: 'Shoulder bags', name: 'Shoulder bags', id: '5' },
-  { value: 'Wallet', name: 'Wallet', id: '6' },
-  { value: 'Laptop bags', name: 'Laptop bags', id: '7' },
-  { value: 'Women Dress', name: 'Women Dress', id: '8' },
-  { value: 'Outer Wear', name: 'Outer Wear', id: '9' },
-  { value: 'Pants', name: 'Pants', id: '10' },
-];
-
-const typeOptions = [
-  { value: 'grocery', name: 'Grocery', id: '1' },
-  { value: 'women-cloths', name: 'Women Cloths', id: '2' },
-  { value: 'bags', name: 'Bags', id: '3' },
-  { value: 'makeup', name: 'Makeup', id: '4' },
-];
 const GET_PRODUCTS = gql`
-  query getProducts(
+  query GetProducts(
     $type: String
-    $sortByPrice: String
+    $category: String
     $searchText: String
     $offset: Int
   ) {
     products(
       type: $type
-      sortByPrice: $sortByPrice
+      category: $category
       searchText: $searchText
       offset: $offset
     ) {
       items {
         id
+        type {
+          id
+          slug
+        }
+        categories {
+          id
+          slug
+        }
         name
-        image
-        type
-        price
+        slug
+        description
+        images
         unit
-        salePrice
-        discountInPercent
+        price
+        sale_price
+        discount_in_percent
+        product_quantity
+        is_featured
+        meta_title
+        meta_keyword
+        meta_description
       }
       totalCount
       hasMore
     }
   }
 `;
+
+const GET_TYPES = gql`
+  query GetTypes {
+    types(limit: 0) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
+const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories(limit: 0) {
+      items {
+        id
+        parent_id
+        name
+        slug
+        banner
+        icon
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
 const CREATE_PRODUCT = gql`
-  mutation createProduct($product: AddProductInput!) {
-    createProduct(product: $product) {
+  mutation createProduct($input: ProductInput!) {
+    createProduct(input: $input) {
       id
+      type {
+        id
+        slug
+      }
+      categories {
+        id
+        slug
+      }
       name
-      image
       slug
-      type
-      price
-      unit
       description
-      salePrice
-      discountInPercent
-      # per_unit
-      quantity
-      # creation_date
+      images
+      unit
+      price
+      sale_price
+      discount_in_percent
+      product_quantity
+      is_featured
+      meta_title
+      meta_keyword
+      meta_description
     }
   }
 `;
 type Props = any;
 
 const AddProduct: React.FC<Props> = props => {
+  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
+  const { data: categoryData, error: categoryError, refetch: categoryRefetch } = useQuery(GET_CATEGORIES);
+
   const dispatch = useDrawerDispatch();
   const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [
     dispatch,
   ]);
   const { register, handleSubmit, setValue } = useForm();
   const [type, setType] = useState([]);
-  const [tag, setTag] = useState([]);
+  const [category, setCategory] = useState([]);
   const [description, setDescription] = useState('');
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [meta_title, setMetaTitle] = useState('');
+  const [meta_keyword, setMetaKeyword] = useState('');
+  const [meta_description, setMetaDescription] = useState('');
 
   React.useEffect(() => {
+    register({name: 'images_data'});
     register({ name: 'type' });
     register({ name: 'categories' });
-    register({ name: 'image', required: true });
+    register({ name: 'images', required: true });
     register({ name: 'description' });
+    register({name: 'is_featured'});
+    register({name: 'meta_title'});
+    register({name: 'meta_keyword'});
+    register({name: 'meta_description'});
   }, [register]);
 
   const handleDescriptionChange = e => {
@@ -125,43 +181,83 @@ const AddProduct: React.FC<Props> = props => {
           products: {
             __typename: products.__typename,
             items: [createProduct, ...products.items],
-            hasMore: true,
+            hasMore: products.items.length + 1 >= 12,
             totalCount: products.items.length + 1,
           },
         },
       });
     },
   });
-  const handleMultiChange = ({ value }) => {
-    setValue('categories', value);
-    setTag(value);
+
+  const handleCategoryMultiChange = ({ value }) => {
+    let categoryItems = [];
+    for (let i = 0; i < value.length; i++) {
+      categoryItems.push({id: value[i].id, name: value[i].name, slug: value[i].slug})
+    }
+    setValue('categories', JSON.stringify(categoryItems));
+    setCategory(value);
   };
 
   const handleTypeChange = ({ value }) => {
-    setValue('type', value);
+    setValue('type', {
+      id: value[0].id,
+      name: value[0].name,
+      slug: value[0].slug
+    });
     setType(value);
   };
   const handleUploader = files => {
-    setValue('image', files[0].path);
+    let imagesData = [];
+    let imagesBase64 = [];
+
+    for (let i = 0; i < files.length; i++) {
+      imagesData.push({name: files[i].name, size: files[i].size, type: files[i].type})
+      getBase64Value(files[i], imageBase64Value => {
+        imagesBase64.push(imageBase64Value);
+      })
+    }
+
+    setValue('images_data', JSON.stringify(imagesData));
+    setValue('images', imagesBase64);
   };
+
+  const handleMetaTitleChange = e => {
+    const value = e.target.value;
+    setValue('meta_title', value);
+    setMetaTitle(value);
+  };
+  const handleMetaKeywordChange = e => {
+    const value = e.target.value;
+    setValue('meta_keyword', value);
+    setMetaKeyword(value);
+  };
+
+  const handleMetaDescriptionChange = e => {
+    const value = e.target.value;
+    setValue('meta_description', value);
+    setMetaDescription(value);
+  };
+
   const onSubmit = data => {
     const newProduct = {
-      id: uuidv4(),
       name: data.name,
-      type: data.type[0].value,
+      type: data.type,
+      categories: data.categories,
       description: data.description,
-      image: data.image && data.image.length !== 0 ? data.image : '',
+      images_data: data.images_data,
+      images: data.images,
       price: Number(data.price),
       unit: data.unit,
-      salePrice: Number(data.salePrice),
-      discountInPercent: Number(data.discountInPercent),
-      quantity: Number(data.quantity),
-      slug: data.name,
-      creation_date: new Date(),
+      sale_price: Number(data.salePrice),
+      discount_in_percent: Number(data.discountInPercent),
+      product_quantity: Number(data.quantity),
+      is_featured: data.is_featured,
+      meta_title: data.meta_title,
+      meta_keyword: data.meta_keyword,
+      meta_description: data.meta_description,
     };
-    console.log(newProduct, 'newProduct data');
     createProduct({
-      variables: { product: newProduct },
+      variables: { input: newProduct },
     });
     closeDrawer();
   };
@@ -188,7 +284,7 @@ const AddProduct: React.FC<Props> = props => {
         >
           <Row>
             <Col lg={4}>
-              <FieldDetails>Upload your Product image here</FieldDetails>
+              <FieldDetails>Upload your Product images here</FieldDetails>
             </Col>
             <Col lg={8}>
               <DrawerBox
@@ -207,7 +303,7 @@ const AddProduct: React.FC<Props> = props => {
                   },
                 }}
               >
-                <Uploader onChange={handleUploader} />
+                <MultiUploader onChange={handleUploader} />
               </DrawerBox>
             </Col>
           </Row>
@@ -222,9 +318,21 @@ const AddProduct: React.FC<Props> = props => {
             <Col lg={8}>
               <DrawerBox>
                 <FormFields>
+                  <FormLabel>Featured Product?</FormLabel>
+                  <Checkbox
+                      checked={isFeatured}
+                      onChange={e => {
+                        setValue('is_featured', e.target.checked)
+                        setIsFeatured(e.target.checked)
+                      }}
+                      labelPlacement={LABEL_PLACEMENT.right}
+                  >
+                  </Checkbox>
+                </FormFields>
+                <FormFields>
                   <FormLabel>Name</FormLabel>
                   <Input
-                    inputRef={register({ required: true, maxLength: 20 })}
+                    inputRef={register({ required: true, maxLength: 60 })}
                     name="name"
                   />
                 </FormFields>
@@ -277,10 +385,10 @@ const AddProduct: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Type</FormLabel>
                   <Select
-                    options={typeOptions}
+                    options={typeData ? typeData.types.items : [] }
                     labelKey="name"
-                    valueKey="value"
-                    placeholder="Product Type"
+                    valueKey="id"
+                    placeholder="Select Product Type"
                     value={type}
                     searchable={false}
                     onChange={handleTypeChange}
@@ -335,12 +443,12 @@ const AddProduct: React.FC<Props> = props => {
                 <FormFields>
                   <FormLabel>Categories</FormLabel>
                   <Select
-                    options={options}
+                    options={categoryData ? categoryData.categories.items : [] }
                     labelKey="name"
-                    valueKey="value"
-                    placeholder="Product Tag"
-                    value={tag}
-                    onChange={handleMultiChange}
+                    valueKey="id"
+                    placeholder="Select Product Categories"
+                    value={category}
+                    onChange={handleCategoryMultiChange}
                     overrides={{
                       Placeholder: {
                         style: ({ $theme }) => {
@@ -369,6 +477,32 @@ const AddProduct: React.FC<Props> = props => {
                       },
                     }}
                     multi
+                  />
+                </FormFields>
+                <FormFields>
+                  <FormLabel>Meta Title</FormLabel>
+                  <Input
+                      name="meta_title"
+                      value={meta_title}
+                      onChange={handleMetaTitleChange}
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Meta Keyword</FormLabel>
+                  <Input
+                      name="meta_keyword"
+                      value={meta_keyword}
+                      onChange={handleMetaKeywordChange}
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Meta Description</FormLabel>
+                  <Textarea
+                      name="meta_description"
+                      value={meta_description}
+                      onChange={handleMetaDescriptionChange}
                   />
                 </FormFields>
               </DrawerBox>
