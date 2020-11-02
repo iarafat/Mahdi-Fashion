@@ -55,6 +55,8 @@ import {
   WomenDress,
 } from '../../components/AllSvgIcon';
 import NoResult from '../../components/NoResult/NoResult';
+import { StyledBodyCell } from '../Types/Types.style';
+import ActionWrapper from '../CategoryForm/ActionWrapper';
 let icons = {
   Accessories: Accessories,
   BathOil: BathOil,
@@ -88,13 +90,20 @@ let icons = {
   WomenDress: WomenDress,
 };
 const GET_CATEGORIES = gql`
-  query getCategories($type: String, $searchBy: String) {
-    categories(type: $type, searchBy: $searchBy) {
-      id
-      icon
-      name
-      slug
-      type
+  query getCategories($searchText: String, $offset: Int) {
+    categories(searchText: $searchText, offset: $offset) {
+      items{
+        id
+        name
+        slug
+        banner
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+      }
+      totalCount
+      hasMore
     }
   }
 `;
@@ -122,9 +131,23 @@ const categorySelectOptions = [
   { value: 'makeup', label: 'Makeup' },
 ];
 
+const prevButtonDisabledStyles = {
+  width: '90px',
+  marginRight: '10px',
+  color: '#6f6f6f',
+  backgroundColor: '#d8d8d8'
+};
+const nextButtonDisabledStyles = {
+  width: '90px',
+  marginLeft: '10px',
+  color: '#6f6f6f',
+  backgroundColor: '#d8d8d8'
+};
+
 export default function Category() {
   const [category, setCategory] = useState([]);
   const [search, setSearch] = useState('');
+  const [offset, setOffset] = useState(0);
   const dispatch = useDrawerDispatch();
   const [checkedId, setCheckedId] = useState([]);
   const [checked, setChecked] = useState(false);
@@ -138,14 +161,35 @@ export default function Category() {
   if (error) {
     return <div>Error! {error.message}</div>;
   }
+
   function handleSearch(event) {
     const value = event.currentTarget.value;
     setSearch(value);
     refetch({
-      type: category.length ? category[0].value : null,
-      searchBy: value,
+      searchText: value,
     });
   }
+  function handlePrevious() {
+    setOffset(offset - 12);
+    refetch({
+      offset: offset - 12,
+    });
+  }
+  function handlePreviousDisabled(data) {
+    const result = (data ? data.categories.totalCount === 0 : false) || offset === 0;
+    return result;
+  }
+  function handleNext() {
+    setOffset(offset + 12);
+    refetch({
+      offset: offset + 12,
+    });
+  }
+  function handleNextDisabled(data) {
+    const result = data ? !data.categories.hasMore : true;
+    return result;
+  }
+
   function handleCategory({ value }) {
     setCategory(value);
     if (value.length) {
@@ -243,86 +287,65 @@ export default function Category() {
 
           <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
             <TableWrapper>
-              <StyledTable $gridTemplateColumns='minmax(70px, 70px) minmax(70px, 70px) minmax(70px, 70px) minmax(150px, auto) minmax(150px, auto) auto'>
-                <StyledHeadCell>
-                  <Checkbox
-                    type='checkbox'
-                    value='checkAll'
-                    checked={checked}
-                    onChange={onAllCheck}
-                    overrides={{
-                      Checkmark: {
-                        style: {
-                          borderTopWidth: '2px',
-                          borderRightWidth: '2px',
-                          borderBottomWidth: '2px',
-                          borderLeftWidth: '2px',
-                          borderTopLeftRadius: '4px',
-                          borderTopRightRadius: '4px',
-                          borderBottomRightRadius: '4px',
-                          borderBottomLeftRadius: '4px',
-                        },
-                      },
-                    }}
-                  />
-                </StyledHeadCell>
-                <StyledHeadCell>Id</StyledHeadCell>
-                <StyledHeadCell>Image</StyledHeadCell>
+              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(150px, auto) minmax(70px, 70px) minmax(70px, 70px) auto'>
+                <StyledHeadCell>#</StyledHeadCell>
                 <StyledHeadCell>Name</StyledHeadCell>
                 <StyledHeadCell>Slug</StyledHeadCell>
-                <StyledHeadCell>Type</StyledHeadCell>
+                <StyledHeadCell>Image</StyledHeadCell>
+                <StyledHeadCell>Icon</StyledHeadCell>
+                <StyledHeadCell>Action</StyledHeadCell>
 
                 {data ? (
-                  data.categories.length ? (
-                    data.categories
-                      .map((item) => Object.values(item))
-                      .map((row, index) => (
-                        <React.Fragment key={index}>
-                          <StyledCell>
-                            <Checkbox
-                              name={row[0]}
-                              checked={checkedId.includes(row[0])}
-                              onChange={handleCheckbox}
-                              overrides={{
-                                Checkmark: {
-                                  style: {
-                                    borderTopWidth: '2px',
-                                    borderRightWidth: '2px',
-                                    borderBottomWidth: '2px',
-                                    borderLeftWidth: '2px',
-                                    borderTopLeftRadius: '4px',
-                                    borderTopRightRadius: '4px',
-                                    borderBottomRightRadius: '4px',
-                                    borderBottomLeftRadius: '4px',
-                                  },
-                                },
-                              }}
-                            />
-                          </StyledCell>
-                          <StyledCell>{row[0]}</StyledCell>
-                          <StyledCell>
-                            <ImageWrapper>
-                              <Icon icon={row[1]} />
-                            </ImageWrapper>
-                          </StyledCell>
-                          <StyledCell>{row[2]}</StyledCell>
-                          <StyledCell>{row[3]}</StyledCell>
-                          <StyledCell>{row[4]}</StyledCell>
-                        </React.Fragment>
-                      ))
+                  data.categories.items.length ? (
+                    data.categories.items.map((item, index) => (
+                      <React.Fragment key={index}>
+                        <StyledBodyCell>{index + 1}</StyledBodyCell>
+                        <StyledBodyCell>{item.name}</StyledBodyCell>
+                        <StyledBodyCell>{item.slug}</StyledBodyCell>
+                        <StyledCell>
+                          <ImageWrapper>
+                            <Icon icon={item.banner} />
+                          </ImageWrapper>
+                        </StyledCell>
+                        <StyledCell>{item.icon}</StyledCell>
+                        <StyledBodyCell>
+                          <ActionWrapper itemsOffset={offset} itemData={item} />
+                        </StyledBodyCell>
+                      </React.Fragment>
+                    ))
                   ) : (
-                    <NoResult
-                      hideButton={false}
-                      style={{
-                        gridColumnStart: '1',
-                        gridColumnEnd: 'one',
-                      }}
-                    />
-                  )
+                      <NoResult
+                        hideButton={false}
+                        style={{
+                          gridColumnStart: '1',
+                          gridColumnEnd: 'one',
+                        }}
+                      />
+                    )
                 ) : null}
               </StyledTable>
             </TableWrapper>
           </Wrapper>
+          <Row>
+            <Col md={8}>
+            </Col>
+            <Col md={4}
+              style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}
+            >
+              <Button
+                style={handlePreviousDisabled(data) ? prevButtonDisabledStyles : { marginRight: '10px' }}
+                disabled={handlePreviousDisabled(data)}
+                onClick={handlePrevious}>
+                Previous
+                </Button>
+              <Button
+                style={handleNextDisabled(data) ? nextButtonDisabledStyles : null}
+                disabled={handleNextDisabled(data)}
+                onClick={handleNext}>
+                Next
+                </Button>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Grid>
