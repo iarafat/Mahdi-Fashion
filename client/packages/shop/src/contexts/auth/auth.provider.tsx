@@ -29,6 +29,7 @@ function reducer(state: any, action: any) {
       return {
         ...state,
         currentForm: 'signUp',
+        
       };
     case 'FORGOTPASS':
       return {

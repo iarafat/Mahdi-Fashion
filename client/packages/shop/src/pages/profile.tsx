@@ -27,6 +27,8 @@ const ProfilePage: NextPage<Props> = ({ deviceType }) => {
     return <div>loading...</div>;
   }
   if (error) return <ErrorMessage message={error.message} />;
+  console.log(data)
+  alert(12)
   return (
     <>
       <SEO title="Profile - PickBazar" description="Profile Details" />

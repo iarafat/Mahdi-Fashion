@@ -1,17 +1,17 @@
 import gql from 'graphql-tag';
 
 export const GET_CATEGORIES = gql`
-  query getCategories($type: String!) {
-    categories(type: $type) {
+query GetCategories {
+  categories {
+    items {
       id
-      title
+      name
       slug
+      banner
       icon
-      children {
-        id
-        title
-        slug
-      }
     }
+    totalCount
+    hasMore
   }
+}
 `;
