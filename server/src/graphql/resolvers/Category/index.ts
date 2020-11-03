@@ -19,7 +19,21 @@ export const categoriesResolvers: IResolvers = {
             categories = search(categories, ['name', 'slug'], searchText);
             const hasMore = categories.length > offset + limit;
             return {
-                items: categories.slice(offset, offset + limit),
+                items: limit == 0 ? categories : categories.slice(offset, offset + limit),
+                totalCount: categories.length,
+                hasMore,
+            }
+        },
+        shopCategories: async (
+            _root: undefined,
+            { limit, offset, searchText }: ICommonPaginationArgs,
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonPaginationReturnType> => {
+            let categories =  await db.categories.find({parent_id: null}).sort({_id: -1}).toArray();
+            categories = search(categories, ['name', 'slug'], searchText);
+            const hasMore = categories.length > offset + limit;
+            return {
+                items: limit == 0 ? categories : categories.slice(offset, offset + limit),
                 totalCount: categories.length,
                 hasMore,
             }
@@ -48,7 +62,7 @@ export const categoriesResolvers: IResolvers = {
 
             const insertData: ICategory = {
                 _id: new ObjectId(),
-                parent_id: input.parent_id,
+                parent_id: input.parent_id ? input.parent_id : null,
                 name: input.name,
                 slug: slugify(input.name),
                 banner: bannerImagePath,
@@ -81,7 +95,7 @@ export const categoriesResolvers: IResolvers = {
             }
 
             const updateData: ICategory = {
-                parent_id: input.parent_id,
+                parent_id: input.parent_id ? input.parent_id : null,
                 name: input.name,
                 slug: slugify(input.name),
                 banner: input.banner,
@@ -123,6 +137,27 @@ export const categoriesResolvers: IResolvers = {
     Category: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        id: (type: ICategory): string => type._id.toString(),
+        id: (category: ICategory): string => category._id.toString(),
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        children: async (category: ICategory, _args: {}, { db }: { db: Database }) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+
+            const categories =  await db.categories.find({parent_id: category._id.toString()}).sort({_id: -1}).toArray();
+            const convertedCategories = [];
+
+            for (let i = 0; i < categories.length; i++) {
+                const categoryItem = categories[i];
+                convertedCategories.push({
+                    id: categoryItem._id ? categoryItem._id.toString() : null,
+                    name: categoryItem.name,
+                    slug: categoryItem.slug,
+                    banner: categoryItem.banner,
+                    icon: categoryItem.icon
+                })
+            }
+
+            return convertedCategories;
+        },
     }
 }

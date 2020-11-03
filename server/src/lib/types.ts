@@ -42,13 +42,21 @@ export interface IType {
     updated_at?: string;
 }
 
+export interface ICategoryChildren {
+    id: string;
+    name: string;
+    slug: string;
+    banner: string;
+    icon: string;
+}
 export interface ICategory {
     _id?: ObjectId;
-    parent_id?: string;
+    parent_id?: string | null;
     name: string;
     slug?: string;
     banner: string;
     icon: string;
+    children?: Array<ICategoryChildren>
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;
@@ -57,10 +65,12 @@ export interface ICategory {
 
 export interface IProductCategory {
     id: string;
+    name: string;
     slug: string;
 }
 export interface IProductType {
     id: string;
+    name: string;
     slug: string;
 }
 export interface IProduct {
@@ -70,8 +80,8 @@ export interface IProduct {
     name: string;
     slug?: string;
     description?: string;
-    images: [string];
-    unit?: number;
+    images: Array<string>;
+    unit?: string;
     price: number;
     sale_price?: number;
     discount_in_percent?: number;

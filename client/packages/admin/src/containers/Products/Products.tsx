@@ -97,6 +97,7 @@ const GET_PRODUCTS = gql`
         sale_price
         discount_in_percent
         product_quantity
+        is_featured
         meta_title
         meta_keyword
         meta_description
@@ -108,14 +109,8 @@ const GET_PRODUCTS = gql`
 `;
 
 const GET_TYPES = gql`
-  query GetTypes(
-    $limit: Int
-    $offset: Int
-  ) {
-    types(
-      limit: $limit
-      offset: $offset
-    ) {
+  query GetTypes {
+    types(limit: 0) {
       items {
         id
         name
@@ -133,10 +128,28 @@ const GET_TYPES = gql`
   }
 `;
 
+const GET_CATEGORIES = gql`
+  query GetCategories {
+    categories(limit: 0) {
+      items {
+        id
+        parent_id
+        name
+        slug
+        banner
+        icon
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
 
 export default function Products() {
   const [offset, setOffset] = useState(0);
   const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
+  const { data: categoryData, error: categoryError, refetch: categoryRefetch } = useQuery(GET_CATEGORIES);
   const { data, error, refetch, fetchMore } = useQuery(GET_PRODUCTS);
 
   const [loadingMore, toggleLoading] = useState(false);
@@ -148,16 +161,6 @@ export default function Products() {
     return <div>Error! {error.message}</div>;
   }
 
-
-  function renderTypes() {
-    if (!typeData) return;
-
-    let typesTotal = typeData.types.totalCount;
-    typeRefetch({
-      limit: typesTotal,
-    })
-  }
-  renderTypes();
 
   function loadMore() {
     toggleLoading(true);
@@ -187,6 +190,18 @@ export default function Products() {
     } else {
       refetch({
         type: null,
+      });
+    }
+  }
+  function handleCategory({ value }) {
+    setCategory(value);
+    if (value.length) {
+      refetch({
+        category: value[0].slug,
+      });
+    } else {
+      refetch({
+        category: null,
       });
     }
   }
@@ -220,13 +235,13 @@ export default function Products() {
                 </Col>
                 <Col md={3} xs={12}>
                   <Select
-                    options={typeData ? typeData.types.items : [] }
+                    options={categoryData ? categoryData.categories.items : [] }
                     labelKey='name'
                     valueKey='slug'
                     placeholder='Select Category'
-                    value={type}
+                    value={category}
                     searchable={true}
-                    onChange={handleType}
+                    onChange={handleCategory}
                   />
                 </Col>
 
@@ -258,7 +273,7 @@ export default function Products() {
                       <ProductCard
                         title={item.name}
                         weight={item.unit}
-                        image={item.image}
+                        image={item.images[0]}
                         currency={CURRENCY}
                         price={item.price}
                         salePrice={item.salePrice}

@@ -71,13 +71,21 @@ export const typeDefs = gql`
         meta_keyword: String
         meta_description: String
     }
+    type CategoryChildren {
+        id: ID
+        name: String
+        slug: String
+        banner: String
+        icon: String
+    }
     type Category {
         id: ID!
-        parent_id: String!
+        parent_id: String
         name: String!
         slug: String!
         banner: String!
         icon: String!
+        children: [CategoryChildren]
         meta_title: String
         meta_keyword: String
         meta_description: String
@@ -85,19 +93,22 @@ export const typeDefs = gql`
     
     input ProductCategoryInput {
         id: String
+        name: String
         slug: String
     }
     input ProductTypeInput {
         id: String
+        name: String
         slug: String
     }
     input ProductInput {
         type: ProductTypeInput!
-        categories: [ProductCategoryInput!]!
+        categories: String!
         name: String!
         description: String
+        images_data: String!
         images: [String!]!
-        unit: Int
+        unit: String
         price: Float!
         sale_price: Float
         discount_in_percent: Int
@@ -109,11 +120,12 @@ export const typeDefs = gql`
     }
     input ProductUpdateInput {
         type: ProductTypeInput!
-        categories: [ProductCategoryInput!]!
+        categories: String!
         name: String
         description: String
+        images_data: String!
         images: [String]
-        unit: Int
+        unit: String
         price: Float
         sale_price: Float
         discount_in_percent: Int
@@ -126,21 +138,23 @@ export const typeDefs = gql`
     
     type ProductCategory {
         id: String
+        name: String
         slug: String
     }
     type ProductType {
         id: String
+        name: String
         slug: String
     }
     type Product {
         id: ID!
         type: ProductType!
-        categories: [ProductCategory!]!
+        categories: [ProductCategory]!
         name: String!
         slug: String!
         description: String
         images: [String!]!
-        unit: Int
+        unit: String
         price: Float!
         sale_price: Float
         discount_in_percent: Int
@@ -235,6 +249,7 @@ export const typeDefs = gql`
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
+        shopCategories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
