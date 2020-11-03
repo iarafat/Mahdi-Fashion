@@ -19,7 +19,7 @@ export const categoriesResolvers: IResolvers = {
             categories = search(categories, ['name', 'slug'], searchText);
             const hasMore = categories.length > offset + limit;
             return {
-                items: categories.slice(offset, offset + limit),
+                items: limit == 0 ? categories : categories.slice(offset, offset + limit),
                 totalCount: categories.length,
                 hasMore,
             }

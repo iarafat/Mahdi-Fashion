@@ -73,7 +73,7 @@ export const typeDefs = gql`
     }
     type Category {
         id: ID!
-        parent_id: String!
+        parent_id: String
         name: String!
         slug: String!
         banner: String!
@@ -85,19 +85,22 @@ export const typeDefs = gql`
     
     input ProductCategoryInput {
         id: String
+        name: String
         slug: String
     }
     input ProductTypeInput {
         id: String
+        name: String
         slug: String
     }
     input ProductInput {
         type: ProductTypeInput!
-        categories: [ProductCategoryInput!]!
+        categories: String!
         name: String!
         description: String
+        images_data: String!
         images: [String!]!
-        unit: Int
+        unit: String
         price: Float!
         sale_price: Float
         discount_in_percent: Int
@@ -109,11 +112,12 @@ export const typeDefs = gql`
     }
     input ProductUpdateInput {
         type: ProductTypeInput!
-        categories: [ProductCategoryInput!]!
+        categories: String!
         name: String
         description: String
+        images_data: String!
         images: [String]
-        unit: Int
+        unit: String
         price: Float
         sale_price: Float
         discount_in_percent: Int
@@ -126,21 +130,23 @@ export const typeDefs = gql`
     
     type ProductCategory {
         id: String
+        name: String
         slug: String
     }
     type ProductType {
         id: String
+        name: String
         slug: String
     }
     type Product {
         id: ID!
         type: ProductType!
-        categories: [ProductCategory!]!
+        categories: [ProductCategory]!
         name: String!
         slug: String!
         description: String
         images: [String!]!
-        unit: Int
+        unit: String
         price: Float!
         sale_price: Float
         discount_in_percent: Int

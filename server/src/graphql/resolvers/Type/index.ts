@@ -27,7 +27,7 @@ export const typesResolvers: IResolvers = {
             const hasMore = types.length > offset + limit;
 
             return {
-                items: types.slice(offset, offset + limit),
+                items: limit == 0 ? types : types.slice(offset, offset + limit),
                 totalCount: types.length,
                 hasMore,
             }
