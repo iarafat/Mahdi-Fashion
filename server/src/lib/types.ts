@@ -42,13 +42,21 @@ export interface IType {
     updated_at?: string;
 }
 
+export interface ICategoryChildren {
+    id: string;
+    name: string;
+    slug: string;
+    banner: string;
+    icon: string;
+}
 export interface ICategory {
     _id?: ObjectId;
-    parent_id?: string;
+    parent_id?: string | null;
     name: string;
     slug?: string;
     banner: string;
     icon: string;
+    children?: Array<ICategoryChildren>
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;
