@@ -1,17 +1,26 @@
 import gql from 'graphql-tag';
 
 export const GET_CATEGORIES = gql`
-query GetCategories {
-  categories {
+query GetCategories{
+	shopCategories {
     items {
-      id
-      name
-      slug
-      banner
-      icon
+        id
+        parent_id
+        name
+        slug
+        banner
+        icon
+        children {
+          id
+          name
+          slug
+          banner
+          icon
+        }
+      }
+      totalCount
+      hasMore
     }
-    totalCount
-    hasMore
   }
-}
 `;
+

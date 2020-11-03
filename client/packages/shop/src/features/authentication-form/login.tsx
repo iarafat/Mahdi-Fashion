@@ -136,45 +136,8 @@ export default function SignInModal() {
         }}>Loading...</p>}
         {error && <p style={{
           marginTop: "15px"
-        }}>mutationError :( Please try again</p>}
-        <Divider>
-          <span>
-            <FormattedMessage id='orText' defaultMessage='or' />
-          </span>
-        </Divider>
-
-        <Button
-          variant='primary'
-          size='big'
-          style={{
-            width: '100%',
-            backgroundColor: '#4267b2',
-            marginBottom: 10,
-          }}
-        >
-          <IconWrapper>
-            <Facebook />
-          </IconWrapper>
-          <FormattedMessage
-            id='continueFacebookBtn'
-            defaultMessage='Continue with Facebook'
-          />
-        </Button>
-
-        <Button
-          variant='primary'
-          size='big'
-          style={{ width: '100%', backgroundColor: '#4285f4' }}
-        >
-          <IconWrapper>
-            <Google />
-          </IconWrapper>
-          <FormattedMessage
-            id='continueGoogleBtn'
-            defaultMessage='Continue with Google'
-          />
-        </Button>
-
+        }}> Please try again</p>}
+      
         <Offer style={{ padding: '20px 0' }}>
           <FormattedMessage
             id='dontHaveAccount'
