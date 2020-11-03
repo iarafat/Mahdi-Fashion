@@ -71,6 +71,13 @@ export const typeDefs = gql`
         meta_keyword: String
         meta_description: String
     }
+    type CategoryChildren {
+        id: ID
+        name: String
+        slug: String
+        banner: String
+        icon: String
+    }
     type Category {
         id: ID!
         parent_id: String
@@ -78,6 +85,7 @@ export const typeDefs = gql`
         slug: String!
         banner: String!
         icon: String!
+        children: [CategoryChildren]
         meta_title: String
         meta_keyword: String
         meta_description: String
@@ -241,6 +249,7 @@ export const typeDefs = gql`
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
+        shopCategories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
