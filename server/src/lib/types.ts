@@ -163,6 +163,13 @@ export interface ICommonDeleteReturnType {
     status: boolean;
 }
 
+export interface ISetting {
+    _id?: ObjectId;
+    key: string;
+    value: any;
+}
+
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;
@@ -171,4 +178,5 @@ export interface Database {
     delivery_methods: Collection<IDeliveryMethod>;
     payment_options: Collection<IPaymentOption>;
     orders: Collection<IOrder>;
+    settings: Collection<ISetting>;
 }

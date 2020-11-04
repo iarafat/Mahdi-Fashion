@@ -244,6 +244,12 @@ export const typeDefs = gql`
         message: String!
         status: Boolean!
     }
+    
+    type Setting {
+        id: ID
+        key: String
+        value: String
+    }
 
     type Query {
         users: [User!]!
@@ -253,7 +259,9 @@ export const typeDefs = gql`
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
-        orders: [Order!]!
+        orders: [Order!]
+        getSetting(key: String!): Setting!
+        getSiteSetting(key: String!): Setting!
     }
     
     type Mutation {
@@ -275,5 +283,6 @@ export const typeDefs = gql`
         updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, details: String): PaymentOption!
         deletePaymentOption(id: ID!): PaymentOption!
         createOrder(input: OrderInput): Order!
+        updateSiteSetting(key: String!, value: String!): Setting!
     }
 `;
