@@ -27,6 +27,7 @@ const GET_CATEGORIES = gql`
     categories(searchText: $searchText, offset: $offset) {
       items{
         id
+        type_id
         name
         slug
         icon
@@ -42,6 +43,7 @@ const UPDATE_CATEGORIES = gql`
   mutation UpdateCategory($id: ID!, $input: CategoryInput!) {
     updateCategory(id: $id, input: $input) {
       id
+      type_id
       name
       slug
       banner
@@ -52,6 +54,25 @@ const UPDATE_CATEGORIES = gql`
     }
   }
 `;
+const GET_TYPES = gql`
+  query GetTypes {
+    types(limit: 0) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
 
 type Props = any;
 
@@ -59,10 +80,6 @@ const UpdateCategory: React.FC<Props> = props => {
   const dispatch = useDrawerDispatch();
   const itemData = useDrawerState('data');
 
-  console.log(itemData);
-  
-  
-  const [category, setCategory] = useState(itemData.parent_id);
 
   const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [ dispatch]);
   const { register, handleSubmit, setValue } = useForm({
@@ -72,8 +89,11 @@ const UpdateCategory: React.FC<Props> = props => {
   const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword);
   const [meta_description, setMetaDescription] = useState(itemData.meta_description);
   const [icon, setIcon] = useState([{ value: itemData.icon }]);
+  const [type, setType] = useState([{ id: itemData ? itemData.type_id : '' }]);
+
 
   React.useEffect(() => {
+    register({ name: 'type_id' });
     register({ name: 'parent' });
     register({ name: 'banner_data' });
     register({ name: 'banner', required: true});
@@ -83,21 +103,25 @@ const UpdateCategory: React.FC<Props> = props => {
     register({ name: 'meta_description' });
   }, [register]);
 
+  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
   const { data, error, refetch } = useQuery(GET_CATEGORIES);
 
   const [updateCategories] = useMutation(UPDATE_CATEGORIES);
 
-  const onSubmit = ({ name, meta_title, meta_keyword, meta_description, banner, banner_data  }) => {
+  const onSubmit = ({ name, type_id, meta_title, meta_keyword, meta_description, banner, banner_data  }) => {
     const typeValue = {
       name: name,
-      parent_id: category && category[0].value,
+      type_id: type ? type[0].id : itemData.type_id,
+      parent_id: itemData.parent_id,
       banner_data: banner_data,
       banner: banner,
-      icon: icon[0].value ? icon[0].value : itemData.icon,
+      icon: icon ? icon[0].value : itemData.icon,
       meta_title: meta_title,
       meta_keyword: meta_keyword,
       meta_description: meta_description,
     };
+
+    console.log(typeValue)
 
     updateCategories({
       variables: { id: itemData.id, input: typeValue },
@@ -108,6 +132,12 @@ const UpdateCategory: React.FC<Props> = props => {
     setValue('icon', value);
     setIcon(value);
   };
+
+  const handleTypeChange = ({ value }) => {
+    setValue('type_id', value);
+    setType(value);
+  };
+
   const handleUploader = files => {
     setValue('image_data', {name: files[0].name, size: files[0].size, type: files[0].type});
 
@@ -194,6 +224,66 @@ const UpdateCategory: React.FC<Props> = props => {
                     inputRef={register({ required: true })}
                     name="name"
                     required={true}
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                      options={typeData ? typeData.types.items : [] }
+                      labelKey="name"
+                      valueKey="id"
+                      placeholder="Select Category Type"
+                      value={type}
+                      required={true}
+                      searchable={true}
+                      onChange={handleTypeChange}
+                      overrides={{
+                        Placeholder: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        DropdownListItem: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        OptionContent: {
+                          style: ({ $theme, $selected }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $selected
+                                  ? $theme.colors.textDark
+                                  : $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        SingleValue: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        Popover: {
+                          props: {
+                            overrides: {
+                              Body: {
+                                style: { zIndex: 5 },
+                              },
+                            },
+                          },
+                        },
+                      }}
+                      type={TYPE.search}
                   />
                 </FormFields>
 
