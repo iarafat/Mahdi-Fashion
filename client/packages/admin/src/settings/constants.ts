@@ -3,7 +3,7 @@
 export const DASHBOARD = '/';
 export const TYPES = '/types';
 export const PRODUCTS = '/products';
-export const CATEGORY = '/category';
+export const CATEGORY = '/categories';
 export const LOGIN = '/login';
 export const LOGOUT = '/logout';
 export const ORDERS = '/orders';
