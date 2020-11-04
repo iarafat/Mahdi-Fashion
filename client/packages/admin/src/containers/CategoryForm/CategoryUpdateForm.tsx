@@ -111,7 +111,7 @@ const UpdateCategory: React.FC<Props> = props => {
   const onSubmit = ({ name, type_id, meta_title, meta_keyword, meta_description, banner, banner_data  }) => {
     const typeValue = {
       name: name,
-      type_id: type_id[0].id,
+      type_id: type ? type[0].id : itemData.type_id,
       parent_id: itemData.parent_id,
       banner_data: banner_data,
       banner: banner,
@@ -120,6 +120,8 @@ const UpdateCategory: React.FC<Props> = props => {
       meta_keyword: meta_keyword,
       meta_description: meta_description,
     };
+
+    console.log(typeValue)
 
     updateCategories({
       variables: { id: itemData.id, input: typeValue },
