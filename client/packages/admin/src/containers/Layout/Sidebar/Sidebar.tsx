@@ -55,7 +55,7 @@ const sidebarMenus = [
     exact: false,
     icon: <ProductIcon />,
   },
-  {
+ /* {
     name: 'Orders',
     path: ORDERS,
     exact: false,
@@ -72,7 +72,7 @@ const sidebarMenus = [
     path: COUPONS,
     exact: false,
     icon: <CouponIcon />,
-  },
+  },*/
   {
     name: 'Settings',
     path: SETTINGS,

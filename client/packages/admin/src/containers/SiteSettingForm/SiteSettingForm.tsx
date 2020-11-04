@@ -1,37 +1,145 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { useForm } from 'react-hook-form';
 import Uploader from '../../components/Uploader/Uploader';
 import Input from '../../components/Input/Input';
 import { Textarea } from '../../components/Textarea/Textarea';
-import Select from '../../components/Select/Select';
 import Button from '../../components/Button/Button';
 import DrawerBox from '../../components/DrawerBox/DrawerBox';
 import { Grid, Row, Col } from '../../components/FlexBox/FlexBox';
 import { Form, FieldDetails } from '../DrawerItems/DrawerItems.style';
 import { FormFields, FormLabel } from '../../components/FormFields/FormFields';
+import {gql} from "apollo-boost";
+import {useMutation, useQuery} from "@apollo/react-hooks";
+import {getBase64Value} from "../../helpers/convert-image-base64";
+import {styled} from "baseui";
 
-const options = [
-  { value: 'active', label: 'Active' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'turn-off', label: 'Down' },
-];
+
+const GET_SETTING = gql`
+  query GetSetting {
+    getSiteSetting(key: "site-settings") {
+      id
+      key
+      value
+    }
+  }
+`;
+
+
+const UPDATE_SITE_SETTING = gql`
+  mutation UpdateSiteSetting($key: String!, $value: String!) {
+    updateSiteSetting(key: $key, value: $value) {
+      id
+      key
+      value
+    }
+  }
+`
+const ThumbsContainer = styled('aside', () => ({
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginTop: '16px',
+}));
+
+const Thumbcus = styled('div', ({ $theme }) => ({
+  ...$theme.borders.borderEA,
+  display: 'inline-flex',
+  borderRadius: '2px',
+  marginBottom: '8px',
+  marginRight: '8px',
+  width: '150px',
+  height: '100px',
+  padding: '4px',
+  boxSizing: 'border-box',
+}));
+
+const thumbInner = {
+  display: 'flex',
+  minWidth: 0,
+  overflow: 'hidden',
+};
+
+const img = {
+  display: 'block',
+  width: '140px',
+  height: '100%',
+}
+const cThumb = (url) => {
+  return  <Thumbcus key="site-image">
+    <div style={thumbInner}>
+      <img src={url} style={img} alt="site-image" />
+    </div>
+  </Thumbcus>;
+};
+
 type Props = {};
+type ValueType = {
+  image: string,
+  site_title: string,
+  site_keyword: string,
+  site_description: string,
+};
 const SiteSettingsForm: React.FC<Props> = () => {
+  const { data, error, refetch } = useQuery(GET_SETTING);
+  const [updateSiteSetting] = useMutation(UPDATE_SITE_SETTING);
   const { register, handleSubmit, setValue } = useForm();
-  const onSubmit = (data) => console.log(data);
-  const [category, setCategory] = useState([]);
+  const [image_data, setImageData] = React.useState<any | null>(null);
+  const [image, setImage] = React.useState('');
+  const [title, setTitle] = React.useState('');
+  const [keyword, setKeyword] = React.useState('');
   const [description, setDescription] = React.useState('');
-  const handleMultiChange = ({ value }) => {
-    setValue('reactSelect', value);
-    setCategory(value);
-  };
-  const handleUploader = (files) => {
-    setValue('reactDropzone', files);
-  };
+  const [siteData, setSiteData] = React.useState<ValueType>();
+
+  const settingData = (): ValueType => {
+    const settingData = JSON.parse(data.getSiteSetting.value);
+    setImage(settingData.image);
+    setTitle(settingData.site_title);
+    setKeyword(settingData.site_keyword);
+    setDescription(settingData.site_description);
+    setSiteData(settingData);
+
+    return settingData;
+  }
+
   React.useEffect(() => {
+    if (data) {
+     settingData();
+    }
+  }, [data]);
+
+  const handleUploader = (files) => {
+    setImageData({name: files[0].name, size: files[0].size, type: files[0].type});
+    getBase64Value(files[0], imageBase64Value => {
+      setImage(imageBase64Value)
+    })
+  };
+
+
+  React.useEffect(() => {
+    register({ name: 'site_title' });
+    register({ name: 'site_keyword' });
     register({ name: 'reactSelect' });
     register({ name: 'reactDropzone' });
   }, [register]);
+
+
+  const onSubmit = (data) => {
+
+    const settingsValue = {
+      image: image,
+      image_data: image_data,
+      site_title: title,
+      site_keyword: keyword,
+      site_description: description,
+    };
+
+    updateSiteSetting({
+      variables: { key: 'site-settings', value: JSON.stringify(settingsValue) },
+    });
+  };
+
+
+
   return (
     <Grid fluid={true}>
       <Form onSubmit={handleSubmit(onSubmit)} style={{ paddingBottom: 0 }}>
@@ -42,7 +150,11 @@ const SiteSettingsForm: React.FC<Props> = () => {
 
           <Col md={8}>
             <DrawerBox>
-              <Uploader onChange={handleUploader} />
+              <Uploader onChange={handleUploader} imageURL={siteData ? siteData.image : null} />
+              <div style={{ display: !image_data ? "block" : "none" }}>
+                <p>Site Logo:</p>
+                <ThumbsContainer>{cThumb(siteData ? siteData.image : null)}</ThumbsContainer>
+              </div>
             </DrawerBox>
           </Col>
         </Row>
@@ -57,10 +169,22 @@ const SiteSettingsForm: React.FC<Props> = () => {
           <Col md={8}>
             <DrawerBox>
               <FormFields>
-                <FormLabel>Site Name</FormLabel>
+                <FormLabel>Site Title</FormLabel>
                 <Input
-                  name='site_name'
-                  inputRef={register({ required: true, maxLength: 20 })}
+                  name='site_title'
+                  inputRef={register({ required: true, maxLength: 60 })}
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
+                />
+              </FormFields>
+
+              <FormFields>
+                <FormLabel>Site Keyword</FormLabel>
+                <Input
+                  name='site_keyword'
+                  inputRef={register({ required: true })}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  value={keyword}
                 />
               </FormFields>
 
@@ -69,64 +193,6 @@ const SiteSettingsForm: React.FC<Props> = () => {
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                />
-              </FormFields>
-
-              <FormFields>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  options={options}
-                  labelKey='label'
-                  valueKey='value'
-                  placeholder='Choose current status'
-                  value={category}
-                  searchable={false}
-                  onChange={handleMultiChange}
-                  overrides={{
-                    Placeholder: {
-                      style: ({ $theme }) => {
-                        return {
-                          ...$theme.typography.fontBold14,
-                          color: $theme.colors.textNormal,
-                        };
-                      },
-                    },
-                    DropdownListItem: {
-                      style: ({ $theme }) => {
-                        return {
-                          ...$theme.typography.fontBold14,
-                          color: $theme.colors.textNormal,
-                        };
-                      },
-                    },
-                    OptionContent: {
-                      style: ({ $theme, $selected }) => {
-                        return {
-                          ...$theme.typography.fontBold14,
-                          color: $selected
-                            ? $theme.colors.textDark
-                            : $theme.colors.textNormal,
-                        };
-                      },
-                    },
-                    SingleValue: {
-                      style: ({ $theme }) => {
-                        return {
-                          ...$theme.typography.fontBold14,
-                          color: $theme.colors.textNormal,
-                        };
-                      },
-                    },
-                    Popover: {
-                      props: {
-                        overrides: {
-                          Body: {
-                            style: { zIndex: 5 },
-                          },
-                        },
-                      },
-                    },
-                  }}
                 />
               </FormFields>
 
