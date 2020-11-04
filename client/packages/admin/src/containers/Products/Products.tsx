@@ -276,8 +276,9 @@ export default function Products() {
                         image={item.images[0]}
                         currency={CURRENCY}
                         price={item.price}
-                        salePrice={item.salePrice}
-                        discountInPercent={item.discountInPercent}
+                        salePrice={item.sale_price}
+                        discountInPercent={item.discount_in_percent}
+                        itemsOffset={offset}
                         data={item}
                       />
                     </Fade>

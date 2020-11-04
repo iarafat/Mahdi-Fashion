@@ -7,7 +7,6 @@ export const ProductCardWrapper = styled('div', ({ $theme }) => ({
   backgroundColor: '#ffffff',
   position: 'relative',
   fontFamily: $theme.typography.primaryFontFamily,
-  cursor: 'pointer',
 }));
 
 export const ProductImageWrapper = styled('div', ({ $theme }) => ({
@@ -34,7 +33,7 @@ export const Image = styled(Images, () => ({
 export const SaleTag = styled('span', ({ $theme }) => ({
   ...$theme.typography.fontBold12,
   color: '#ffffff',
-  // backgroundColor: $theme.colors.warning,
+  backgroundColor: $theme.colors.warning,
   padding: '0 10px',
   lineHeight: '2',
   borderRadius: '12px',

@@ -88,8 +88,8 @@ const ActionWrapper: React.FC<Props> =
                         items: types.items.filter((item) => {
                             return item.id !== itemData.id;
                         }),
-                        hasMore: types.items.length + 1 >= 12,
-                        totalCount: types.items.length + 1,
+                        hasMore: types.items.length - 1 >= 12,
+                        totalCount: types.items.length - 1,
                     },
                 },
             });
