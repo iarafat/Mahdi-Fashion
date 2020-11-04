@@ -42,6 +42,8 @@ export const usersResolvers: IResolvers = {
             if (userResult) {
                 throw new Error("User already registered.");
             }
+			
+			
 
             const address = {
                 title: "",
@@ -62,7 +64,6 @@ export const usersResolvers: IResolvers = {
                 created_at: new Date().toString(),
             };
 
-
             const insertResult = await db.users.insertOne(user);
             const insertedUser = insertResult.ops[0];
             return {
@@ -76,7 +77,6 @@ export const usersResolvers: IResolvers = {
             {db}: { db: Database }
         ): Promise<IUserAuth> => {
             const userResult = await db.users.findOne({"phones.number": phone});
-
             if (!userResult) {
                 throw new Error("User dose not exits.");
             }

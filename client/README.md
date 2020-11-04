@@ -1,4 +1,4 @@
-# PickBazar Documentation
+# Mahdi Fashion Documentation
 
 # Introduction
 
@@ -32,10 +32,10 @@ We have used monorepo folder structure with Yarn Workspace. In our template we h
 
 # Getting Started & Installation
 
-For getting started with the template you have to follow the below procedure. First navigate to the `pickbazar` directory. Then run below command for getting started with specific part.
+For getting started with the template you have to follow the below procedure. First navigate to the `Mahdi Fashion` directory. Then run below command for getting started with specific part.
 
 ```bash
-# on pickbazar directory
+# on Mahdi Fashion directory
 yarn
 ```
 

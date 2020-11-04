@@ -31,7 +31,7 @@ const ProfilePage: NextPage<Props> = ({ deviceType }) => {
   alert(12)
   return (
     <>
-      <SEO title="Profile - PickBazar" description="Profile Details" />
+      <SEO title="Profile - Mahdi Fashion" description="Profile Details" />
       <ProfileProvider initData={data.me}>
         <Modal>
           <PageWrapper>

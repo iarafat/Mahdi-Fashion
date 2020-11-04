@@ -231,6 +231,7 @@ export const Products: React.FC<ProductsProps> = ({
         );
     }
   };
+  
   return (
     <>
       <ProductsRow>

@@ -3,7 +3,7 @@
   "version": "3.0.3",
   "private": true,
   "scripts": {
-    "dev": "next -p 9000",
+    "dev": "next -p 9001",
     "build": "next build",
     "start": "next start -p 9000",
     "shop-dev": "next -p 9000"

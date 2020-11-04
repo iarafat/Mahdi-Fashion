@@ -11,9 +11,9 @@ export const vendorSamples = [
     name: 'Bristo-C Chinese Restaurant',
     slug: 'bristo-c-res',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bristo.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bristo.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bristo_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bristo_thumb.jpg',
 
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
@@ -72,9 +72,9 @@ export const vendorSamples = [
     id: '1002',
     name: 'Red Dragon',
     slug: 'red-dragon',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/red.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/red.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/red_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/red_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['chinese', 'sea-food', 'thai', 'lebanese', 'caribbean'],
@@ -143,9 +143,9 @@ export const vendorSamples = [
     name: 'Namaste India Restaurant',
     slug: 'Namaste-india',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/Namaste.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/Namaste.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/Namaste_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/Namaste_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['chinese', 'indian', 'kebab', 'caribbean'],
@@ -224,9 +224,9 @@ export const vendorSamples = [
     name: 'Riccardo Enoteca',
     slug: 'riccardo-enoteca',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/riccardo.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/riccardo.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/riccardo_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/riccardo_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -280,9 +280,9 @@ export const vendorSamples = [
     id: '1005',
     name: 'Mamas Fish House',
     slug: 'mama-fish-house',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/mama.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/mama.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/mama_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/mama_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['lebanese', 'sea-food', 'fast-food', 'thai', 'barista'],
@@ -347,9 +347,9 @@ export const vendorSamples = [
     id: '1006',
     name: 'La Diplomate',
     slug: 'la-diplomate',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/la.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/la.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/la_Thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/la_Thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -420,9 +420,9 @@ export const vendorSamples = [
     id: '1007',
     name: 'Joes Restaurant ',
     slug: 'joes-seafood',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/joes.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/joes.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/joes_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/joes_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['fast-food', 'pizza', 'indian', 'kebab', 'thai', 'barista'],
@@ -490,9 +490,9 @@ export const vendorSamples = [
     name: 'White Castle',
     slug: 'white-castle',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/white.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/white.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/white_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/white_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -555,9 +555,9 @@ export const vendorSamples = [
     name: 'The Grill -Steak House',
     slug: 'the-grill',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/the-grill.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/the-grill.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/the-grill_Thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/the-grill_Thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -611,9 +611,9 @@ export const vendorSamples = [
     id: '1010',
     name: 'Cafe Chinese',
     slug: 'cafe-chinese',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/cafe.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/cafe.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/cafe_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/cafe_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -684,9 +684,9 @@ export const vendorSamples = [
     id: '1011',
     name: 'Bida Manda Restaurant',
     slug: 'bida manda',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bida.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bida.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bida_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bida_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['caribbean', 'lebanese', 'vegetarian', 'vegan', 'barista'],
@@ -740,9 +740,9 @@ export const vendorSamples = [
     name: 'Ateras',
     slug: 'atera',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/atera.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/atera.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/atera_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/atera_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -811,9 +811,9 @@ export const vendorSamples = [
     id: '1013',
     name: 'Fish & Co',
     slug: 'fish-co',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/fish.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/fish.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/fish_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/fish_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['chinese', 'sea-food', 'vegetarian', 'vegan', 'barista'],
@@ -874,9 +874,9 @@ export const vendorSamples = [
     id: '1014',
     name: 'Bella Italia',
     slug: 'bela-italia',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bela.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bela.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/bela_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/bela_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['indian', 'kebab', 'thai', 'italian'],
@@ -940,9 +940,9 @@ export const vendorSamples = [
     name: 'Village Square Restaurant',
     slug: 'village-square',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/village.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/village.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/village_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/village_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -1006,9 +1006,9 @@ export const vendorSamples = [
     name: 'Little India NY',
     slug: 'little-india',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/little.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/little.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/little_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/little_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -1088,9 +1088,9 @@ export const vendorSamples = [
     name: 'Pizza Inn',
     slug: 'pizza-inn',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/pizza.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/pizza.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/pizza_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/pizza_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: [
@@ -1168,9 +1168,9 @@ export const vendorSamples = [
     name: 'Pizza Hut',
     slug: 'pizza-hut',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/pizza-hut.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/pizza-hut.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/pizza-hut_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/pizza-hut_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['fast-food', 'pizza', 'thai', 'lebanese'],
@@ -1226,9 +1226,9 @@ export const vendorSamples = [
     name: 'Glazed NY',
     slug: 'glazed-ny',
     previewUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/glazed.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/glazed.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/glazed_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/glazed_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['chinese', 'indian', 'kebab', 'arabic', 'thai'],
@@ -1281,9 +1281,9 @@ export const vendorSamples = [
     id: '1020',
     name: 'Thai Signature',
     slug: 'thai-signature',
-    previewUrl: 'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/thai.jpg',
+    previewUrl: 'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/thai.jpg',
     thumbnailUrl:
-      'https://s3.amazonaws.com/redqteam.com/pickbazar/Food/thai_thumb.jpg',
+      'https://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Food/thai_thumb.jpg',
     type: 'restaurant', // fixed don't change
     //must be lowercase and - separated
     categories: ['chinese', 'kebab', 'arabic', 'thai', 'italian', 'barista'],

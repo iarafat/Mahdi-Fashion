@@ -123,7 +123,7 @@ const loadOrders = (): Order[] => {
           id: 226,
           title: "Ozmo Air & Fabric Freshner",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/air_freshner_acana_ozmo.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/air_freshner_acana_ozmo.jpg",
           weight: "2lb",
           price: 5,
           quantity: 30
@@ -132,7 +132,7 @@ const loadOrders = (): Order[] => {
           id: 274,
           title: "Professional Moth Killer",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/pest_control_kritterkill.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/pest_control_kritterkill.jpg",
           weight: "2lb",
           price: 50,
           quantity: 3
@@ -160,7 +160,7 @@ const loadOrders = (): Order[] => {
           id: 322,
           title: "Clover Valley Vegetable Oil",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/oil_clover_valley.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/oil_clover_valley.jpg",
           weight: "2lb",
           price: 5,
           quantity: 30
@@ -168,7 +168,7 @@ const loadOrders = (): Order[] => {
         {
           id: 323,
           title: "Daisy Corn Oil",
-          image: "http://s3.amazonaws.com/redqteam.com/pickbazar/oil_daisy.jpg",
+          image: "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/oil_daisy.jpg",
           weight: "2lb",
           price: 50,
           quantity: 1
@@ -195,7 +195,7 @@ const loadOrders = (): Order[] => {
           id: 376,
           title: "Ballymaloe Mayonnaise",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/Ballymaloe_Mayonnaise_240g.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Ballymaloe_Mayonnaise_240g.jpg",
           weight: "2lb",
           price: 5,
           quantity: 30
@@ -203,7 +203,7 @@ const loadOrders = (): Order[] => {
         {
           id: 398,
           title: "Diet Coke",
-          image: "http://s3.amazonaws.com/redqteam.com/pickbazar/oil_daisy.jpg",
+          image: "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/oil_daisy.jpg",
           weight: "2lb",
           price: 5,
           quantity: 10
@@ -230,7 +230,7 @@ const loadOrders = (): Order[] => {
           id: 463,
           title: "Spadet Deodorant",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/spadet_Deodorant.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/spadet_Deodorant.jpg",
           weight: "2lb",
           price: 50,
           quantity: 4
@@ -239,7 +239,7 @@ const loadOrders = (): Order[] => {
           id: 464,
           title: "Attitude Bubble Bath",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/attitude_night_bubble_bath.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/attitude_night_bubble_bath.jpg",
           weight: "2lb",
           price: 50,
           quantity: 6
@@ -266,7 +266,7 @@ const loadOrders = (): Order[] => {
           id: 334,
           title: "Natures Gift Basmati Rice",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/nature's_gift_basmati_rice.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/nature's_gift_basmati_rice.jpg",
           weight: "2lb",
           price: 50,
           quantity: 4
@@ -275,7 +275,7 @@ const loadOrders = (): Order[] => {
           id: 266,
           title: "Ecos",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/laundry_products_ecos.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/laundry_products_ecos.jpg",
           weight: "2lb",
           price: 50,
           quantity: 6
@@ -302,7 +302,7 @@ const loadOrders = (): Order[] => {
           id: 250,
           title: "Winni's Natural",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/dishwasher_winni's_bango_schiuma.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/dishwasher_winni's_bango_schiuma.jpg",
           weight: "2lb",
           price: 50,
           quantity: 1
@@ -311,7 +311,7 @@ const loadOrders = (): Order[] => {
           id: 252,
           title: "Camp Cuthlery",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/kitchen_accessories_camp_cutlery.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/kitchen_accessories_camp_cutlery.jpg",
           weight: "2lb",
           price: 150,
           quantity: 1
@@ -338,7 +338,7 @@ const loadOrders = (): Order[] => {
           id: 394,
           title: "Tropicana Orange",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/tropicana_orange_no_pulp.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/tropicana_orange_no_pulp.jpg",
           weight: "2lb",
           price: 50,
           quantity: 5
@@ -347,7 +347,7 @@ const loadOrders = (): Order[] => {
           id: 449,
           title: "Human Nature Shaving Cream",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/kitchen_accessories_camp_cutlery.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/kitchen_accessories_camp_cutlery.jpg",
           weight: "2lb",
           price: 50,
           quantity: 1
@@ -375,7 +375,7 @@ const loadOrders = (): Order[] => {
           id: 451,
           title: "Absolute Plus Meat Dental Set",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/absolute_plus_Meat_Dental_Set_.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/absolute_plus_Meat_Dental_Set_.jpg",
           weight: "2lb",
           price: 50,
           quantity: 5
@@ -384,7 +384,7 @@ const loadOrders = (): Order[] => {
           id: 449,
           title: "Human Nature Shaving Cream",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/kitchen_accessories_camp_cutlery.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/kitchen_accessories_camp_cutlery.jpg",
           weight: "2lb",
           price: 50,
           quantity: 1
@@ -411,7 +411,7 @@ const loadOrders = (): Order[] => {
           id: 396,
           title: "Coca Cola Botle",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/Coca_Cola_200ml_Bottle.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/Coca_Cola_200ml_Bottle.jpg",
           weight: "2lb",
           price: 10,
           quantity: 50
@@ -420,7 +420,7 @@ const loadOrders = (): Order[] => {
           id: 253,
           title: "Dinner Spoon ",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/kitchen_accessories_dinner_spoons.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/kitchen_accessories_dinner_spoons.jpg",
           weight: "2lb",
           price: 300,
           quantity: 1
@@ -447,7 +447,7 @@ const loadOrders = (): Order[] => {
           id: 265,
           title: "Home Made Simple",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/laundry_products_home_made_simple.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/laundry_products_home_made_simple.jpg",
           weight: "2lb",
           price: 50,
           quantity: 5
@@ -456,7 +456,7 @@ const loadOrders = (): Order[] => {
           id: 402,
           title: "Canadian Maple Syrup",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/canadian_maple_syrup.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/canadian_maple_syrup.jpg",
           weight: "2lb",
           price: 50,
           quantity: 2
@@ -483,7 +483,7 @@ const loadOrders = (): Order[] => {
           id: 394,
           title: "Tropicana Orange",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/tropicana_orange_no_pulp.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/tropicana_orange_no_pulp.jpg",
           weight: "2lb",
           price: 50,
           quantity: 5
@@ -492,7 +492,7 @@ const loadOrders = (): Order[] => {
           id: 449,
           title: "Human Nature Shaving Cream",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/kitchen_accessories_camp_cutlery.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/kitchen_accessories_camp_cutlery.jpg",
           weight: "2lb",
           price: 50,
           quantity: 1
@@ -519,7 +519,7 @@ const loadOrders = (): Order[] => {
           id: 406,
           title: "Servivita Chocolate Syrup",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/servivita_chocolate_syrup.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/servivita_chocolate_syrup.jpg",
           weight: "2lb",
           price: 50,
           quantity: 5
@@ -528,7 +528,7 @@ const loadOrders = (): Order[] => {
           id: 453,
           title: "Gum Oral Care Cleaning Kit",
           image:
-            "http://s3.amazonaws.com/redqteam.com/pickbazar/gum_Oral_care_cleaning_kit.jpg",
+            "http://s3.amazonaws.com/redqteam.com/Mahdi Fashion/gum_Oral_care_cleaning_kit.jpg",
           weight: "2lb",
           price: 430,
           quantity: 1
