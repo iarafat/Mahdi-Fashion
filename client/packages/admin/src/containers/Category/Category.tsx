@@ -94,6 +94,7 @@ const GET_CATEGORIES = gql`
     categories(searchText: $searchText, offset: $offset) {
       items{
         id
+        type_id
         name
         slug
         banner

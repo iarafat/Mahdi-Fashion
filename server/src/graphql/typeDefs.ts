@@ -62,10 +62,11 @@ export const typeDefs = gql`
     }
     
     input CategoryInput {
+        type_id: String!
         parent_id: String
         name: String!
         banner_data: File
-        banner: String!
+        banner: String
         icon: String!
         meta_title: String
         meta_keyword: String
@@ -73,6 +74,7 @@ export const typeDefs = gql`
     }
     type CategoryChildren {
         id: ID
+        type_id: String
         name: String
         slug: String
         banner: String
@@ -80,10 +82,11 @@ export const typeDefs = gql`
     }
     type Category {
         id: ID!
+        type_id: String
         parent_id: String
         name: String!
         slug: String!
-        banner: String!
+        banner: String
         icon: String!
         children: [CategoryChildren]
         meta_title: String
@@ -116,7 +119,7 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
-        is_featured: Boolean!
+        is_featured: Boolean
     }
     input ProductUpdateInput {
         type: ProductTypeInput!
@@ -249,7 +252,7 @@ export const typeDefs = gql`
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
         categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
-        shopCategories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
+        shopCategories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!

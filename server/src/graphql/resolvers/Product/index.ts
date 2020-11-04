@@ -79,7 +79,7 @@ export const productsResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
-                is_featured: input.is_featured,
+                is_featured: input.is_featured ? input.is_featured : false,
                 created_at: new Date().toUTCString(),
             };
 
@@ -114,7 +114,7 @@ export const productsResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
-                is_featured: input.is_featured,
+                is_featured: input.is_featured ? input.is_featured : false,
                 updated_at: new Date().toUTCString(),
             };
 
