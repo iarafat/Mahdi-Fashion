@@ -94,11 +94,6 @@ export const typeDefs = gql`
         meta_description: String
     }
     
-    input ProductCategoryInput {
-        id: String
-        name: String
-        slug: String
-    }
     input ProductTypeInput {
         id: String
         name: String
@@ -126,7 +121,7 @@ export const typeDefs = gql`
         categories: String!
         name: String
         description: String
-        images_data: String!
+        images_data: String
         images: [String]
         unit: String
         price: Float
@@ -136,7 +131,7 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
-        is_featured: Boolean!
+        is_featured: Boolean
     }
     
     type ProductCategory {

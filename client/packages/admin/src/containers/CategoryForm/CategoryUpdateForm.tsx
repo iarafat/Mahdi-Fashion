@@ -121,7 +121,6 @@ const UpdateCategory: React.FC<Props> = props => {
       meta_description: meta_description,
     };
 
-    console.log(typeValue)
 
     updateCategories({
       variables: { id: itemData.id, input: typeValue },

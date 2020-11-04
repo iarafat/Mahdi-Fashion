@@ -64,10 +64,23 @@ const img = {
   height: '100%',
 };
 
-function MultiUploader({ onChange, imageURL }: any) {
-  const [files, setFiles] = useState(
-    imageURL ? [{ name: 'demo', preview: imageURL }] : []
-  );
+function MultiUploader({ onChange, imagesURL }: any) {
+  const [files, setFiles] = useState([]);
+
+  React.useEffect(() => {
+    let urls = [];
+    if (imagesURL) {
+      for (let i = 0; i < imagesURL.length; i++) {
+        urls.push({
+          name: 'demo' + i,
+          preview: imagesURL[i]
+        })
+      }
+    }
+
+    setFiles(urls)
+  }, [imagesURL]);
+
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     multiple: true,
