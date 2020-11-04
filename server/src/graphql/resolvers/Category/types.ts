@@ -1,4 +1,5 @@
 export interface ICategoryInput {
+    type_id: string;
     parent_id?: string;
     name: string;
     banner?: any;

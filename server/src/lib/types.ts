@@ -44,6 +44,7 @@ export interface IType {
 
 export interface ICategoryChildren {
     id: string;
+    type_id: string;
     name: string;
     slug: string;
     banner: string;
@@ -51,10 +52,11 @@ export interface ICategoryChildren {
 }
 export interface ICategory {
     _id?: ObjectId;
+    type_id: string;
     parent_id?: string | null;
     name: string;
     slug?: string;
-    banner: string;
+    banner?: string;
     icon: string;
     children?: Array<ICategoryChildren>
     meta_title?: string;
@@ -89,7 +91,7 @@ export interface IProduct {
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;
-    is_featured: boolean;
+    is_featured?: boolean;
     created_at?: string;
     updated_at?: string;
 }

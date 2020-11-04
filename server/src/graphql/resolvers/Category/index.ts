@@ -26,10 +26,25 @@ export const categoriesResolvers: IResolvers = {
         },
         shopCategories: async (
             _root: undefined,
-            { limit, offset, searchText }: ICommonPaginationArgs,
+            {type, limit, offset, searchText }: {
+                type: string,
+                limit: ICommonPaginationArgs["limit"],
+                offset: ICommonPaginationArgs["offset"],
+                searchText: ICommonPaginationArgs["searchText"]
+            },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
             let categories =  await db.categories.find({parent_id: null}).sort({_id: -1}).toArray();
+
+            if (type) {
+                const typeResult = await db.types.findOne({slug: type});
+                categories = categories.filter((category) => {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    return category.type_id === typeResult._id.toString();
+                });
+            }
+
             categories = search(categories, ['name', 'slug'], searchText);
             const hasMore = categories.length > offset + limit;
             return {
@@ -62,6 +77,7 @@ export const categoriesResolvers: IResolvers = {
 
             const insertData: ICategory = {
                 _id: new ObjectId(),
+                type_id: input.type_id,
                 parent_id: input.parent_id ? input.parent_id : null,
                 name: input.name,
                 slug: slugify(input.name),
@@ -95,6 +111,7 @@ export const categoriesResolvers: IResolvers = {
             }
 
             const updateData: ICategory = {
+                type_id: input.type_id,
                 parent_id: input.parent_id ? input.parent_id : null,
                 name: input.name,
                 slug: slugify(input.name),
@@ -150,6 +167,7 @@ export const categoriesResolvers: IResolvers = {
                 const categoryItem = categories[i];
                 convertedCategories.push({
                     id: categoryItem._id ? categoryItem._id.toString() : null,
+                    type_id: categoryItem.type_id,
                     name: categoryItem.name,
                     slug: categoryItem.slug,
                     banner: categoryItem.banner,

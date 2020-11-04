@@ -20,7 +20,7 @@ export interface IProductInput {
     sale_price?: number;
     discount_in_percent?: number;
     product_quantity: number;
-    is_featured: boolean;
+    is_featured?: boolean;
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;
@@ -37,7 +37,7 @@ export interface IUpdateProductInput {
     sale_price?: number;
     discount_in_percent?: number;
     product_quantity: number;
-    is_featured: boolean;
+    is_featured?: boolean;
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;

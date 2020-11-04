@@ -30,6 +30,25 @@ const GET_CATEGORIES = gql`
     categories(searchText: $searchText, offset: $offset) {
       items{
         id
+        type_id
+        name
+        slug
+        banner
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+      }
+    }   
+  }
+`;
+
+const GET_CATEGORIES_FOR_LIST = gql`
+  query ShopCategories {
+    shopCategories(limit: 0) {
+      items{
+        id
+        type_id
         name
         slug
         banner
@@ -46,6 +65,7 @@ const CREATE_CATEGORY = gql`
   mutation createCategory($category: CategoryInput!) {
     createCategory(input: $category) {
       id
+      type_id
       name
       slug
       banner
@@ -53,6 +73,26 @@ const CREATE_CATEGORY = gql`
       meta_title
       meta_keyword
       meta_description
+    }
+  }
+`;
+
+const GET_TYPES = gql`
+  query GetTypes {
+    types(limit: 0) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
+      }
+      totalCount
+      hasMore
     }
   }
 `;
@@ -66,6 +106,7 @@ const AddCategory: React.FC<Props> = props => {
   ]);
   const { register, handleSubmit, setValue } = useForm();
   const [category, setCategory] = useState({});
+  const [type, setType] = useState([]);
   const [parentCategoryOptions, setParentCategoryOptions] = useState([]);
   const [meta_title, setMetaTitle] = useState('');
   const [meta_keyword, setMetaKeyword] = useState('');
@@ -73,6 +114,7 @@ const AddCategory: React.FC<Props> = props => {
   const [icon, setIcon] = useState([]);
 
   React.useEffect(() => {
+    register({ name: 'type_id' });
     register({ name: 'parent' });
     register({ name: 'banner_data' });
     register({ name: 'banner', required: true});
@@ -82,11 +124,13 @@ const AddCategory: React.FC<Props> = props => {
     register({ name: 'meta_description' });
   }, [register]);
 
-  const { data, error, refetch } = useQuery(GET_CATEGORIES);
+  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
+  const { data, error, refetch } = useQuery(GET_CATEGORIES_FOR_LIST);
+
 
   React.useEffect(() => {
-    data && data.categories && data.categories.items
-      && setParentCategoryOptions(data.categories.items.map(category => ({
+    data && data.shopCategories && data.shopCategories.items
+      && setParentCategoryOptions(data.shopCategories.items.map(category => ({
         value: category.id,
         name: category.name,
       })))
@@ -125,10 +169,11 @@ const AddCategory: React.FC<Props> = props => {
 
   const onSubmit = (data) => {
 
-    const { name, meta_title, meta_keyword, meta_description, banner, banner_data }  = data ;
+    const { name, type_id, parent, meta_title, meta_keyword, meta_description, banner, banner_data }  = data ;
     const newCategory = {
       name: name,
-      parent_id: category && category[0].value,
+      type_id: type_id[0].id,
+      parent_id: parent ? parent[0].value : null,
       banner_data: banner_data,
       banner: banner,
       icon: icon[0].value,
@@ -160,6 +205,12 @@ const AddCategory: React.FC<Props> = props => {
     setValue('icon', value);
     setIcon(value);
   };
+
+  const handleTypeChange = ({ value }) => {
+    setValue('type_id', value);
+    setType(value);
+  };
+
   const handleMetaTitleChange = e => {
     const value = e.target.value;
     setValue('meta_title', value);
@@ -238,6 +289,66 @@ const AddCategory: React.FC<Props> = props => {
                   <Input
                     inputRef={register({ required: true, maxLength: 20 })}
                     name="name"
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                      options={typeData ? typeData.types.items : [] }
+                      labelKey="name"
+                      valueKey="id"
+                      placeholder="Select Category Type"
+                      value={type}
+                      required={true}
+                      searchable={true}
+                      onChange={handleTypeChange}
+                      overrides={{
+                        Placeholder: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        DropdownListItem: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        OptionContent: {
+                          style: ({ $theme, $selected }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $selected
+                                  ? $theme.colors.textDark
+                                  : $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        SingleValue: {
+                          style: ({ $theme }) => {
+                            return {
+                              ...$theme.typography.fontBold14,
+                              color: $theme.colors.textNormal,
+                            };
+                          },
+                        },
+                        Popover: {
+                          props: {
+                            overrides: {
+                              Body: {
+                                style: { zIndex: 5 },
+                              },
+                            },
+                          },
+                        },
+                      }}
+                      type={TYPE.search}
                   />
                 </FormFields>
 
