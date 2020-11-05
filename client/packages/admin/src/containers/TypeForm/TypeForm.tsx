@@ -38,6 +38,8 @@ const GET_TYPES = gql`
                 slug
                 image
                 icon
+                home_title
+                home_subtitle
                 meta_title
                 meta_keyword
                 meta_description
@@ -58,6 +60,8 @@ const CREATE_TYPE = gql`
             slug
             image
             icon
+            home_title
+            home_subtitle
             meta_title
             meta_keyword
             meta_description
@@ -74,6 +78,8 @@ const AddType: React.FC<Props> = props => {
         dispatch,
     ]);
     const {register, handleSubmit, setValue} = useForm();
+    const [home_title, setHomeTitle] = useState('');
+    const [home_subtitle, setHomeSubtitle] = useState('');
     const [meta_title, setMetaTitle] = useState('');
     const [meta_keyword, setMetaKeyword] = useState('');
     const [meta_description, setMetaDescription] = useState('');
@@ -82,6 +88,8 @@ const AddType: React.FC<Props> = props => {
         register({name: 'icon', required: true});
         register({name: 'image_data'});
         register({name: 'image', required: true});
+        register({name: 'home_title'});
+        register({name: 'home_subtitle'});
         register({name: 'meta_title'});
         register({name: 'meta_keyword'});
         register({name: 'meta_description'});
@@ -114,12 +122,14 @@ const AddType: React.FC<Props> = props => {
         }
     });
 
-    const onSubmit = ({name, icon, meta_title, meta_keyword, meta_description, image, image_data}) => {
+    const onSubmit = ({name, icon, home_title, home_subtitle, meta_title, meta_keyword, meta_description, image, image_data}) => {
         const newType = {
             name: name,
             image_data: image_data,
             image: image,
             icon: icon[0].value,
+            home_title: home_title,
+            home_subtitle: home_subtitle,
             meta_title: meta_title,
             meta_keyword: meta_keyword,
             meta_description: meta_description,
@@ -141,6 +151,16 @@ const AddType: React.FC<Props> = props => {
         })
     };
 
+    const handleHomeTitleChange = e => {
+        const value = e.target.value;
+        setValue('home_title', value);
+        setHomeTitle(value);
+    };
+    const handleHomeSubtitleChange = e => {
+        const value = e.target.value;
+        setValue('home_subtitle', value);
+        setHomeSubtitle(value);
+    };
     const handleMetaTitleChange = e => {
         const value = e.target.value;
         setValue('meta_title', value);
@@ -280,6 +300,28 @@ const AddType: React.FC<Props> = props => {
                                         }}
                                         maxDropdownHeight="300px"
                                         type={TYPE.search}
+                                    />
+                                </FormFields>
+
+                                <FormFields>
+                                    <FormLabel>Type Home Title</FormLabel>
+                                    <Input
+                                        inputRef={register({required: true})}
+                                        name="home_title"
+                                        required={true}
+                                        value={home_title}
+                                        onChange={handleHomeTitleChange}
+                                    />
+                                </FormFields>
+
+                                <FormFields>
+                                    <FormLabel>Type Home Sub Title</FormLabel>
+                                    <Input
+                                        inputRef={register({required: true})}
+                                        name="home_subtitle"
+                                        required={true}
+                                        value={home_subtitle}
+                                        onChange={handleHomeSubtitleChange}
                                     />
                                 </FormFields>
 
