@@ -118,15 +118,16 @@ export const categoriesResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICategory> => {
             await authorize(req, db);
-
+            let bannerImagePath = '';
             const existsData = await db.categories.findOne({_id: new ObjectId(id)});
             if (!existsData) {
                 throw new Error("Resource not found.");
             }
 
-            const sameData = await db.categories.findOne({name: input.name, slug: slugify(input.name)});
-            if (sameData) {
-                throw new Error("Try with new value...");
+            if (input.banner_data) {
+                bannerImagePath = storeImage(input.banner, input.banner_data.name);
+            } else {
+                bannerImagePath = input.banner;
             }
 
             const updateData: ICategory = {
@@ -134,7 +135,7 @@ export const categoriesResolvers: IResolvers = {
                 parent_id: input.parent_id ? input.parent_id : null,
                 name: input.name,
                 slug: slugify(input.name),
-                banner: input.banner,
+                banner: bannerImagePath,
                 icon: input.icon,
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,

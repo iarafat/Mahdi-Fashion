@@ -138,10 +138,10 @@ const UpdateCategory: React.FC<Props> = props => {
   };
 
   const handleUploader = files => {
-    setValue('image_data', {name: files[0].name, size: files[0].size, type: files[0].type});
+    setValue('banner_data', {name: files[0].name, size: files[0].size, type: files[0].type});
 
     getBase64Value(files[0], imageBase64Value => {
-      setValue('image', imageBase64Value);
+      setValue('banner', imageBase64Value);
     })
   };
 
