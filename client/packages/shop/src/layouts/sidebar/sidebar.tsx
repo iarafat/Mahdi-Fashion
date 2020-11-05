@@ -46,6 +46,7 @@ const SidebarCategory: React.FC<SidebarCategoryProps> = ({
   const { data, loading } = useQuery(GET_CATEGORIES, {
     variables: { type },
   });
+  console.log(data);
   const { pathname, query } = router;
   const selectedQueries = query.category;
 
@@ -107,11 +108,11 @@ const SidebarCategory: React.FC<SidebarCategoryProps> = ({
                   </RequestMedicine>
                 </Link>
               )}
-              <TreeMenu
+              {/*<TreeMenu
                 data={data.categories}
                 onClick={onCategoryClick}
                 active={selectedQueries}
-              />
+              />*/}
             </>
           }
         />

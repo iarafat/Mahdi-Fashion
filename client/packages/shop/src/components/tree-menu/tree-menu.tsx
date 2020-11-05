@@ -61,8 +61,7 @@ export const TreeMenu: React.FC<Props> = ({
   active,
 }) => {
   const handler = (children) => {
-    if(children){
-      return children.map((subOption) => {
+      /*return children.map((subOption) => {
         if (!subOption.children) {
           return (
             <Tree
@@ -90,11 +89,7 @@ export const TreeMenu: React.FC<Props> = ({
             {handler(subOption.children)}
           </Tree>
         );
-      })
-    }
-    return null;
-    ;
-   // return <h3>Will Children</h3>
+      });*/
   };
   return <>{handler(data)}</>;
 };
