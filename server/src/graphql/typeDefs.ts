@@ -39,6 +39,8 @@ export const typeDefs = gql`
         image_data: File
         image: String
         icon: String!
+        home_title: String!
+        home_subtitle: String!
         meta_title: String
         meta_keyword: String
         meta_description: String
@@ -49,6 +51,8 @@ export const typeDefs = gql`
         slug: String!
         image: String!
         icon: String!
+        home_title: String
+        home_subtitle: String
         meta_title: String
         meta_keyword: String
         meta_description: String
@@ -94,6 +98,12 @@ export const typeDefs = gql`
         meta_description: String
         created_at: String
         updated_at: String
+    }
+    
+    type CatetgoryPaginationType {
+        items: [Category]
+        totalCount: Int
+        hasMore: Boolean
     }
     
     input ProductTypeInput {
@@ -184,12 +194,6 @@ export const typeDefs = gql`
         type: String!
         image: String!
         details: String
-    }
-    
-    type CatetgoryPaginationType {
-        items: [Category]
-        totalCount: Int
-        hasMore: Boolean
     }
 
     # Orders

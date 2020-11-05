@@ -35,6 +35,8 @@ export interface IType {
     slug?: string;
     image: string;
     icon: string;
+    home_title: string;
+    home_subtitle: string;
     meta_title?: string;
     meta_keyword?: string;
     meta_description?: string;

@@ -37,6 +37,8 @@ const GET_TYPES = gql`
         slug
         image
         icon
+        home_title
+        home_subtitle
         meta_title
         meta_keyword
         meta_description
@@ -56,6 +58,8 @@ const UPDATE_TYPE = gql`
       slug
       image
       icon
+      home_title
+      home_subtitle
       meta_title
       meta_keyword
       meta_description
@@ -75,16 +79,21 @@ const UpdateType: React.FC<Props> = props => {
   ]);
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: itemData,
-  });
-  const [meta_title, setMetaTitle] = useState(itemData.meta_title);
-  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword);
-  const [meta_description, setMetaDescription] = useState(itemData.meta_description);
+  })
+
+  const [home_title, setHomeTitle] = useState(itemData.home_title ? itemData.home_title : '');
+  const [home_subtitle, setHomeSubtitle] = useState(itemData.home_subtitle ? itemData.home_subtitle : '');
+  const [meta_title, setMetaTitle] = useState(itemData.meta_title ? itemData.meta_title : '');
+  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword ? itemData.meta_keyword : '');
+  const [meta_description, setMetaDescription] = useState(itemData.meta_description ? itemData.meta_description : '');
   const [icon, setIcon] = useState([{ value: itemData.icon }]);
 
   React.useEffect(() => {
     register({ name: 'icon' });
     register({ name: 'image_data' });
     register({ name: 'image', required: true });
+    register({name: 'home_title'});
+    register({name: 'home_subtitle'})
     register({ name: 'meta_title' });
     register({ name: 'meta_keyword' });
     register({ name: 'meta_description' });
@@ -94,12 +103,14 @@ const UpdateType: React.FC<Props> = props => {
 
   const [updateType] = useMutation(UPDATE_TYPE);
 
-  const onSubmit = ({ name, icon, meta_title, meta_keyword, meta_description, image, image_data }) => {
+  const onSubmit = ({ name, icon, home_title, home_subtitle, meta_title, meta_keyword, meta_description, image, image_data }) => {
     const typeValue = {
       name: name,
       image_data: image_data,
       image: image,
       icon: icon[0].value ? icon[0].value : itemData.icon,
+      home_title: home_title,
+      home_subtitle: home_subtitle,
       meta_title: meta_title,
       meta_keyword: meta_keyword,
       meta_description: meta_description,
@@ -120,6 +131,16 @@ const UpdateType: React.FC<Props> = props => {
     getBase64Value(files[0], imageBase64Value => {
       setValue('image', imageBase64Value);
     })
+  };
+  const handleHomeTitleChange = e => {
+    const value = e.target.value;
+    setValue('home_title', value);
+    setHomeTitle(value);
+  };
+  const handleHomeSubtitleChange = e => {
+    const value = e.target.value;
+    setValue('home_subtitle', value);
+    setHomeSubtitle(value);
   };
 
   const handleMetaTitleChange = e => {
@@ -261,6 +282,28 @@ const UpdateType: React.FC<Props> = props => {
                     }}
                     maxDropdownHeight="300px"
                     type={TYPE.search}
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Type Home Title</FormLabel>
+                  <Input
+                      inputRef={register({required: true})}
+                      name="home_title"
+                      required={true}
+                      value={home_title}
+                      onChange={handleHomeTitleChange}
+                  />
+                </FormFields>
+
+                <FormFields>
+                  <FormLabel>Type Home Sub Title</FormLabel>
+                  <Input
+                      inputRef={register({required: true})}
+                      name="home_subtitle"
+                      required={true}
+                      value={home_subtitle}
+                      onChange={handleHomeSubtitleChange}
                   />
                 </FormFields>
 
