@@ -257,6 +257,7 @@ export const typeDefs = gql`
         categories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         shopCategories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
+        getProduct(slug: String!): Product!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
         orders: [Order!]

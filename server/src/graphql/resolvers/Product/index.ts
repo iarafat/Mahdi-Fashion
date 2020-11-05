@@ -36,6 +36,19 @@ export const productsResolvers: IResolvers = {
                 totalCount: products.length,
                 hasMore,
             }
+        },
+        getProduct: async (
+            _root: undefined,
+            {slug}: { slug: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<IProduct> => {
+            const product = await db.products.findOne({slug: slug});
+
+            if (!product) {
+                throw new Error("Resource not found.");
+            }
+
+            return product;
         }
     },
 
