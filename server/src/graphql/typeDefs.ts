@@ -92,13 +92,10 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
+        created_at: String
+        updated_at: String
     }
     
-    input ProductCategoryInput {
-        id: String
-        name: String
-        slug: String
-    }
     input ProductTypeInput {
         id: String
         name: String
@@ -126,7 +123,7 @@ export const typeDefs = gql`
         categories: String!
         name: String
         description: String
-        images_data: String!
+        images_data: String
         images: [String]
         unit: String
         price: Float
@@ -136,7 +133,7 @@ export const typeDefs = gql`
         meta_title: String
         meta_keyword: String
         meta_description: String
-        is_featured: Boolean!
+        is_featured: Boolean
     }
     
     type ProductCategory {
@@ -247,16 +244,24 @@ export const typeDefs = gql`
         message: String!
         status: Boolean!
     }
+    
+    type Setting {
+        id: ID
+        key: String
+        value: String
+    }
 
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
-        categories(limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
+        categories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         shopCategories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         deliveryMethods: [DeliveryMethod!]!
         paymentOptions: [PaymentOption!]!
-        orders: [Order!]!
+        orders: [Order!]
+        getSetting(key: String!): Setting!
+        getSiteSetting(key: String!): Setting!
     }
     
     type Mutation {
@@ -267,7 +272,7 @@ export const typeDefs = gql`
         deleteType(id: ID!): DefaultDeleteType!
         createCategory(input: CategoryInput): Category!
         updateCategory(id: ID!, input: CategoryInput): Category!
-        deleteCategory(id: ID!): Category!
+        deleteCategory(id: ID!): DefaultDeleteType!
         createProduct(input: ProductInput): Product!
         updateProduct(id: ID!, input: ProductUpdateInput): Product!
         deleteProduct(id: ID!): DefaultDeleteType!
@@ -278,5 +283,6 @@ export const typeDefs = gql`
         updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, details: String): PaymentOption!
         deletePaymentOption(id: ID!): PaymentOption!
         createOrder(input: OrderInput): Order!
+        updateSiteSetting(key: String!, value: String!): Setting!
     }
 `;

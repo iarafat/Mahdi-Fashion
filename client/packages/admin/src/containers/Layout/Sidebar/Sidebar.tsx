@@ -44,18 +44,18 @@ const sidebarMenus = [
     icon: <MenuIcon />,
   },
   {
-    name: 'Products',
-    path: PRODUCTS,
-    exact: false,
-    icon: <ProductIcon />,
-  },
-  {
-    name: 'Category',
+    name: 'Categories',
     path: CATEGORY,
     exact: false,
     icon: <SidebarCategoryIcon />,
   },
   {
+    name: 'Products',
+    path: PRODUCTS,
+    exact: false,
+    icon: <ProductIcon />,
+  },
+ /* {
     name: 'Orders',
     path: ORDERS,
     exact: false,
@@ -72,7 +72,7 @@ const sidebarMenus = [
     path: COUPONS,
     exact: false,
     icon: <CouponIcon />,
-  },
+  },*/
   {
     name: 'Settings',
     path: SETTINGS,

@@ -85,9 +85,9 @@ const UpdateCategory: React.FC<Props> = props => {
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: itemData,
   });
-  const [meta_title, setMetaTitle] = useState(itemData.meta_title);
-  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword);
-  const [meta_description, setMetaDescription] = useState(itemData.meta_description);
+  const [meta_title, setMetaTitle] = useState(itemData.meta_title ? itemData.meta_title : '');
+  const [meta_keyword, setMetaKeyword] = useState(itemData.meta_keyword ? itemData.meta_keyword : '');
+  const [meta_description, setMetaDescription] = useState(itemData.meta_description ? itemData.meta_description : '');
   const [icon, setIcon] = useState([{ value: itemData.icon }]);
   const [type, setType] = useState([{ id: itemData ? itemData.type_id : '' }]);
 
@@ -121,7 +121,6 @@ const UpdateCategory: React.FC<Props> = props => {
       meta_description: meta_description,
     };
 
-    console.log(typeValue)
 
     updateCategories({
       variables: { id: itemData.id, input: typeValue },

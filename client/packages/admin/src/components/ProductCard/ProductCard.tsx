@@ -15,6 +15,9 @@ import {
   DiscountedPrice,
 } from './ProductCard.style';
 import { useDrawerDispatch } from '../../context/DrawerContext';
+import {ActionStyle, IconWrapper} from "../../containers/Types/Types.style";
+import {AllIcons} from "../../assets/icons/all-icons";
+import ActionWrapper from "../../containers/ProductForm/ActionWrapper";
 
 type ProductCardProps = {
   title: string;
@@ -26,8 +29,13 @@ type ProductCardProps = {
   salePrice?: number;
   orderId?: number;
   discountInPercent?: number;
+  itemsOffset?: number;
   data: any;
 };
+const Icon = ({icon, width = '18px', height = '18px'}) => {
+  let Component = AllIcons.hasOwnProperty(icon) ? AllIcons[icon] : 'span';
+  return <Component width={width} height={height}/>;
+}
 
 const ProductCard: React.FC<ProductCardProps> = ({
   title,
@@ -37,6 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   salePrice,
   discountInPercent,
   currency,
+ itemsOffset,
   data,
   orderId,
   ...props
@@ -56,7 +65,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <ProductCardWrapper
       {...props}
       className="product-card"
-      onClick={openDrawer}
     >
       <ProductImageWrapper>
         <Image url={image} className="product-image" />
@@ -87,6 +95,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           <OrderID>{orderId}</OrderID>
         </ProductMeta>
+
+        <div style={{ textAlign: "right", marginTop: "15px"}}>
+          <ActionStyle>
+            <IconWrapper onClick={openDrawer} style={{marginRight: '10px', cursor: 'pointer'}}>
+              <Icon icon="ArrowNext"/>
+            </IconWrapper>
+          </ActionStyle>
+
+          <ActionWrapper itemsOffset={itemsOffset} itemData={data}/>
+        </div>
       </ProductInfo>
     </ProductCardWrapper>
   );

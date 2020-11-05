@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import uuidv4 from 'uuid/v4';
 import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { useDrawerDispatch } from '../../context/DrawerContext';
@@ -38,6 +37,7 @@ const GET_CATEGORIES = gql`
         meta_title
         meta_keyword
         meta_description
+        created_at
       }
     }   
   }
@@ -62,7 +62,7 @@ const GET_CATEGORIES_FOR_LIST = gql`
 `;
 
 const CREATE_CATEGORY = gql`
-  mutation createCategory($category: CategoryInput!) {
+  mutation CreateCategory($category: CategoryInput!) {
     createCategory(input: $category) {
       id
       type_id
@@ -73,6 +73,7 @@ const CREATE_CATEGORY = gql`
       meta_title
       meta_keyword
       meta_description
+      created_at
     }
   }
 `;
@@ -155,7 +156,7 @@ const AddCategory: React.FC<Props> = props => {
       cache.writeQuery({
         query: GET_CATEGORIES,
         data: {
-          types: {
+          categories: {
             __typename: categories.__typename,
             items: [createCategory, ...categories.items],
             hasMore: categories.items.length + 1 >= 12,
@@ -358,7 +359,7 @@ const AddCategory: React.FC<Props> = props => {
                     options={parentCategoryOptions}
                     labelKey="name"
                     valueKey="value"
-                    placeholder="Ex: Choose parent category"
+                    placeholder="Select parent category"
                     value={category}
                     searchable={false}
                     onChange={handleParentCategoryChange}

@@ -30,22 +30,38 @@ import UserImage from '../../../assets/image/user.jpg';
 import { useDrawerDispatch } from '../../../context/DrawerContext';
 import Drawer, { ANCHOR } from '../../../components/Drawer/Drawer';
 import Sidebar from '../Sidebar/Sidebar';
+import {gql} from "apollo-boost";
+import {useQuery} from "@apollo/react-hooks";
+import {Plus} from "../../../components/AllSvgIcon";
 
-const data = [
-  {
-    title: 'Delivery Successful',
-    time: '5m',
-    message: 'Order #34567 had been placed',
-  },
-];
+
+const GET_SETTING = gql`
+    query GetSetting {
+        getSiteSetting(key: "site-settings") {
+            id
+            key
+            value
+        }
+    }
+`;
+
 const Topbar = ({ refs }: any) => {
-  const dispatch = useDrawerDispatch();
-  const { signout } = React.useContext(AuthContext);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const openDrawer = useCallback(
-    () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'PRODUCT_FORM' }),
-    [dispatch]
-  );
+    const {data, error, refetch} = useQuery(GET_SETTING)
+    const [siteSettingData, setSiteSettingData] = useState<any | null>(null);
+
+    React.useEffect(() => {
+        if (data) {
+            setSiteSettingData(JSON.parse(data.getSiteSetting.value))
+        }
+    }, [data])
+
+    const dispatch = useDrawerDispatch()
+    const {signout} = React.useContext(AuthContext);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const openDrawer = useCallback(
+        () => dispatch({type: 'OPEN_DRAWER', drawerComponent: 'PRODUCT_FORM'}),
+        [dispatch]
+    );
 
   return (
     <TopbarWrapper ref={refs}>
@@ -100,9 +116,9 @@ const Topbar = ({ refs }: any) => {
       </DrawerWrapper>
 
       <TopbarRightSide>
-        <Button onClick={openDrawer}>Add Products</Button>
+        <Button startEnhancer={() => <Plus />} style={{ marginRight: "20px" }} onClick={openDrawer}>Add Products</Button>
 
-        <Popover
+        {/*<Popover
           content={({ close }) => <Notification data={data} onClear={close} />}
           accessibilityType={'tooltip'}
           placement={PLACEMENT.bottomRight}
@@ -126,17 +142,17 @@ const Topbar = ({ refs }: any) => {
               <AlertDotIcon />
             </AlertDot>
           </NotificationIconWrapper>
-        </Popover>
+        </Popover>*/}
 
         <Popover
           content={({ close }) => (
             <UserDropdowItem>
-              <NavLink to={STAFF_MEMBERS} exact={false} onClick={close}>
+              {/*<NavLink to={STAFF_MEMBERS} exact={false} onClick={close}>
                 Staff
               </NavLink>
               <NavLink to={SETTINGS} exact={false} onClick={close}>
                 Settings
-              </NavLink>
+              </NavLink>*/}
               <LogoutBtn
                 onClick={() => {
                   signout();

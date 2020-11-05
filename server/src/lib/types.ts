@@ -63,6 +63,7 @@ export interface ICategory {
     meta_keyword?: string;
     meta_description?: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface IProductCategory {
@@ -162,6 +163,13 @@ export interface ICommonDeleteReturnType {
     status: boolean;
 }
 
+export interface ISetting {
+    _id?: ObjectId;
+    key: string;
+    value: any;
+}
+
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;
@@ -170,4 +178,5 @@ export interface Database {
     delivery_methods: Collection<IDeliveryMethod>;
     payment_options: Collection<IPaymentOption>;
     orders: Collection<IOrder>;
+    settings: Collection<ISetting>;
 }

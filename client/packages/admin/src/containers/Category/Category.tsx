@@ -9,7 +9,6 @@ import { useDrawerDispatch } from '../../context/DrawerContext';
 import Select from '../../components/Select/Select';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
-import Checkbox from '../../components/CheckBox/CheckBox';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { Wrapper, Header, Heading } from '../../components/WrapperStyle';
@@ -23,75 +22,16 @@ import {
 
 import {
   Plus,
-  Accessories,
-  BathOil,
-  BeautyHealth,
-  Beverage,
-  Breakfast,
-  Cooking,
-  Dairy,
-  Deodorent,
-  Eyes,
-  Face,
-  FacialCare,
-  FruitsVegetable,
-  HandBags,
-  HomeCleaning,
-  LaptopBags,
-  Lips,
-  MeatFish,
-  OralCare,
-  OuterWear,
-  Pants,
-  PetCare,
-  Purse,
-  ShavingNeeds,
-  Shirts,
-  ShoulderBags,
-  Skirts,
-  Snacks,
-  Tops,
-  Wallet,
-  WomenDress,
 } from '../../components/AllSvgIcon';
 import NoResult from '../../components/NoResult/NoResult';
-import { StyledBodyCell } from '../Types/Types.style';
+import {IconWrapper, Image, StyledBodyCell} from '../Types/Types.style';
 import ActionWrapper from '../CategoryForm/ActionWrapper';
-let icons = {
-  Accessories: Accessories,
-  BathOil: BathOil,
-  BeautyHealth: BeautyHealth,
-  Beverage: Beverage,
-  Breakfast: Breakfast,
-  Cooking: Cooking,
-  Dairy: Dairy,
-  Deodorent: Deodorent,
-  Eyes: Eyes,
-  Face: Face,
-  FacialCare: FacialCare,
-  FruitsVegetable: FruitsVegetable,
-  HandBags: HandBags,
-  HomeCleaning: HomeCleaning,
-  LaptopBags: LaptopBags,
-  Lips: Lips,
-  MeatFish: MeatFish,
-  OralCare: OralCare,
-  OuterWear: OuterWear,
-  Pants: Pants,
-  PetCare: PetCare,
-  Purse: Purse,
-  ShavingNeeds: ShavingNeeds,
-  Shirts: Shirts,
-  ShoulderBags: ShoulderBags,
-  Skirts: Skirts,
-  Snacks: Snacks,
-  Tops: Tops,
-  Wallet: Wallet,
-  WomenDress: WomenDress,
-};
+import dayjs from "dayjs";
+import {AllIcons} from "../../assets/icons/all-icons";
+
 const GET_CATEGORIES = gql`
-  query getCategories($searchText: String, $offset: Int) {
-    categories(searchText: $searchText, offset: $offset) {
+  query GetCategories($type: String, $searchText: String, $offset: Int) {
+    categories(type: $type, searchText: $searchText, offset: $offset) {
       items{
         id
         type_id
@@ -102,6 +42,27 @@ const GET_CATEGORIES = gql`
         meta_title
         meta_keyword
         meta_description
+        created_at
+      }
+      totalCount
+      hasMore
+    }
+  }
+`;
+
+const GET_TYPES = gql`
+  query GetTypes {
+    types(limit: 0) {
+      items {
+        id
+        name
+        slug
+        image
+        icon
+        meta_title
+        meta_keyword
+        meta_description
+        created_at
       }
       totalCount
       hasMore
@@ -125,12 +86,6 @@ const Row = withStyle(Rows, () => ({
   },
 }));
 
-const categorySelectOptions = [
-  { value: 'grocery', label: 'Grocery' },
-  { value: 'women-cloths', label: 'Women Cloth' },
-  { value: 'bags', label: 'Bags' },
-  { value: 'makeup', label: 'Makeup' },
-];
 
 const prevButtonDisabledStyles = {
   width: '90px',
@@ -146,17 +101,16 @@ const nextButtonDisabledStyles = {
 };
 
 export default function Category() {
-  const [category, setCategory] = useState([]);
+  const [type, setType] = useState([]);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const dispatch = useDrawerDispatch();
-  const [checkedId, setCheckedId] = useState([]);
-  const [checked, setChecked] = useState(false);
   const openDrawer = useCallback(
     () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'CATEGORY_FORM' }),
     [dispatch]
   );
 
+  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
   const { data, error, refetch } = useQuery(GET_CATEGORIES);
 
   if (error) {
@@ -191,11 +145,11 @@ export default function Category() {
     return result;
   }
 
-  function handleCategory({ value }) {
-    setCategory(value);
+  function handleType({ value }) {
+    setType(value);
     if (value.length) {
       refetch({
-        type: value[0].value,
+        type: value[0].id,
       });
     } else {
       refetch({
@@ -204,26 +158,8 @@ export default function Category() {
     }
   }
 
-  function onAllCheck(event) {
-    if (event.target.checked) {
-      const idx = data && data.categories.map((category) => category.id);
-      setCheckedId(idx);
-    } else {
-      setCheckedId([]);
-    }
-    setChecked(event.target.checked);
-  }
-
-  function handleCheckbox(event) {
-    const { name } = event.currentTarget;
-    if (!checkedId.includes(name)) {
-      setCheckedId((prevState) => [...prevState, name]);
-    } else {
-      setCheckedId((prevState) => prevState.filter((id) => id !== name));
-    }
-  }
-  function Icon({ icon }) {
-    const Component = icons.hasOwnProperty(icon) ? icons[icon] : 'span';
+  const Icon = ({ icon }) => {
+    let Component =  AllIcons.hasOwnProperty(icon) ? AllIcons[icon] : 'span';
     return <Component />;
   }
   return (
@@ -237,20 +173,20 @@ export default function Category() {
             }}
           >
             <Col md={2}>
-              <Heading>Category</Heading>
+              <Heading>Categories</Heading>
             </Col>
 
             <Col md={10}>
               <Row>
                 <Col md={3} lg={3}>
                   <Select
-                    options={categorySelectOptions}
-                    labelKey='label'
-                    valueKey='value'
-                    placeholder='Category Type'
-                    value={category}
-                    searchable={false}
-                    onChange={handleCategory}
+                      options={typeData ? typeData.types.items : [] }
+                      labelKey='name'
+                      valueKey='id'
+                      placeholder='Select Category Type'
+                      value={type}
+                      searchable={true}
+                      onChange={handleType}
                   />
                 </Col>
 
@@ -288,12 +224,13 @@ export default function Category() {
 
           <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
             <TableWrapper>
-              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(150px, auto) minmax(70px, 70px) minmax(70px, 70px) auto'>
+              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(150px, auto) minmax(70px, 70px) minmax(70px, 70px) minmax(120px, auto) minmax(160px, 160px)'>
                 <StyledHeadCell>#</StyledHeadCell>
                 <StyledHeadCell>Name</StyledHeadCell>
                 <StyledHeadCell>Slug</StyledHeadCell>
                 <StyledHeadCell>Image</StyledHeadCell>
                 <StyledHeadCell>Icon</StyledHeadCell>
+                <StyledHeadCell>Created At</StyledHeadCell>
                 <StyledHeadCell>Action</StyledHeadCell>
 
                 {data ? (
@@ -303,12 +240,19 @@ export default function Category() {
                         <StyledBodyCell>{index + 1}</StyledBodyCell>
                         <StyledBodyCell>{item.name}</StyledBodyCell>
                         <StyledBodyCell>{item.slug}</StyledBodyCell>
-                        <StyledCell>
+                        <StyledBodyCell>
                           <ImageWrapper>
-                            <Icon icon={item.banner} />
+                            <Image src={`${item.banner}`} />
                           </ImageWrapper>
-                        </StyledCell>
-                        <StyledCell>{item.icon}</StyledCell>
+                        </StyledBodyCell>
+                        <StyledBodyCell>
+                          <IconWrapper>
+                            <Icon icon={item.icon} />
+                          </IconWrapper>
+                        </StyledBodyCell>
+                        <StyledBodyCell>
+                          {dayjs(item.created_at).format('DD MMM YYYY hh:mm:ss A')}
+                        </StyledBodyCell>
                         <StyledBodyCell>
                           <ActionWrapper itemsOffset={offset} itemData={item} />
                         </StyledBodyCell>

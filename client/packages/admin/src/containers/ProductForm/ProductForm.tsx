@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import uuidv4 from 'uuid/v4';
 import gql from 'graphql-tag';
 import {useMutation, useQuery} from '@apollo/react-hooks';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -23,6 +22,7 @@ import {
 import {getBase64Value} from "../../helpers/convert-image-base64";
 import MultiUploader from "../../components/Uploader/Multi-Uploader";
 import Checkbox, {LABEL_PLACEMENT} from "../../components/CheckBox/CheckBox";
+import {TYPE} from "baseui/select";
 
 const GET_PRODUCTS = gql`
   query GetProducts(
@@ -239,6 +239,8 @@ const AddProduct: React.FC<Props> = props => {
   };
 
   const onSubmit = data => {
+    if (!data.images) return alert('Please select images for product');
+
     const newProduct = {
       name: data.name,
       type: data.type,
@@ -303,7 +305,7 @@ const AddProduct: React.FC<Props> = props => {
                   },
                 }}
               >
-                <MultiUploader onChange={handleUploader} />
+                <MultiUploader required={true}  onChange={handleUploader} />
               </DrawerBox>
             </Col>
           </Row>
@@ -390,7 +392,8 @@ const AddProduct: React.FC<Props> = props => {
                     valueKey="id"
                     placeholder="Select Product Type"
                     value={type}
-                    searchable={false}
+                    required={true}
+                    searchable={true}
                     onChange={handleTypeChange}
                     overrides={{
                       Placeholder: {
@@ -437,6 +440,7 @@ const AddProduct: React.FC<Props> = props => {
                         },
                       },
                     }}
+                    type={TYPE.search}
                   />
                 </FormFields>
 
@@ -448,6 +452,8 @@ const AddProduct: React.FC<Props> = props => {
                     valueKey="id"
                     placeholder="Select Product Categories"
                     value={category}
+                    required={true}
+                    searchable={true}
                     onChange={handleCategoryMultiChange}
                     overrides={{
                       Placeholder: {
@@ -476,6 +482,7 @@ const AddProduct: React.FC<Props> = props => {
                         },
                       },
                     }}
+                    type={TYPE.search}
                     multi
                   />
                 </FormFields>

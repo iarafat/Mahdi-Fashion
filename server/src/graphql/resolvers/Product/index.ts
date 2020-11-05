@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonPaginationReturnType, IProduct} from "../../../lib/types";
+import {Database, ICommonDeleteReturnType, ICommonPaginationReturnType, IProduct} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {IProductInput, IProductsArgs, IUpdateProductInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -15,7 +15,7 @@ export const productsResolvers: IResolvers = {
             {type, category, limit, offset, searchText}: IProductsArgs,
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
-            let products = await db.products.find({}).sort({_id: -1}).toArray();
+            let products = await db.products.find({}).sort({is_featured: -1}).toArray();
 
             if (category) {
                 products = products.filter((product) =>
@@ -93,10 +93,19 @@ export const productsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<IProduct> => {
             await authorize(req, db);
-
+            let imagesPath = [];
+            const imagesData = input.images_data ? JSON.parse(input.images_data) : [];
             const existsData = await db.products.findOne({_id: new ObjectId(id)});
             if (!existsData) {
                 throw new Error("Resource not found.");
+            }
+
+            if (imagesData.length) {
+                for (let i = 0; i < input.images.length; i++) {
+                    imagesPath.push(storeImage(input.images[i], imagesData[i].name));
+                }
+            } else {
+                imagesPath = input.images;
             }
 
             const updateData: IProduct = {
@@ -105,7 +114,7 @@ export const productsResolvers: IResolvers = {
                 name: input.name,
                 slug: slugify(input.name),
                 description: input.description,
-                images: input.images,
+                images: imagesPath,
                 unit: input.unit,
                 price: input.price,
                 sale_price: input.sale_price,
@@ -132,7 +141,7 @@ export const productsResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<IProduct> => {
+        ): Promise<ICommonDeleteReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.products.findOneAndDelete({
@@ -143,7 +152,10 @@ export const productsResolvers: IResolvers = {
                 throw new Error("Failed to delete resource.")
             }
 
-            return deleteResult.value;
+            return {
+                message: 'Resource successfully deleted.',
+                status: true
+            };
         },
     },
 

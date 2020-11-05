@@ -66,20 +66,20 @@ const ActionWrapper: React.FC<Props> =
         const updateItemsQuery = (cache) => {
             const {categories} = cache.readQuery({
                 query: GET_CATEGORIES,
-                variables: {offset: itemsOffset},
+                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
             });
 
             cache.writeQuery({
                 query: GET_CATEGORIES,
-                variables: {offset: itemsOffset},
+                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
                 data: {
-                    types: {
+                    categories: {
                         __typename: categories.__typename,
                         items: categories.items.filter((item) => {
                             return item.id !== itemData.id;
                         }),
-                        hasMore: categories.items.length + 1 >= 12,
-                        totalCount: categories.items.length + 1,
+                        hasMore: categories.items.length - 1 >= 12,
+                        totalCount: categories.items.length - 1,
                     },
                 },
             });

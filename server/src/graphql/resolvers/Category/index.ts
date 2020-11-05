@@ -1,7 +1,13 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICategory, ICommonPaginationArgs, ICommonPaginationReturnType} from "../../../lib/types";
+import {
+    Database,
+    ICategory,
+    ICommonDeleteReturnType,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICategoryInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -12,10 +18,23 @@ export const categoriesResolvers: IResolvers = {
     Query: {
         categories: async (
             _root: undefined,
-            { limit, offset, searchText }: ICommonPaginationArgs,
+            { type, limit, offset, searchText }: {
+                type: string,
+                limit: ICommonPaginationArgs["limit"],
+                offset: ICommonPaginationArgs["offset"],
+                searchText: ICommonPaginationArgs["searchText"]
+            },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
             let categories =  await db.categories.find({}).sort({_id: -1}).toArray();
+
+            if (type) {
+                categories = categories.filter((category) => {
+                    return category.type_id === type;
+                });
+            }
+
+
             categories = search(categories, ['name', 'slug'], searchText);
             const hasMore = categories.length > offset + limit;
             return {
@@ -120,6 +139,7 @@ export const categoriesResolvers: IResolvers = {
                 meta_title: input.meta_title,
                 meta_keyword: input.meta_keyword,
                 meta_description: input.meta_description,
+                updated_at: new Date().toUTCString(),
             };
 
             await db.categories.updateOne(
@@ -136,7 +156,7 @@ export const categoriesResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICategory> => {
+        ): Promise<ICommonDeleteReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.categories.findOneAndDelete({
@@ -147,7 +167,10 @@ export const categoriesResolvers: IResolvers = {
                 throw new Error("Failed to delete resource.")
             }
 
-            return deleteResult.value;
+            return {
+                message: 'Resource successfully deleted.',
+                status: true
+            };
         },
     },
 
