@@ -53,11 +53,12 @@ export const Products: React.FC<ProductsProps> = ({
   type,
 }) => {
   const router = useRouter();
+  console.log(router.query)
   const { data, error, loading, fetchMore, networkStatus } = useQuery(
     GET_PRODUCTS,
     {
       variables: {
-        type: type,
+        type: router.query.type,
         text: router.query.text,
         category: router.query.category,
         offset: 0,
@@ -150,6 +151,7 @@ export const Products: React.FC<ProductsProps> = ({
   if (!data || !data.products || data.products.items.length === 0) {
     return <NoResultFound />;
   }
+  //console.log(data)
   const handleLoadMore = () => {
     fetchMore({
       variables: {
@@ -175,6 +177,7 @@ export const Products: React.FC<ProductsProps> = ({
   };
 
   const renderCard = (productType, props) => {
+    //console.log(props)
     switch (productType) {
       case 'book':
         return (
@@ -214,9 +217,9 @@ export const Products: React.FC<ProductsProps> = ({
       default:
         return (
           <GeneralCard
-            title={props.title}
+            title={props.name}
             description={props.description}
-            image={props.image}
+            image={"http://localhost:7000/"+props.images[0]}
             weight={props.unit}
             currency={CURRENCY}
             price={props.price}
