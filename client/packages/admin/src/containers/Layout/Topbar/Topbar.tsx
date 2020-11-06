@@ -67,7 +67,7 @@ const Topbar = ({ refs }: any) => {
     <TopbarWrapper ref={refs}>
       <Logo>
         <Link to='/'>
-          <LogoImage src={Logoimage} alt='Mahdi Fashion-admin' />
+          <LogoImage src={siteSettingData ? siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
         </Link>
       </Logo>
 

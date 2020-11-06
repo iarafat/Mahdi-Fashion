@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext, useState} from 'react';
 import { Redirect, useHistory, useLocation } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -13,11 +13,22 @@ import { Wrapper, FormWrapper, LogoImage, LogoWrapper } from './Login.style';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import Logoimage from '../../assets/image/PickBazar.png';
+import {gql} from "apollo-boost";
+import {useQuery} from "@apollo/react-hooks";
 
 const initialValues = {
     phone: '',
   password: '',
 };
+const GET_SETTING = gql`
+    query GetSetting {
+        getSiteSetting(key: "site-settings") {
+            id
+            key
+            value
+        }
+    }
+`;
 
 const getLoginValidationSchema = () => {
   return Yup.object().shape({
@@ -31,6 +42,16 @@ const MyInput = ({ field, form, ...props }) => {
 };
 
 export default () => {
+
+    const {data, error, refetch} = useQuery(GET_SETTING)
+    const [siteSettingData, setSiteSettingData] = useState<any | null>(null);
+
+    React.useEffect(() => {
+        if (data) {
+            setSiteSettingData(JSON.parse(data.getSiteSetting.value))
+        }
+    }, [data])
+
   let history = useHistory();
   let location = useLocation();
   const { authenticate, isAuthenticated } = useContext(AuthContext);
@@ -52,7 +73,7 @@ export default () => {
             <Form>
               <FormFields>
                 <LogoWrapper>
-                  <LogoImage src={Logoimage} alt='Mahdi Fashion-admin' />
+                  <LogoImage src={siteSettingData ? siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
                 </LogoWrapper>
                 <FormTitle>Log in to admin</FormTitle>
               </FormFields>
