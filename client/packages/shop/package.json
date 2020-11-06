@@ -78,5 +78,6 @@
     "imagemin-optipng": "^8.0.0",
     "imagemin-svgo": "^8.0.0",
     "typescript": "^3.9.5"
-  }
+  },
+  "proxy": "http://localhost:7000"
 }
