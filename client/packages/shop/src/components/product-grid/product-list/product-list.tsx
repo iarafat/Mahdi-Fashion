@@ -36,6 +36,8 @@ const MedicineCard = dynamic(
   import('components/product-card/product-card-five/product-card-five')
 );
 
+console.log(process.env.PROXY_URL)
+
 type ProductsProps = {
   deviceType?: {
     mobile: boolean;
@@ -53,7 +55,6 @@ export const Products: React.FC<ProductsProps> = ({
   type,
 }) => {
   const router = useRouter();
-  console.log(router.query)
   const { data, error, loading, fetchMore, networkStatus } = useQuery(
     GET_PRODUCTS,
     {
@@ -151,7 +152,6 @@ export const Products: React.FC<ProductsProps> = ({
   if (!data || !data.products || data.products.items.length === 0) {
     return <NoResultFound />;
   }
-  //console.log(data)
   const handleLoadMore = () => {
     fetchMore({
       variables: {
@@ -177,7 +177,6 @@ export const Products: React.FC<ProductsProps> = ({
   };
 
   const renderCard = (productType, props) => {
-    //console.log(props)
     switch (productType) {
       case 'book':
         return (
@@ -228,7 +227,7 @@ export const Products: React.FC<ProductsProps> = ({
             data={props}
             deviceType={deviceType}
             onClick={() =>
-              handleQuickViewModal(props, deviceType, handleModalClose)
+              router.push('/product/[slug]', `/product/${props.slug}`)
             }
           />
         );

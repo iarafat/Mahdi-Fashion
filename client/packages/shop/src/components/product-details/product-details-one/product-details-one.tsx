@@ -25,7 +25,7 @@ import {
 import { LongArrowLeft } from 'assets/icons/LongArrowLeft';
 import { CartIcon } from 'assets/icons/CartIcon';
 import ReadMore from 'components/truncate/truncate';
-import CarouselWithCustomDots from 'components/multi-carousel/multi-carousel';
+import CarouselWithCustomDots from 'components/multi-carousel/multi-carouselV2';
 import Products from 'components/product-grid/product-list/product-list';
 import { CURRENCY } from 'utils/constant';
 import { FormattedMessage } from 'react-intl';
@@ -49,7 +49,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
   const { isRtl } = useLocale();
   const { addItem, removeItem, isInCart, getItem } = useCart();
   const data = product;
-
+  console.log(product)
   const handleAddClick = (e) => {
     e.stopPropagation();
     addItem(data);
@@ -82,13 +82,15 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
                 }}
                 onClick={Router.back}
               >
-                <LongArrowLeft style={{ marginRight: 5 }} />
+                <span style={{ marginRight: "5px" }}>
+                <LongArrowLeft />
+                </span>
                 <FormattedMessage id="backBtn" defaultMessage="Back" />
               </Button>
             </BackButton>
 
             <CarouselWithCustomDots
-              items={product.gallery}
+              items={product.images}
               deviceType={deviceType}
             />
           </ProductPreview>
@@ -96,18 +98,18 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
 
         <ProductInfo dir={isRtl ? 'rtl' : 'ltr'}>
           <ProductTitlePriceWrapper>
-            <ProductTitle>{product.title}</ProductTitle>
+            <ProductTitle>{product.name}</ProductTitle>
             <ProductPriceWrapper>
               {product.discountInPercent ? (
                 <SalePrice>
                   {CURRENCY}
-                  {product.price}
+                  {product.sale_price}
                 </SalePrice>
               ) : null}
 
               <ProductPrice>
                 {CURRENCY}
-                {product.salePrice ? product.salePrice : product.price}
+                {product.sale_price ? product.sale_price : product.price}
               </ProductPrice>
             </ProductPriceWrapper>
           </ProductTitlePriceWrapper>
@@ -126,7 +128,11 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
                   borderRadius={100}
                   onClick={handleAddClick}
                 >
-                  <CartIcon mr={2} />
+                  <span style={{
+                      marginRight: "10px"
+                  }}>
+                  <CartIcon />
+                  </span>
                   <ButtonText>
                     <FormattedMessage
                       id="addCartButton"
@@ -148,12 +154,12 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
             <MetaSingle>
               {product?.categories?.map((item: any) => (
                 <Link
-                  href={`/${product.type.toLowerCase()}?category=${item.slug}`}
+                  href={`/${product.type.slug.toLowerCase()}?category=${item.slug}`}
                   key={`link-${item.id}`}
                 >
                   {
                     <a>
-                      <MetaItem>{item.title}</MetaItem>
+                      <MetaItem>{item.name}</MetaItem>
                     </a>
                   }
                 </Link>
@@ -175,19 +181,19 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
                   border: '1px solid #f1f1f1',
                   color: '#77798c',
                 }}
-                icon={<LongArrowLeft />}
+                icon={<LongArrowLeft  />}
                 onClick={Router.back}
               />
             </BackButton>
 
             <CarouselWithCustomDots
-              items={product.gallery}
+              items={product.images}
               deviceType={deviceType}
             />
           </ProductPreview>
         )}
       </ProductDetailsWrapper>
-
+       {/*
       <RelatedItems>
         <h2>
           <FormattedMessage
@@ -202,6 +208,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
           fetchLimit={10}
         />
       </RelatedItems>
+      */}
     </>
   );
 };
