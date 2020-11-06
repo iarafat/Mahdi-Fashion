@@ -1,45 +1,73 @@
 import gql from 'graphql-tag';
 
-export const GET_PRODUCTS = gql`
-  query getProducts(
-    $type: String
-    $text: String
-    $category: String
-    $offset: Int
-    $limit: Int
-  ) {
-    products(
-      type: $type
-      text: $text
-      category: $category
-      offset: $offset
-      limit: $limit
-    ) {
-      items {
+/*export const GET_PRODUCTS = gql`
+query GetProducts {
+  products {
+    items {
+    	id
+      	name
+    	slug
+      description
+      images
+      type {
         id
-        title
         slug
-        unit
-        price
-        salePrice
-        description
-        discountInPercent
-        type
-        image
-        author {
-          id
-          name
-        }
-        gallery {
-          url
-        }
-        categories {
-          id
-          title
-          slug
-        }
       }
-      hasMore
+      categories {
+        id
+        slug
+      }      
     }
+    totalCount
+    hasMore
   }
+}
+
+`;
+
+*/
+
+export const GET_PRODUCTS = gql`
+query GetProducts(
+  $type: String
+  $category: String
+  $searchText: String
+  $offset: Int
+) {
+  products(
+    type: $type
+    category: $category
+    searchText: $searchText
+    offset: $offset
+  ) {
+    items {
+      id
+      type {
+        id
+        slug
+      }
+      categories {
+        id
+        slug
+      }
+      name
+      slug
+      description
+      images
+      unit
+      price
+      sale_price
+      discount_in_percent
+      product_quantity
+      is_featured
+      meta_title
+      meta_keyword
+      meta_description
+    }
+    totalCount
+    hasMore
+  }
+
+}
+
 `;

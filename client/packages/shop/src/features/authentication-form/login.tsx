@@ -13,16 +13,19 @@ import {
   // Input,
   Divider,
 } from './authentication-form.style';
+import { useMutation } from '@apollo/react-hooks';
 import { Facebook } from 'assets/icons/Facebook';
 import { Google } from 'assets/icons/Google';
 import { AuthContext } from 'contexts/auth/auth.context';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { closeModal } from '@redq/reuse-modal';
 import { Input } from 'components/forms/input';
+import { SIGNIN_MUTATION } from 'graphql/mutation/signin';
+
 export default function SignInModal() {
   const intl = useIntl();
   const { authDispatch } = useContext<any>(AuthContext);
-  const [email, setEmail] = React.useState('');
+  const [phone, setPhone] = React.useState('');
   const [password, setPassword] = React.useState('');
 
   const toggleSignUpForm = () => {
@@ -37,13 +40,37 @@ export default function SignInModal() {
     });
   };
 
-  const loginCallback = () => {
+  /*const loginCallback = () => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('access_token', `${email}.${password}`);
       authDispatch({ type: 'SIGNIN_SUCCESS' });
       closeModal();
     }
-  };
+  };*/
+
+  const [
+    signinMeMutation,
+    { 
+      loading,
+      error,
+      data
+    }
+  ] = useMutation(SIGNIN_MUTATION,{
+    onCompleted: (data) => {
+      console.log(data)
+      const { access_token } = data.login;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('access_token', `${access_token}`);
+        authDispatch({ type: 'SIGNIN_SUCCESS' });
+        closeModal();
+      }
+    },
+    onError: (error) => {
+      setPhone('');
+      setPassword('');
+      console.log(error);
+    }
+  });
 
   return (
     <Wrapper>
@@ -58,15 +85,23 @@ export default function SignInModal() {
             defaultMessage='Login with your email &amp; password'
           />
         </SubHeading>
-        <form onSubmit={loginCallback}>
+        <form onSubmit={
+            async (e) => {
+                e.preventDefault();
+                await signinMeMutation({
+                  variables: {phone, password}
+                });
+              }
+          }
+        >
           <Input
-            type='email'
+            type='text'
             placeholder={intl.formatMessage({
               id: 'emailAddressPlaceholder',
               defaultMessage: 'Email Address.',
             })}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             required
             height='48px'
             backgroundColor='#F7F7F7'
@@ -96,46 +131,13 @@ export default function SignInModal() {
             <FormattedMessage id='continueBtn' defaultMessage='Continue' />
           </Button>
         </form>
-        <Divider>
-          <span>
-            <FormattedMessage id='orText' defaultMessage='or' />
-          </span>
-        </Divider>
-
-        <Button
-          variant='primary'
-          size='big'
-          style={{
-            width: '100%',
-            backgroundColor: '#4267b2',
-            marginBottom: 10,
-          }}
-          onClick={loginCallback}
-        >
-          <IconWrapper>
-            <Facebook />
-          </IconWrapper>
-          <FormattedMessage
-            id='continueFacebookBtn'
-            defaultMessage='Continue with Facebook'
-          />
-        </Button>
-
-        <Button
-          variant='primary'
-          size='big'
-          style={{ width: '100%', backgroundColor: '#4285f4' }}
-          onClick={loginCallback}
-        >
-          <IconWrapper>
-            <Google />
-          </IconWrapper>
-          <FormattedMessage
-            id='continueGoogleBtn'
-            defaultMessage='Continue with Google'
-          />
-        </Button>
-
+        {loading && <p style={{
+          marginTop: "15px"
+        }}>Loading...</p>}
+        {error && <p style={{
+          marginTop: "15px"
+        }}> Please try again</p>}
+      
         <Offer style={{ padding: '20px 0' }}>
           <FormattedMessage
             id='dontHaveAccount'

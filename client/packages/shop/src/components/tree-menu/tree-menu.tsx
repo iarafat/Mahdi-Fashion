@@ -61,35 +61,35 @@ export const TreeMenu: React.FC<Props> = ({
   active,
 }) => {
   const handler = (children) => {
-    return children.map((subOption) => {
-      if (!subOption.children) {
+      return children.map((subOption) => {
+        if (!subOption.children) {
+          return (
+            <Tree
+              key={subOption.name}
+              name={subOption.name}
+              icon={subOption.icon}
+              depth="child"
+              onClick={() => onClick(subOption.slug)}
+              isOpen={active === subOption.slug}
+            />
+          );
+        }
         return (
           <Tree
-            key={subOption.title}
-            name={subOption.title}
+            key={subOption.name}
+            name={subOption.name}
             icon={subOption.icon}
-            depth="child"
+            depth="parent"
             onClick={() => onClick(subOption.slug)}
-            isOpen={active === subOption.slug}
-          />
+            isOpen={
+              active === subOption.slug ||
+              subOption.children.some((item) => item.slug === active)
+            }
+          >
+            {handler(subOption.children)}
+          </Tree>
         );
-      }
-      return (
-        <Tree
-          key={subOption.title}
-          name={subOption.title}
-          icon={subOption.icon}
-          depth="parent"
-          onClick={() => onClick(subOption.slug)}
-          isOpen={
-            active === subOption.slug ||
-            subOption.children.some((item) => item.slug === active)
-          }
-        >
-          {handler(subOption.children)}
-        </Tree>
-      );
-    });
+      });
   };
   return <>{handler(data)}</>;
 };

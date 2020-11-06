@@ -102,7 +102,7 @@ export const CATEGORY_MENU_ITEMS = [
     icon: 'Handbag',
     dynamic: true,
   },
-  {
+  /*{
     id: 'nav.clothing',
     defaultMessage: 'Clothing',
     href: CLOTHING_PAGE,
@@ -135,7 +135,7 @@ export const CATEGORY_MENU_ITEMS = [
     defaultMessage: 'Foods',
     href: RESTAURANT_PAGE,
     icon: 'Restaurant',
-  },
+  },*/
 ];
 
 export const MOBILE_DRAWER_MENU = [

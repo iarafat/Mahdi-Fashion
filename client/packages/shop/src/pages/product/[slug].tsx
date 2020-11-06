@@ -30,25 +30,26 @@ type Props = {
 };
 
 const ProductPage: NextPage<Props> = ({ data, deviceType }) => {
+  const SingleProduct = data.getProduct;
   let content = (
-    <ProductDetails product={data.product} deviceType={deviceType} />
+    <ProductDetails product={SingleProduct} deviceType={deviceType} />
   );
-  if (data.product.type === 'BOOK') {
-    content = (
-      <ProductDetailsBook product={data.product} deviceType={deviceType} />
-    );
-  }
+
 
   return (
     <>
       <SEO
-        title={`${data.product.title} - PickBazar`}
-        description={`${data.product.title} Details`}
+        title={`${SingleProduct.name} - Mahdi Fashion`}
+        description={`${SingleProduct.name} Details`}
       />
 
       <Modal>
         <ProductSingleWrapper>
-          <ProductSingleContainer>
+          <ProductSingleContainer
+          style={{
+            marginTop: "50px"
+          }}
+          >
             {content}
             <CartPopUp deviceType={deviceType} />
           </ProductSingleContainer>

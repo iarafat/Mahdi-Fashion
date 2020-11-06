@@ -4,13 +4,17 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 
 let apolloClient;
-
+console.log(process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT);
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       uri: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT, // Server URL (must be absolute)
       credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+      onError: ({ networkError, graphQLErrors }) => {
+        console.log('graphQLErrors', graphQLErrors);
+        console.log('networkError', networkError);
+      },
     }),
     cache: new InMemoryCache(),
   });

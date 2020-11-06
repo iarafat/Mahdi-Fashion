@@ -36,6 +36,8 @@ const MedicineCard = dynamic(
   import('components/product-card/product-card-five/product-card-five')
 );
 
+console.log(process.env.PROXY_URL)
+
 type ProductsProps = {
   deviceType?: {
     mobile: boolean;
@@ -57,7 +59,7 @@ export const Products: React.FC<ProductsProps> = ({
     GET_PRODUCTS,
     {
       variables: {
-        type: type,
+        type: router.query.type,
         text: router.query.text,
         category: router.query.category,
         offset: 0,
@@ -214,9 +216,9 @@ export const Products: React.FC<ProductsProps> = ({
       default:
         return (
           <GeneralCard
-            title={props.title}
+            title={props.name}
             description={props.description}
-            image={props.image}
+            image={"http://localhost:7000/"+props.images[0]}
             weight={props.unit}
             currency={CURRENCY}
             price={props.price}
@@ -225,12 +227,13 @@ export const Products: React.FC<ProductsProps> = ({
             data={props}
             deviceType={deviceType}
             onClick={() =>
-              handleQuickViewModal(props, deviceType, handleModalClose)
+              router.push('/product/[slug]', `/product/${props.slug}`)
             }
           />
         );
     }
   };
+  
   return (
     <>
       <ProductsRow>
