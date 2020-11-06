@@ -1,8 +1,12 @@
 import gql from 'graphql-tag';
 
 export const GET_CATEGORIES = gql`
-query GetCategories{
-	shopCategories {
+query GetCategories(
+  $type: String
+){
+	shopCategories(
+    type: $type
+  ) {
     items {
         id
         parent_id
