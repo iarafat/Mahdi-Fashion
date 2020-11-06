@@ -45,6 +45,8 @@ const GET_TYPES = gql`
         slug
         image
         icon
+        home_title
+        home_subtitle
         meta_title
         meta_keyword
         meta_description
