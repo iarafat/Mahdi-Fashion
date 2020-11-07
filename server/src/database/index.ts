@@ -21,10 +21,6 @@ if (process.env.APP_ENV == 'production') {
 
 
 export const connectDatabase = async (): Promise<Database> => {
-
-
-    console.log(`[${process.env.APP_ENV}]: ${url}`);
-
     console.log("[mongodb]: Starting db init...")
 
     const client = await MongoClient.connect(url, {
