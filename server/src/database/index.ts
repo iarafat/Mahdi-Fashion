@@ -1,27 +1,35 @@
 import {MongoClient} from "mongodb";
 import {Database} from "../lib/types";
+// env settings
+require("dotenv").config();
+
 let url: string;
+const dbName = process.env.DB_NAME;
+// @ts-ignore
+const dbPassword: string = process.env.DB_USER_PASSWORD;
+
 
 if (process.env.APP_ENV == 'production') {
     url = `mongodb+srv://${process.env.DB_USER}:${
         process.env.DB_USER_PASSWORD
     }@${process.env.DB_CLUSTER}.mongodb.net`;
 } else if (process.env.APP_ENV == 'server') {
-    url = `mongodb://${process.env.DB_USER}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER}:27017?authMechanism=DEFAULT&authSource=db&tls=true"`;
-    url = <string>process.env.DB_URL;
+    url = `mongodb://${process.env.DB_USER}:${encodeURIComponent(dbPassword)}@${process.env.DB_CLUSTER}:27017/?authMechanism=DEFAULT&authSource=admin&ssl=false`;
 } else if (process.env.APP_ENV == 'local') {
     url = <string>process.env.DB_URL;
 }
 
-const dbName = process.env.DB_NAME;
 
 export const connectDatabase = async (): Promise<Database> => {
+
+
+    console.log(`[${process.env.APP_ENV}]: ${url}`);
 
     console.log("[mongodb]: Starting db init...")
 
     const client = await MongoClient.connect(url, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
     });
 
     console.log("[mongodb]: Connected successfully to database");
