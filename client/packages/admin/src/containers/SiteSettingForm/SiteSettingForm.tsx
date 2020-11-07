@@ -12,7 +12,7 @@ import {gql} from "apollo-boost";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {getBase64Value} from "../../helpers/convert-image-base64";
 import {styled} from "baseui";
-
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const GET_SETTING = gql`
   query GetSetting {
@@ -150,10 +150,10 @@ const SiteSettingsForm: React.FC<Props> = () => {
 
           <Col md={8}>
             <DrawerBox>
-              <Uploader onChange={handleUploader} imageURL={siteData ? siteData.image : null} />
+              <Uploader onChange={handleUploader} imageURL={siteData ? ADMIN_IMAGE_HOST+siteData.image : null} />
               <div style={{ display: !image_data ? "block" : "none" }}>
                 <p>Site Logo:</p>
-                <ThumbsContainer>{cThumb(siteData ? siteData.image : null)}</ThumbsContainer>
+                <ThumbsContainer>{cThumb(siteData ? ADMIN_IMAGE_HOST+siteData.image : null)}</ThumbsContainer>
               </div>
             </DrawerBox>
           </Col>

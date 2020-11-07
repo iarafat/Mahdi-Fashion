@@ -15,6 +15,7 @@ import Button from '../../components/Button/Button';
 import Logoimage from '../../assets/image/PickBazar.png';
 import {gql} from "apollo-boost";
 import {useQuery} from "@apollo/react-hooks";
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const initialValues = {
     phone: '',
@@ -73,7 +74,7 @@ export default () => {
             <Form>
               <FormFields>
                 <LogoWrapper>
-                  <LogoImage src={siteSettingData ? siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
+                  <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
                 </LogoWrapper>
                 <FormTitle>Log in to admin</FormTitle>
               </FormFields>
