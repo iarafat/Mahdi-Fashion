@@ -19,6 +19,7 @@ import NoResultFound from 'components/no-result/no-result';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'components/button/button';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
+import { SHOP_IMAGE_HOST } from 'utils/images-path';
 const ErrorMessage = dynamic(() =>
   import('components/error-message/error-message')
 );
@@ -218,7 +219,7 @@ export const Products: React.FC<ProductsProps> = ({
           <GeneralCard
             title={props.name}
             description={props.description}
-            image={"http://localhost:7000/"+props.images[0]}
+            image={SHOP_IMAGE_HOST+props.images[0]}
             weight={props.unit}
             currency={CURRENCY}
             price={props.price}
