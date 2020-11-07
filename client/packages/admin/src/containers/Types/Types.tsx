@@ -29,6 +29,7 @@ import NoResult from '../../components/NoResult/NoResult';
 import {Plus} from "../../components/AllSvgIcon";
 import {useDrawerDispatch} from "../../context/DrawerContext";
 import ActionWrapper from "../TypeForm/ActionWrapper";
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -201,7 +202,7 @@ export default function Coupons() {
 
                                       <StyledBodyCell>
                                         <ImageWrapper>
-                                          <Image src={`${item.image}`} />
+                                          <Image src={`${ADMIN_IMAGE_HOST}${item.image}`} />
                                         </ImageWrapper>
                                       </StyledBodyCell>
                                       <StyledBodyCell>

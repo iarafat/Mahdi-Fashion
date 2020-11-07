@@ -21,6 +21,7 @@ import {
 import { FormFields, FormLabel } from '../../components/FormFields/FormFields';
 import {AllIconArray} from "../../assets/icons/all-icons";
 import {getBase64Value} from "../../helpers/convert-image-base64";
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const GET_TYPES = gql`
   query GetTypes(
@@ -201,7 +202,7 @@ const UpdateType: React.FC<Props> = props => {
                   },
                 }}
               >
-                <Uploader type={'file'} required={true} onChange={handleUploader} imageURL={itemData.image} />
+                <Uploader type={'file'} required={true} onChange={handleUploader} imageURL={ADMIN_IMAGE_HOST+itemData.image} />
               </DrawerBox>
             </Col>
           </Row>

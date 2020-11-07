@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { styled } from 'baseui';
 import { UploadIcon } from '../../assets/icons/UploadIcon';
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const Text = styled('span', ({ $theme }) => ({
   ...$theme.typography.font14,
@@ -73,7 +74,7 @@ function MultiUploader({ onChange, imagesURL }: any) {
       for (let i = 0; i < imagesURL.length; i++) {
         urls.push({
           name: 'demo' + i,
-          preview: imagesURL[i]
+          preview: ADMIN_IMAGE_HOST+imagesURL[i]
         })
       }
     }

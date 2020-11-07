@@ -16,6 +16,7 @@ import ProductCard from '../../components/ProductCard/ProductCard';
 import NoResult from '../../components/NoResult/NoResult';
 import { CURRENCY } from '../../settings/constants';
 import Placeholder from '../../components/Placeholder/Placeholder';
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 export const ProductsRow = styled('div', ({ $theme }) => ({
   display: 'flex',
@@ -273,7 +274,7 @@ export default function Products() {
                       <ProductCard
                         title={item.name}
                         weight={item.unit}
-                        image={item.images[0]}
+                        image={ADMIN_IMAGE_HOST+item.images[0]}
                         currency={CURRENCY}
                         price={item.price}
                         salePrice={item.sale_price}
