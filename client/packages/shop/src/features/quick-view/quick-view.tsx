@@ -131,7 +131,7 @@ const QuickView: React.FunctionComponent<QuickViewProps> = ({
                       borderRadius={100}
                       onClick={handleAddClick}
                     >
-                      <CartIcon mr={2} />
+                      <CartIcon />
                       <ButtonText>
                         <FormattedMessage
                           id="addCartButton"

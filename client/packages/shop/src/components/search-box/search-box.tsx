@@ -41,7 +41,7 @@ export const SearchBox: React.FC<Props> = ({
     >
       {minimal ? (
         <>
-          <SearchIcon style={{ marginLeft: 16, marginRight: 16 }} />
+          <SearchIcon />
           <StyledInput
             type='search'
             onChange={onChange}
@@ -61,7 +61,7 @@ export const SearchBox: React.FC<Props> = ({
             {...rest}
           />
           <StyledSearchButton>
-            <SearchIcon style={{ marginRight: 10 }} />
+            <SearchIcon />
             {showButtonText && buttonText}
           </StyledSearchButton>
         </>
