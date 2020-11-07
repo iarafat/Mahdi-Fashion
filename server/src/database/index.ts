@@ -6,6 +6,9 @@ if (process.env.APP_ENV == 'production') {
     url = `mongodb+srv://${process.env.DB_USER}:${
         process.env.DB_USER_PASSWORD
     }@${process.env.DB_CLUSTER}.mongodb.net`;
+} else if (process.env.APP_ENV == 'server') {
+    url = `mongodb://${process.env.DB_USER}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER}:27017?authMechanism=DEFAULT&authSource=db&tls=true"`;
+    url = <string>process.env.DB_URL;
 } else if (process.env.APP_ENV == 'local') {
     url = <string>process.env.DB_URL;
 }
