@@ -33,6 +33,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import {gql} from "apollo-boost";
 import {useQuery} from "@apollo/react-hooks";
 import {Plus} from "../../../components/AllSvgIcon";
+import {ADMIN_IMAGE_HOST} from "../../../helpers/images-path";
 
 
 const GET_SETTING = gql`
@@ -67,7 +68,7 @@ const Topbar = ({ refs }: any) => {
     <TopbarWrapper ref={refs}>
       <Logo>
         <Link to='/'>
-          <LogoImage src={siteSettingData ? siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
+          <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
         </Link>
       </Logo>
 
