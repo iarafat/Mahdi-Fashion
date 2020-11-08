@@ -28,6 +28,7 @@ import {IconWrapper, Image, StyledBodyCell} from '../Types/Types.style';
 import ActionWrapper from '../CategoryForm/ActionWrapper';
 import dayjs from "dayjs";
 import {AllIcons} from "../../assets/icons/all-icons";
+import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
 const GET_CATEGORIES = gql`
   query GetCategories($type: String, $searchText: String, $offset: Int) {
@@ -242,7 +243,7 @@ export default function Category() {
                         <StyledBodyCell>{item.slug}</StyledBodyCell>
                         <StyledBodyCell>
                           <ImageWrapper>
-                            <Image src={`${item.banner}`} />
+                            <Image src={`${ADMIN_IMAGE_HOST}${item.banner}`} />
                           </ImageWrapper>
                         </StyledBodyCell>
                         <StyledBodyCell>

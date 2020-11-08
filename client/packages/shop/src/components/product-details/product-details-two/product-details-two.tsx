@@ -104,7 +104,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
               }}
               onClick={Router.back}
             >
-              <LongArrowLeft style={{ marginRight: 5 }} />
+              <LongArrowLeft />
               <FormattedMessage id="backBtn" defaultMessage="Back" />
             </Button>
           </BackButton>
@@ -186,7 +186,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
                   borderRadius={100}
                   onClick={handleAddClick}
                 >
-                  <CartIcon mr={2} />
+                  <CartIcon />
                   <ButtonText>
                     <FormattedMessage
                       id="addCartButton"

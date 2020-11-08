@@ -113,11 +113,7 @@ export async function getStaticPaths() {
     paths: [
       { params: { type: 'grocery' } },
       { params: { type: 'makeup' } },
-      { params: { type: 'bags' } },
-      { params: { type: 'book' } },
-      { params: { type: 'medicine' } },
-      { params: { type: 'furniture' } },
-      { params: { type: 'clothing' } },
+      { params: { type: 'bags' } }
     ],
     fallback: false,
   };

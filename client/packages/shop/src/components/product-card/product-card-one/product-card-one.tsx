@@ -112,7 +112,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               borderRadius={100}
               onClick={handleAddClick}
             >
-              <CartIcon mr={2} />
+              <CartIcon/>
               <ButtonText>
                 <FormattedMessage id="addCartButton" defaultMessage="Cart" />
               </ButtonText>

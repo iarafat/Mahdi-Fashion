@@ -51,7 +51,7 @@ export const PROFILE_MENU_ITEM = {
   href: PROFILE_PAGE,
 };
 export const AUTHORIZED_MENU_ITEMS = [
-  PROFILE_MENU_ITEM,
+  /*PROFILE_MENU_ITEM,
   {
     id: 'nav.checkout',
     defaultMessage: 'Checkout',
@@ -77,7 +77,7 @@ export const AUTHORIZED_MENU_ITEMS = [
     id: 'nav.privacy_policy',
     defaultMessage: 'Privacy Policy',
     href: PRIVACY_POLICY_PAGE,
-  },
+  },*/
 ];
 // category menu items for header navigation
 export const CATEGORY_MENU_ITEMS = [
