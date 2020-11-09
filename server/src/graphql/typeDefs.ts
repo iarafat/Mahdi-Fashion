@@ -292,5 +292,6 @@ export const typeDefs = gql`
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
         addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
+        updatePhoneNumber(id: ID!, index: Int!, number: String!): DefaultMessageType!
     }
 `;

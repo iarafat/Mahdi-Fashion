@@ -150,6 +150,32 @@ export const usersResolvers: IResolvers = {
                 message: "Added successfully."
             };
         },
+        updatePhoneNumber: async (
+            _root: undefined,
+            {id, index, number}: { id: string, index: number, number: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const {number: number1} = userResult.phones[index];
+            await db.users.updateOne(
+                {_id: new ObjectId(id), "phones.number": number1},
+                {$set: {"phones.$.number": number}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Added successfully."
+            };
+        },
     },
     User: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
