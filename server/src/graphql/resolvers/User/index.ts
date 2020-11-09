@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IUser, IUserAuth} from "../../../lib/types";
+import {Database, ICommonMessageReturnType, IUser, IUserAuth} from "../../../lib/types";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {authorize} from "../../../lib/utils";
@@ -29,7 +29,17 @@ export const usersResolvers: IResolvers = {
         ): Promise<IUser[]> => {
             await authorize(req, db);
             return await db.users.find({}).toArray();
-        }
+        },
+        getUser: async (
+            _root: undefined,
+            {id}: { id: string},
+            {db, req}: { db: Database, req: Request }
+        ): Promise<IUser> => {
+            await authorize(req, db);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return await db.users.findOne({_id: new ObjectId(id)});
+        },
     },
 
     Mutation: {
@@ -42,8 +52,6 @@ export const usersResolvers: IResolvers = {
             if (userResult) {
                 throw new Error("User already registered.");
             }
-			
-			
 
             const address = {
                 title: "",
@@ -59,7 +67,7 @@ export const usersResolvers: IResolvers = {
                 name: "",
                 email: "",
                 password: await hashPassword(password),
-                phones: [{number: phone, status: false, is_primary: false}],
+                phones: [{number: phone, status: false, is_primary: true}],
                 delivery_address: [address],
                 created_at: new Date().toString(),
             };
@@ -90,11 +98,178 @@ export const usersResolvers: IResolvers = {
                 user: userResult,
                 access_token: accessToken(userResult._id),
             }
-        }
+        },
+        updateUserNameAndEmail: async (
+            _root: undefined,
+            {id, name, email}: { id: string, name: string, email: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {name: name, email: email}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Updated successfully."
+            };
+        },
+        addPhoneNumber: async (
+            _root: undefined,
+            {id, number}: { id: string, number: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (userResult.phones.length == 2) {
+                throw new Error("Already added two phone numbers. You are not allowed to add more than two numbers.");
+            }
+
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$push: {phones: {number: number, status: false, is_primary: false} }}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Added successfully."
+            };
+        },
+        updatePhoneNumber: async (
+            _root: undefined,
+            {id, index, number}: { id: string, index: number, number: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const {number: number1} = userResult.phones[index];
+            await db.users.updateOne(
+                {_id: new ObjectId(id), "phones.number": number1},
+                {$set: {"phones.$.number": number}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Updated successfully."
+            };
+        },
+        setPhoneNumberPrimary: async (
+            _root: undefined,
+            {id, index}: { id: string, index: number},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            const numbers = [];
+            const userPhones = userResult.phones;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            for (let i = 0; i < userPhones.length; i++) {
+                if (i == index) {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: true
+                        });
+                    }
+                } else {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: false
+                        });
+                    }
+                }
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {phones: numbers}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Set successfully."
+            };
+        },
+        deletePhoneNumber: async (
+            _root: undefined,
+            {id, index}: { id: string, index: number},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (userResult.phones.length == 1) {
+                throw new Error("You are not allowed to delete your number.");
+            }
+
+            const numbers = [];
+            const userPhones = userResult.phones;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            for (let i = 0; i < userPhones.length; i++) {
+                if (i != index) {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: true
+                        });
+                    }
+                }
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {phones: numbers}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Deleted successfully."
+            };
+        },
     },
     User: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        id: (type: IUser): string => type._id.toString(),
+        id: (user: IUser): string => user._id.toString(),
     }
 }

@@ -19,7 +19,7 @@ export interface IUser {
     name?: string;
     email?: string;
     password: string;
-    phones?: [Phone];
+    phones?: Array<Phone>;
     delivery_address?: [Address]
     created_at: string;
 }
@@ -160,7 +160,7 @@ export interface IOrder {
     updated_at?: string;
 }
 
-export interface ICommonDeleteReturnType {
+export interface ICommonMessageReturnType {
     message: string;
     status: boolean;
 }
