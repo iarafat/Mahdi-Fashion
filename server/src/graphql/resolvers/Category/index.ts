@@ -4,7 +4,7 @@ import {Request} from "express";
 import {
     Database,
     ICategory,
-    ICommonDeleteReturnType,
+    ICommonMessageReturnType,
     ICommonPaginationArgs,
     ICommonPaginationReturnType
 } from "../../../lib/types";
@@ -157,7 +157,7 @@ export const categoriesResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonDeleteReturnType> => {
+        ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.categories.findOneAndDelete({

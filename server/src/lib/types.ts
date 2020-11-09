@@ -160,7 +160,7 @@ export interface IOrder {
     updated_at?: string;
 }
 
-export interface ICommonDeleteReturnType {
+export interface ICommonMessageReturnType {
     message: string;
     status: boolean;
 }

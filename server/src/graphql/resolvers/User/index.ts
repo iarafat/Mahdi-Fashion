@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IUser, IUserAuth} from "../../../lib/types";
+import {Database, ICommonMessageReturnType, IUser, IUserAuth} from "../../../lib/types";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {authorize} from "../../../lib/utils";
@@ -29,7 +29,17 @@ export const usersResolvers: IResolvers = {
         ): Promise<IUser[]> => {
             await authorize(req, db);
             return await db.users.find({}).toArray();
-        }
+        },
+        getUser: async (
+            _root: undefined,
+            {id}: { id: string},
+            {db, req}: { db: Database, req: Request }
+        ): Promise<IUser> => {
+            await authorize(req, db);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return await db.users.findOne({_id: new ObjectId(id)});
+        },
     },
 
     Mutation: {
@@ -42,8 +52,6 @@ export const usersResolvers: IResolvers = {
             if (userResult) {
                 throw new Error("User already registered.");
             }
-			
-			
 
             const address = {
                 title: "",
@@ -59,7 +67,7 @@ export const usersResolvers: IResolvers = {
                 name: "",
                 email: "",
                 password: await hashPassword(password),
-                phones: [{number: phone, status: false, is_primary: false}],
+                phones: [{number: phone, status: false, is_primary: true}],
                 delivery_address: [address],
                 created_at: new Date().toString(),
             };
@@ -90,7 +98,29 @@ export const usersResolvers: IResolvers = {
                 user: userResult,
                 access_token: accessToken(userResult._id),
             }
-        }
+        },
+        updateUserNameAndEmail: async (
+            _root: undefined,
+            {id, name, email}: { id: string, name: string, email: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {name: name, email: email}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Updated successfully."
+            };
+        },
     },
     User: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
