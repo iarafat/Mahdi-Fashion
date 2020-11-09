@@ -13,7 +13,6 @@ import {
   SettingsFormContent,
   HeadingSection,
   Title,
-  // Input,
   Row,
   ButtonGroup,
 } from './settings.style';

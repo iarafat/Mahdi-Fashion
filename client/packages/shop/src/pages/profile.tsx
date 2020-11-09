@@ -22,7 +22,11 @@ type Props = {
   };
 };
 const ProfilePage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_CUSTOMER);
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_CUSTOMER, {
+    variables: { 
+      
+    },
+  });
   if (!data || loading) {
     return <div>loading...</div>;
   }
