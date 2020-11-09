@@ -291,5 +291,6 @@ export const typeDefs = gql`
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
+        addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
     }
 `;

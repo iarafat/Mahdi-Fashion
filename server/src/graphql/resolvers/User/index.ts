@@ -121,10 +121,39 @@ export const usersResolvers: IResolvers = {
                 message: "Updated successfully."
             };
         },
+        addPhoneNumber: async (
+            _root: undefined,
+            {id, number}: { id: string, number: string},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (userResult.phones.length > 1) {
+                throw new Error("Already added two phone numbers. You are not allowed to add more than two numbers.");
+            }
+
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$push: {phones: {number: number, status: false, is_primary: false} }}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Added successfully."
+            };
+        },
     },
     User: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        id: (type: IUser): string => type._id.toString(),
+        id: (user: IUser): string => user._id.toString(),
     }
 }
