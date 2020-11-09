@@ -293,5 +293,6 @@ export const typeDefs = gql`
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
         addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
         updatePhoneNumber(id: ID!, index: Int!, number: String!): DefaultMessageType!
+        setPhoneNumberPrimary(id: ID!, index: Int!): DefaultMessageType!
     }
 `;

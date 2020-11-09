@@ -173,7 +173,53 @@ export const usersResolvers: IResolvers = {
             // @ts-ignore
             return {
                 status: true,
-                message: "Added successfully."
+                message: "Updated successfully."
+            };
+        },
+        setPhoneNumberPrimary: async (
+            _root: undefined,
+            {id, index}: { id: string, index: number},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            const numbers = [];
+            const userPhones = userResult.phones;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            for (let i = 0; i < userPhones.length; i++) {
+                if (i == index) {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: true
+                        });
+                    }
+                } else {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: false
+                        });
+                    }
+                }
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {phones: numbers}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Set successfully."
             };
         },
     },
