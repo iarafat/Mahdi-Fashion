@@ -294,5 +294,6 @@ export const typeDefs = gql`
         addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
         updatePhoneNumber(id: ID!, index: Int!, number: String!): DefaultMessageType!
         setPhoneNumberPrimary(id: ID!, index: Int!): DefaultMessageType!
+        deletePhoneNumber(id: ID!, index: Int!): DefaultMessageType!
     }
 `;

@@ -133,7 +133,7 @@ export const usersResolvers: IResolvers = {
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            if (userResult.phones.length > 1) {
+            if (userResult.phones.length == 2) {
                 throw new Error("Already added two phone numbers. You are not allowed to add more than two numbers.");
             }
 
@@ -220,6 +220,50 @@ export const usersResolvers: IResolvers = {
             return {
                 status: true,
                 message: "Set successfully."
+            };
+        },
+        deletePhoneNumber: async (
+            _root: undefined,
+            {id, index}: { id: string, index: number},
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({_id: new ObjectId(id)});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if (userResult.phones.length == 1) {
+                throw new Error("You are not allowed to delete your number.");
+            }
+
+            const numbers = [];
+            const userPhones = userResult.phones;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            for (let i = 0; i < userPhones.length; i++) {
+                if (i != index) {
+                    if (userPhones) {
+                        numbers.push({
+                            number: userPhones[i].number,
+                            status: userPhones[i].status,
+                            is_primary: true
+                        });
+                    }
+                }
+            }
+
+            await db.users.updateOne(
+                {_id: new ObjectId(id)},
+                {$set: {phones: numbers}}
+            );
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return {
+                status: true,
+                message: "Deleted successfully."
             };
         },
     },
