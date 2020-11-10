@@ -60,7 +60,6 @@ export default function SignInModal() {
     onError: (error) => {
       setPhone('');
       setPassword('');
-      console.log(error);
     }
   });
 
