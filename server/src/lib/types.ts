@@ -20,7 +20,7 @@ export interface IUser {
     email?: string;
     password: string;
     phones?: Array<Phone>;
-    delivery_address?: [Address]
+    delivery_address?: Array<Address>;
     created_at: string;
 }
 
