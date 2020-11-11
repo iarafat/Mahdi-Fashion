@@ -89,7 +89,6 @@ const SiteSettingsForm: React.FC<Props> = () => {
   const [keyword, setKeyword] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [siteData, setSiteData] = React.useState<ValueType>();
-
   const settingData = (): ValueType => {
     const settingData = JSON.parse(data.getSiteSetting.value);
     setImage(settingData.image);

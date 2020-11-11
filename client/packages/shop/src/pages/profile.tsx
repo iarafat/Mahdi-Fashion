@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { useQuery } from '@apollo/react-hooks';
 import { Modal } from '@redq/reuse-modal';
-import { GET_LOGGED_IN_CUSTOMER } from 'graphql/query/customer.query';
+import { GET_LOGGED_IN_USER } from 'graphql/query/customer.query';
 import { ProfileProvider } from 'contexts/profile/profile.provider';
 import SettingsContent from 'features/user-profile/settings/settings';
 import {
@@ -22,9 +22,8 @@ type Props = {
   };
 };
 const ProfilePage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_CUSTOMER, {
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER, {
     variables: { 
-      
     },
   });
   if (!data || loading) {

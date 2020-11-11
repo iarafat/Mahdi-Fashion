@@ -27,7 +27,6 @@ const Header: React.FC<Props> = ({ className }) => {
       Router.push('/');
     }
   };
-
   const handleJoin = () => {
     authDispatch({
       type: 'SIGNIN',
