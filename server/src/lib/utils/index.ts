@@ -1,6 +1,7 @@
 import {Request} from "express";
 import * as jwt from "jsonwebtoken";
 import {Database, IUser} from "../../lib/types";
+import {ObjectId} from "mongodb";
 
 
 export const authorize = async (req: Request, db: Database): Promise<IUser | null> => {
@@ -18,11 +19,11 @@ export const authorize = async (req: Request, db: Database): Promise<IUser | nul
         throw new Error("Unauthorized!");
     }
 
-    const {userId, exp} = <any>jwt.verify(token, secret);
+    const {UserId, exp} = <any>jwt.verify(token, secret);
 
     if (exp < Date.now().valueOf() / 1000) {
         throw new Error("Token has expired, please login to obtain a new one")
     }
 
-    return await db.users.findOne({_id: userId});
+    return await db.users.findOne({_id:  new ObjectId(UserId)});
 };

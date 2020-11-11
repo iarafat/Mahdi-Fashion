@@ -267,7 +267,7 @@ export const typeDefs = gql`
         orders: [Order!]
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
-        getUser(id: ID!): User!
+        getUser: User!
     }
     
     type Mutation {

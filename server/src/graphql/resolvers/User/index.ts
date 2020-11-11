@@ -35,10 +35,9 @@ export const usersResolvers: IResolvers = {
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<IUser> => {
-            await authorize(req, db);
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            return await db.users.findOne({_id: new ObjectId(id)});
+            return await authorize(req, db);
         },
     },
 
@@ -92,8 +91,10 @@ export const usersResolvers: IResolvers = {
         updateUserNameAndEmail: async (
             _root: undefined,
             {id, name, email}: { id: string, name: string, email: string },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -112,8 +113,10 @@ export const usersResolvers: IResolvers = {
         addPhoneNumber: async (
             _root: undefined,
             {id, number}: { id: string, number: string },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -139,8 +142,10 @@ export const usersResolvers: IResolvers = {
         updatePhoneNumber: async (
             _root: undefined,
             {id, index, number}: { id: string, index: number, number: string },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -163,8 +168,10 @@ export const usersResolvers: IResolvers = {
         setPhoneNumberPrimary: async (
             _root: undefined,
             {id, index}: { id: string, index: number },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -207,8 +214,10 @@ export const usersResolvers: IResolvers = {
         deletePhoneNumber: async (
             _root: undefined,
             {id, index}: { id: string, index: number },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -256,8 +265,10 @@ export const usersResolvers: IResolvers = {
                 district: string,
                 region: string
             },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -299,8 +310,10 @@ export const usersResolvers: IResolvers = {
                 district: string,
                 region: string
             },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -332,8 +345,10 @@ export const usersResolvers: IResolvers = {
         setDeliveryAddressPrimary: async (
             _root: undefined,
             {id, index}: { id: string, index: number },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -382,8 +397,10 @@ export const usersResolvers: IResolvers = {
         deleteDeliveryAddress: async (
             _root: undefined,
             {id, index}: { id: string, index: number },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
@@ -428,8 +445,10 @@ export const usersResolvers: IResolvers = {
         changePassword: async (
             _root: undefined,
             {id, old_password, new_password, confirm_password}: { id: string, old_password: string, new_password: string, confirm_password: string },
-            {db}: { db: Database }
+            {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
+            await authorize(req, db);
+
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
             if (!userResult) {
                 throw new Error("User dose not exits.");
