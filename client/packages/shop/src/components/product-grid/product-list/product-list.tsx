@@ -37,8 +37,6 @@ const MedicineCard = dynamic(
   import('components/product-card/product-card-five/product-card-five')
 );
 
-console.log(process.env.PROXY_URL)
-
 type ProductsProps = {
   deviceType?: {
     mobile: boolean;

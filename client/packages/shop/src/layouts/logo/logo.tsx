@@ -12,7 +12,7 @@ type LogoProps = {
 };
 
 const Logo: React.FC<LogoProps> = ({ refs, imageUrl, alt, onClick }: any) => {
-  const {data, error, refetch} = useQuery(GET_SETTING);
+  const {data, error, loading} = useQuery(GET_SETTING);
 
   const [ siteSettingData, setSiteSettingData ] = useState<any | null>(initialState);
 
@@ -30,7 +30,8 @@ const Logo: React.FC<LogoProps> = ({ refs, imageUrl, alt, onClick }: any) => {
   }
   return (
     <LogoBox onClick={onLogoClick} ref={refs}>
-      <LogoImage src={siteSettingData ? SHOP_IMAGE_HOST+siteSettingData.image : ''} alt={alt} />
+      {loading && <span>logo here</span> }
+      {data &&<LogoImage src={siteSettingData ? SHOP_IMAGE_HOST+siteSettingData.image : imageUrl } alt={alt} />}
     </LogoBox>
   );
 };

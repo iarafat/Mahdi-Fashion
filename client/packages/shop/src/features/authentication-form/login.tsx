@@ -54,9 +54,6 @@ export default function SignInModal() {
           type: 'SIGNIN_SUCCESS',
           user
         });
-        authDispatch({ 
-          type: 'CURRENT_USER'
-        });
         closeModal();
       }
     },
@@ -65,9 +62,7 @@ export default function SignInModal() {
       setPassword('');
     }
   });
-
-  console.log(useContext<any>(AuthContext))
-
+  
   return (
     <Wrapper>
       <Container>

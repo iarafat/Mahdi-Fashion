@@ -31,7 +31,6 @@ const ProfilePage: NextPage<Props> = ({ deviceType }) => {
   }
   if (error) return <ErrorMessage message={error.message} />;
   console.log(data)
-  alert(12)
   return (
     <>
       <SEO title="Profile - Mahdi Fashion" description="Profile Details" />
