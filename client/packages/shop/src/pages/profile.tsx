@@ -22,10 +22,8 @@ type Props = {
   };
 };
 const ProfilePage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER, {
-    variables: { 
-    },
-  });
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
+  console.log(data);
   if (!data || loading) {
     return <div>loading...</div>;
   }
