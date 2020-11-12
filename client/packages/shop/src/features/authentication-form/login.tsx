@@ -49,7 +49,6 @@ export default function SignInModal() {
     }
   ] = useMutation(SIGNIN_MUTATION,{
     onCompleted: (data) => {
-      console.log(data)
       const { access_token } = data.login;
       if (typeof window !== 'undefined') {
         localStorage.setItem('access_token', `${access_token}`);
@@ -60,7 +59,6 @@ export default function SignInModal() {
     onError: (error) => {
       setPhone('');
       setPassword('');
-      console.log(error);
     }
   });
 

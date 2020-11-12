@@ -22,17 +22,13 @@ type Props = {
   };
 };
 const ProfilePage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_CUSTOMER, {
-    variables: { 
-      
-    },
-  });
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_CUSTOMER);
+  
+  console.log(data);
   if (!data || loading) {
     return <div>loading...</div>;
   }
   if (error) return <ErrorMessage message={error.message} />;
-  console.log(data)
-  alert(12)
   return (
     <>
       <SEO title="Profile - Mahdi Fashion" description="Profile Details" />
