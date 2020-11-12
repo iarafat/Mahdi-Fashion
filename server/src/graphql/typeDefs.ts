@@ -267,7 +267,7 @@ export const typeDefs = gql`
         orders: [Order!]
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
-        getUser(id: ID!): User!
+        getUser: User!
     }
     
     type Mutation {
@@ -295,5 +295,10 @@ export const typeDefs = gql`
         updatePhoneNumber(id: ID!, index: Int!, number: String!): DefaultMessageType!
         setPhoneNumberPrimary(id: ID!, index: Int!): DefaultMessageType!
         deletePhoneNumber(id: ID!, index: Int!): DefaultMessageType!
+        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        updateDeliveryAddress(id: ID!, index: Int!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        setDeliveryAddressPrimary(id: ID!, index: Int!): DefaultMessageType!
+        deleteDeliveryAddress(id: ID!, index: Int!): DefaultMessageType!
+        changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
     }
 `;
