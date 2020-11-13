@@ -7,11 +7,13 @@ export const typeDefs = gql`
         type: String!
     }   
     type Phone {
+        id: String
         number: String!
         status: Boolean
         is_primary: Boolean
     }
     type DeliveryAddress {
+        id: String
         title: String
         address: String 
         division: String 
@@ -292,9 +294,9 @@ export const typeDefs = gql`
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
         addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
-        updatePhoneNumber(id: ID!, index: Int!, number: String!): DefaultMessageType!
-        setPhoneNumberPrimary(id: ID!, index: Int!): DefaultMessageType!
-        deletePhoneNumber(id: ID!, index: Int!): DefaultMessageType!
+        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): DefaultMessageType!
+        setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
+        deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
         addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
         updateDeliveryAddress(id: ID!, index: Int!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
         setDeliveryAddressPrimary(id: ID!, index: Int!): DefaultMessageType!
