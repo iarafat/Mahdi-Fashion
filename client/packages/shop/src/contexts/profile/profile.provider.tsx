@@ -48,30 +48,31 @@ function reducer(state: any, action: Action): any {
         ),
       };
     case 'ADD_OR_UPDATE_ADDRESS':
-      if (action.payload.id) {
+      console.log(action.payload)
+      /*if (action.payload.id) {
         return {
           ...state,
-          address: state.address.map((item: any) =>
-            item.id === action.payload.id
+          delivery_address: state.delivery_address.map((item: any, index: any) =>
+            index === action.payload.id
               ? { ...item, ...action.payload }
               : item
           ),
         };
-      }
+      }*/
       const newAdress = {
         ...action.payload,
         id: uuidV4(),
-        type: state.address.length === '0' ? 'primary' : 'secondary',
+        is_primary: state.delivery_address.length === '0' ? true : false,
       };
       return {
         ...state,
-        address: [...state.address, newAdress],
+        delivery_address: [...state.delivery_address, newAdress],
       };
     case 'DELETE_ADDRESS':
       return {
         ...state,
-        address: state.address.filter(
-          (item: any) => item.id !== action.payload
+        delivery_address: state.delivery_address.filter(
+          (item: any, index: any) => index !== action.payload
         ),
       };
     case 'ADD_CARD':
@@ -103,10 +104,10 @@ function reducer(state: any, action: Action): any {
     case 'SET_PRIMARY_ADDRESS':
       return {
         ...state,
-        address: state.address.map((item: any) =>
-          item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+        delivery_address: state.delivery_address.map((item: any, index: any) =>
+          index == action.payload
+            ? { ...item, is_primary: true }
+            : { ...item, is_primary: false }
         ),
       };
     case 'SET_PRIMARY_SCHEDULE':

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { Col } from 'react-styled-flexboxgrid';
 import { openModal } from '@redq/reuse-modal';
+import RadioCardTWO from 'components/radio-card/radio-card-two';
 import RadioCard from 'components/radio-card/radio-card';
 import { ProfileContext } from 'contexts/profile/profile.context';
 import { DELETE_ADDRESS } from 'graphql/mutation/address';
@@ -16,9 +17,11 @@ import {
   Row,
   ButtonGroup,
 } from './settings.style';
+import RadioGroupTwo from 'components/radio-group/radio-group-two';
 import RadioGroup from 'components/radio-group/radio-group';
+
 import PaymentGroup from 'components/payment-group/payment-group';
-import UpdateAddress from 'components/address-card/address-card';
+import UpdateAddressTwo from 'components/address-card/address-card-two';
 import UpdateContact from 'components/contact-card/contact-card';
 import { Button } from 'components/button/button';
 import { Input } from 'components/forms/input';
@@ -41,7 +44,13 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
 
-  const { address, contact, card } = state;
+  const { 
+    delivery_address, 
+    card,
+    name,
+    email,
+    phones
+  } = state;
 
   const handleChange = (e) => {
     const { value, name } = e.target;
@@ -71,12 +80,11 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
     });
   };
 
-  const handleEditDelete = async (item: any, type: string, name: string) => {
+  const handleEditDelete = async (item: any, index: any, type: string, name: string) => {
     if (type === 'edit') {
-      const modalComponent = name === 'address' ? UpdateAddress : UpdateContact;
+      const modalComponent = name === 'address' ? UpdateAddressTwo : UpdateContact;
       handleModal(modalComponent, item);
     } else {
-      console.log(name, item, type, 'delete');
       switch (name) {
         case 'payment':
           dispatch({ type: 'DELETE_CARD', payload: item.id });
@@ -91,11 +99,15 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
             variables: { contactId: JSON.stringify(item.id) },
           });
         case 'address':
-          dispatch({ type: 'DELETE_ADDRESS', payload: item.id });
+          dispatch({ type: 'DELETE_ADDRESS', payload: index });
 
           return await deleteAddressMutation({
-            variables: { addressId: JSON.stringify(item.id) },
+            variables: { 
+              id: "5fa2a3c3c9efe33afc57bc39",
+              index 
+            },
           });
+
         default:
           return false;
       }
@@ -132,7 +144,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
               type='text'
               label='Name'
               name='name'
-              value={state.name}
+              value={name}
               onChange={handleChange}
               backgroundColor='#F7F7F7'
               height='48px'
@@ -151,7 +163,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
               type='email'
               name='email'
               label='Email Address'
-              value={state.email}
+              value={email}
               onChange={handleChange}
               backgroundColor='#F7F7F7'
               // intlInputLabelId="profileEmailField"
@@ -177,24 +189,24 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
               </HeadingSection>
               <ButtonGroup>
                 <RadioGroup
-                  items={contact}
-                  component={(item: any) => (
+                  items={phones}
+                  component={(item: any, index: any) => (
                     <RadioCard
-                      id={item.id}
-                      key={item.id}
+                      id={index}
+                      key={item.number}
                       title={item.type}
                       content={item.number}
                       checked={item.type === 'primary'}
                       onChange={() =>
                         dispatch({
                           type: 'SET_PRIMARY_CONTACT',
-                          payload: item.id.toString(),
+                          payload: index.toString(),
                         })
                       }
                       name='contact'
-                      onEdit={() => handleEditDelete(item, 'edit', 'contact')}
+                      onEdit={() => handleEditDelete(item, index, 'edit', 'contact')}
                       onDelete={() =>
-                        handleEditDelete(item, 'delete', 'contact')
+                        handleEditDelete(item, index, 'delete', 'contact')
                       }
                     />
                   )}
@@ -205,7 +217,9 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       type='button'
                       className='add-button'
                       onClick={() =>
-                        handleModal(UpdateContact, {}, 'add-contact-modal')
+                        handleModal(UpdateContact, {
+
+                        }, 'add-contact-modal')
                       }
                     >
                       <FormattedMessage
@@ -231,28 +245,32 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                 </Title>
               </HeadingSection>
               <ButtonGroup>
-                <RadioGroup
-                  items={address}
-                  component={(item: any) => (
-                    <RadioCard
-                      id={item.id}
-                      key={item.id}
-                      title={item.name}
-                      content={item.info}
+                <RadioGroupTwo
+                  items={delivery_address}
+                  component={(item: any, index: any) => (
+                    <RadioCardTWO 
+                      id={index}
+                      key={index}
+                      address={item.address}
+                      district={item.district}
+                      division={item.division}
+                      title={item.title}
+                      region = {item.region}
                       name='address'
-                      checked={item.type === 'primary'}
+                      isChecked={item.is_primary === true}
                       onChange={() =>
                         dispatch({
                           type: 'SET_PRIMARY_ADDRESS',
-                          payload: item.id.toString(),
+                          payload: index,
                         })
                       }
-                      onEdit={() => handleEditDelete(item, 'edit', 'address')}
+                      onEdit={() => handleEditDelete(item, index, 'edit', 'address')}
                       onDelete={() =>
-                        handleEditDelete(item, 'delete', 'address')
+                        handleEditDelete(item, index, 'delete', 'address')
                       }
                     />
                   )}
+                  
                   secondaryComponent={
                     <Button
                       size='big'
@@ -260,12 +278,12 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       type='button'
                       className='add-button'
                       onClick={() =>
-                        handleModal(UpdateAddress, {}, 'add-address-modal')
+                        handleModal(UpdateAddressTwo, {}, 'add-address-modal')
                       }
                     >
                       <FormattedMessage
-                        id='addAddressBtn'
-                        defaultMessage='Add Address'
+                        id='addAddressBtn' 
+                        defaultMessage='Add Address' 
                       />
                     </Button>
                   }
@@ -275,7 +293,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
           </Col>
         </Row>
 
-        <Row>
+        {/*<Row>
           <Col xs={12} sm={12} md={12} lg={12}>
             <SettingsFormContent>
               <HeadingSection>
@@ -309,7 +327,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
               />
             </SettingsFormContent>
           </Col>
-        </Row>
+        </Row>*/}
       </SettingsFormContent>
     </SettingsForm>
   );
