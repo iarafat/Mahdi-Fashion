@@ -1,11 +1,13 @@
 import {Collection, ObjectId} from 'mongodb';
 
 interface Phone {
+    id: string
     number: string,
     status?: boolean,
     is_primary?: boolean
 }
 interface Address {
+    id: string
     title: string,
     address: string,
     division?: string,

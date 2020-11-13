@@ -5,6 +5,7 @@ import {Database, ICommonMessageReturnType, IUser, IUserAuth} from "../../../lib
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {authorize} from "../../../lib/utils";
+import shortid from "shortid";
 
 const hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10)
@@ -57,7 +58,7 @@ export const usersResolvers: IResolvers = {
                 name: "",
                 email: "",
                 password: await hashPassword(password),
-                phones: [{number: phone, status: false, is_primary: true}],
+                phones: [{id: shortid.generate(), number: phone, status: false, is_primary: true}],
                 created_at: new Date().toString(),
             };
 
@@ -131,7 +132,7 @@ export const usersResolvers: IResolvers = {
 
             await db.users.updateOne(
                 {_id: new ObjectId(id)},
-                {$push: {phones: {number: number, status: false, is_primary: false}}}
+                {$push: {phones: {id: shortid.generate(), number: number, status: false, is_primary: false}}}
             );
 
             return {
@@ -141,7 +142,7 @@ export const usersResolvers: IResolvers = {
         },
         updatePhoneNumber: async (
             _root: undefined,
-            {id, index, number}: { id: string, index: number, number: string },
+            {id, phoneId, number}: { id: string, phoneId: string, number: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
@@ -151,12 +152,8 @@ export const usersResolvers: IResolvers = {
                 throw new Error("User dose not exits.");
             }
 
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const {number: number1} = userResult.phones[index];
             await db.users.updateOne(
-                {_id: new ObjectId(id), "phones.number": number1},
+                {_id: new ObjectId(id), "phones.id": phoneId},
                 {$set: {"phones.$.number": number}}
             );
 
@@ -167,7 +164,7 @@ export const usersResolvers: IResolvers = {
         },
         setPhoneNumberPrimary: async (
             _root: undefined,
-            {id, index}: { id: string, index: number },
+            {id, phoneId}: { id: string, phoneId: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
@@ -177,29 +174,25 @@ export const usersResolvers: IResolvers = {
                 throw new Error("User dose not exits.");
             }
 
-            const numbers = [];
-            const userPhones = userResult.phones;
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            for (let i = 0; i < userPhones.length; i++) {
-                if (i == index) {
-                    if (userPhones) {
-                        numbers.push({
-                            number: userPhones[i].number,
-                            status: userPhones[i].status,
-                            is_primary: true
-                        });
+            const numbers = userResult.phones.map(phone => {
+                if (phone.id == phoneId) {
+                    return {
+                        id: phone.id,
+                        number: phone.number,
+                        status: phone.status,
+                        is_primary: true
                     }
                 } else {
-                    if (userPhones) {
-                        numbers.push({
-                            number: userPhones[i].number,
-                            status: userPhones[i].status,
-                            is_primary: false
-                        });
+                    return {
+                        id: phone.id,
+                        number: phone.number,
+                        status: phone.status,
+                        is_primary: false
                     }
                 }
-            }
+            });
 
             await db.users.updateOne(
                 {_id: new ObjectId(id)},
@@ -213,7 +206,7 @@ export const usersResolvers: IResolvers = {
         },
         deletePhoneNumber: async (
             _root: undefined,
-            {id, index}: { id: string, index: number },
+            {id, phoneId}: { id: string, phoneId: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
@@ -234,14 +227,13 @@ export const usersResolvers: IResolvers = {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             for (let i = 0; i < userPhones.length; i++) {
-                if (i != index) {
-                    if (userPhones) {
-                        numbers.push({
-                            number: userPhones[i].number,
-                            status: userPhones[i].status,
-                            is_primary: true
-                        });
-                    }
+                if (userPhones && userPhones[i].id != phoneId) {
+                    numbers.push({
+                        id: userPhones[i].id,
+                        number: userPhones[i].number,
+                        status: userPhones[i].status,
+                        is_primary: true
+                    });
                 }
             }
 
@@ -281,6 +273,7 @@ export const usersResolvers: IResolvers = {
             }
 
             const newAddress = {
+                id: shortid.generate(),
                 title: title,
                 address: address,
                 division: division,
@@ -321,12 +314,13 @@ export const usersResolvers: IResolvers = {
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            const {title: title1, address: address1, division: division1, district: district1, region: region1, is_primary} = userResult.delivery_address[index];
+            const {id: id1, title: title1, address: address1, division: division1, district: district1, region: region1, is_primary} = userResult.delivery_address[index];
 
             await db.users.updateOne(
                 {_id: new ObjectId(id), "delivery_address.title": title1},
                 {
                     $set: {
+                        "delivery_address.$.id": id1,
                         "delivery_address.$.title": title ? title : title1,
                         "delivery_address.$.address": address ? address : address1,
                         "delivery_address.$.division": division ? division : division1,
@@ -362,6 +356,7 @@ export const usersResolvers: IResolvers = {
                 if (i == index) {
                     if (userAddresses) {
                         addresses.push({
+                            id: userAddresses[i].id,
                             title: userAddresses[i].title,
                             address: userAddresses[i].address,
                             division: userAddresses[i].division,
@@ -373,6 +368,7 @@ export const usersResolvers: IResolvers = {
                 } else {
                     if (userAddresses) {
                         addresses.push({
+                            id: userAddresses[i].id,
                             title: userAddresses[i].title,
                             address: userAddresses[i].address,
                             division: userAddresses[i].division,
@@ -421,6 +417,7 @@ export const usersResolvers: IResolvers = {
                 if (i != index) {
                     if (userAddresses) {
                         addresses.push({
+                            id: userAddresses[i].id,
                             title: userAddresses[i].title,
                             address: userAddresses[i].address,
                             division: userAddresses[i].division,
