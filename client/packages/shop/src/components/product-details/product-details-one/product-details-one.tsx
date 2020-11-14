@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
+import dynamic from 'next/dynamic';
 import { Button } from 'components/button/button';
 import {
   ProductDetailsWrapper,
@@ -32,6 +33,13 @@ import { FormattedMessage } from 'react-intl';
 import { useLocale } from 'contexts/language/language.provider';
 import { useCart } from 'contexts/cart/use-cart';
 import { Counter } from 'components/counter/counter';
+import { flex } from 'styled-system';
+import Footer from 'components/footer';
+
+const CartPopUp = dynamic(() => import('features/carts/cart-popup-two'), {
+  ssr: false,
+});
+
 
 type ProductDetailsProps = {
   product: any;
@@ -54,7 +62,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
     e.stopPropagation();
     addItem(data);
   };
-
+  const checkoutStatus = React.useRef(null);
   const handleRemoveClick = (e) => {
     e.stopPropagation();
     removeItem(data);
@@ -119,8 +127,14 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
             <ReadMore character={600}>{product.description}</ReadMore>
           </ProductDescription>
 
-          <ProductCartWrapper>
-            <ProductCartBtn>
+          <ProductCartWrapper style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center'
+          }}>
+            <ProductCartBtn style={{
+            display: 'flex'
+          }}>
               {!isInCart(data.id) ? (
                 <Button
                   className="cart-button"
@@ -148,7 +162,10 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
                 />
               )}
             </ProductCartBtn>
+            <CartPopUp deviceType={deviceType} />
           </ProductCartWrapper>
+
+
 
           <ProductMeta>
             <MetaSingle>
@@ -209,6 +226,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
         />
       </RelatedItems>
       */}
+      <Footer/>
     </>
   );
 };

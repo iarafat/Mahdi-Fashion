@@ -4,6 +4,7 @@ import { ProfileContext } from './profile.context';
 
 type Action =
   | { type: 'HANDLE_ON_INPUT_CHANGE'; payload: any }
+  | { type: 'HANDLE_PASSWORD_CLEAR'; payload: any }
   | { type: 'ADD_OR_UPDATE_CONTACT'; payload: any }
   | { type: 'DELETE_CONTACT'; payload: any }
   | { type: 'ADD_ADDRESS'; payload: any }
@@ -19,6 +20,7 @@ function reducer(state: any, action: Action): any {
   switch (action.type) {
     case 'HANDLE_ON_INPUT_CHANGE':
       return { ...state, [action.payload.field]: action.payload.value };
+    
     case 'ADD_OR_UPDATE_CONTACT':
       if (action.payload.id !== null ) {
         return {
@@ -48,37 +50,30 @@ function reducer(state: any, action: Action): any {
       };
     case 'ADD_ADDRESS':
       const newAdress = {
+
         ...action.payload
       };
       return {
-        delivery_address: [newAdress],
+        ...state,
+        delivery_address: [...state.delivery_address, newAdress],
       };
     case 'UPDATE_ADDRESS':
-      
         console.log(action.payload)
-        /*if (action.payload.id) {
+        if (action.payload.id) {
           return {
             ...state,
             delivery_address: state.delivery_address.map((item: any, index: any) =>
-              index === action.payload.id
-                ? { ...item, ...action.payload }
+              item.id === action.payload.id
+                ? { ...item, ...action.payload.value }
                 : item
             ),
           };
-        }*/
-        const MynewAdress = {
-          ...action.payload
-        };
-        return {
-          ...state,
-          delivery_address: [...state.delivery_address, newAdress],
-      };
-
+        }
     case 'DELETE_ADDRESS':
       return {
         ...state,
         delivery_address: state.delivery_address.filter(
-          (item: any, index: any) => index !== action.payload
+          (item: any, index: any) => item.id !== action.payload
         ),
       };
     case 'ADD_CARD':
@@ -103,15 +98,15 @@ function reducer(state: any, action: Action): any {
         ...state,
         phones: state.phones.map((item: any) =>
           item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+            ? { ...item, is_primary: true, type: 'primary' }
+            : { ...item, is_primary: false, type: 'secondary' }
         ),
       };
     case 'SET_PRIMARY_ADDRESS':
       return {
         ...state,
         delivery_address: state.delivery_address.map((item: any, index: any) =>
-          index == action.payload
+          item.id == action.payload
             ? { ...item, is_primary: true }
             : { ...item, is_primary: false }
         ),

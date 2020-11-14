@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -21,11 +21,7 @@ import { useRefScroll } from 'utils/use-ref-scroll';
 import { initializeApollo } from 'utils/apollo';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
 import { GET_CATEGORIES } from 'graphql/query/category.query';
-import { GET_TYPE } from 'graphql/query/type.query';
 import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
-import { useQuery } from '@apollo/react-hooks';
-import { SHOP_IMAGE_HOST } from 'utils/images-path';
-import { string } from 'yup';
 const Sidebar = dynamic(() => import('layouts/sidebar/sidebar'));
 const Products = dynamic(() =>
   import('components/product-grid/product-list/product-list')
@@ -34,12 +30,6 @@ const CartPopUp = dynamic(() => import('features/carts/cart-popup'), {
   ssr: false,
 });
 
-type ShopType = {
-  home_title: string
-  image: string
-  home_subtitle: string
-}
-
 const CategoryPage: React.FC<any> = ({ deviceType }) => {
   const { query } = useRouter();
   const { elRef: targetRef, scroll } = useRefScroll({
@@ -47,67 +37,50 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
     percentOfContainer: 0,
     offsetPX: -110,
   });
-  useEffect(() => {
+  React.useEffect(() => {
     if (query.text || query.category) {
       scroll();
     }
   }, [query.text, query.category]);
   const PAGE_TYPE: any = query.type;
   const page = sitePages[PAGE_TYPE];
+  return (
+    <>
+      <SEO title={page?.page_title} description={page?.page_description} />
 
-  const { data, error, loading } = useQuery(GET_TYPE,{
-    variables: { 
-      searchText: PAGE_TYPE
-    }
-  });
-
-    if(loading){
-        return  <Banner
-              intlTitleId={page?.banner_title_id}
-              intlDescriptionId={page?.banner_description_id}
-              imageUrl={page?.banner_image_url}
-            />
-    }
-    if(data){
-        const {home_title, image, home_subtitle} = data.types.items[0];
-        return (
-          <>
-            <SEO title={home_title} description={home_subtitle} />
-    
-            <Modal>
-              <Banner
-                intlTitleId={home_title}
-                intlDescriptionId={home_subtitle}
-                imageUrl={SHOP_IMAGE_HOST+image}
+      <Modal>
+        <Banner
+          intlTitleId={page?.banner_title_id}
+          intlDescriptionId={page?.banner_description_id}
+          imageUrl={page?.banner_image_url}
+        />
+        <MobileCarouselDropdown>
+          <StoreNav items={CATEGORY_MENU_ITEMS} />
+          <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
+        </MobileCarouselDropdown>
+        <OfferSection>
+          <div style={{ margin: '0 -10px' }}>
+            <Carousel deviceType={deviceType} data={siteOffers} />
+          </div>
+        </OfferSection>
+        <MainContentArea>
+          <SidebarSection>
+            <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
+          </SidebarSection>
+          <ContentSection>
+            <div ref={targetRef}>
+              <Products
+                type={PAGE_TYPE}
+                deviceType={deviceType}
+                fetchLimit={20}
               />
-              <MobileCarouselDropdown>
-                <StoreNav items={CATEGORY_MENU_ITEMS} />
-                <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
-              </MobileCarouselDropdown>
-              <OfferSection>
-                <div style={{ margin: '0 -10px' }}>
-                  <Carousel deviceType={deviceType} data={siteOffers} />
-                </div>
-              </OfferSection>
-              <MainContentArea>
-                <SidebarSection>
-                  <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
-                </SidebarSection>
-                <ContentSection>
-                  <div ref={targetRef}>
-                    <Products
-                      type={PAGE_TYPE}
-                      deviceType={deviceType}
-                      fetchLimit={20}
-                    />
-                  </div>
-                </ContentSection>
-              </MainContentArea>
-              <CartPopUp deviceType={deviceType} />
-            </Modal>
-          </>
-        );
-    }
+            </div>
+          </ContentSection>
+        </MainContentArea>
+        <CartPopUp deviceType={deviceType} />
+      </Modal>
+    </>
+  );
 };
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const apolloClient = initializeApollo();
@@ -117,7 +90,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     variables: {
       type: params.type,
       offset: 0,
-      limit: 20,
+      limit: 20
     },
   });
   await apolloClient.query({

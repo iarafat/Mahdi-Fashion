@@ -13,6 +13,7 @@ import { FormattedMessage } from 'react-intl';
 // Shape of form values
 interface FormValues {
   id: any | null;
+  addressId: any | null,
   title: string;
   address: string;
   division?: string;
@@ -30,7 +31,8 @@ const FormEnhancer = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) => {
     return {
-      id: "5faf6cd25c1c513fb0cf101f" || null,
+      id: "5faf88594f70ae175c5a44c2" || null,
+      addressId: props.item.id || null,
       title: props.item.title || '',
       address: props.item.address || '',
       division: props.item.division || '',
@@ -39,7 +41,6 @@ const FormEnhancer = withFormik<MyFormProps, FormValues>({
     };
   },
   validationSchema: Yup.object().shape({
-    id: Yup.string().required('Title is required!'),
     title: Yup.string().required('Title is required!'),
     address: Yup.string().required('Address is required'),
   }),
@@ -64,7 +65,8 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
     isSubmitting,
   } = props;
   const addressValue = {
-    id: "5faf6cd25c1c513fb0cf101f",
+    id: "5faf88594f70ae175c5a44c2",
+    addressId: item.id, 
     title: values.title,
     address: values.address,
     division: values.division,
@@ -77,9 +79,9 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
   const [addAddressMutation] = useMutation(ADD_ADDRESS);
 
   const handleSubmit = async () => {
+    console.log(isValid)
     if (isValid) {
-      const {id, title, address, division, district, region} = addressValue;
-      console.log(item);
+      const {id, addressId, title, address, division, district, region} = addressValue;
       if(Object.keys(item).length === 0){
         const addressData = await addAddressMutation({
           variables: { 
@@ -97,19 +99,24 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
         });
         closeModal();
       }else{
-        const addressData = await updateAddressMutation({
+        console.log(item)
+        //console.log ("id: "+id, "item-ID: "+addressId, "title"+title, "address "+address, "division "+division, " "+district, " region"+region,)
+        console.log(id, addressId)
+        const updateAddressData = await updateAddressMutation({
           variables: { 
             id,
+            addressId,
             title,
             address, 
             division,
             district,
             region
-           },
+           }
         });
         dispatch({
-          type: 'ADD_OR_UPDATE_ADDRESS',
-          payload: addressValue 
+          type: 'UPDATE_ADDRESS',
+          payload: { value: addressValue, id: item.id }
+
         });
         closeModal();
       }

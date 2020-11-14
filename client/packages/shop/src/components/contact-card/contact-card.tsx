@@ -39,7 +39,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
     if(Object.keys(item).length === 0){
       const addPhone = await addPhoneMutation({
         variables: { 
-          id: "5faf6cd25c1c513fb0cf101f",
+          id: "5faf88594f70ae175c5a44c2",
           number: values.number
         },
       });
@@ -52,7 +52,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
     }else{
       const updatePhone =  await updatePhoneMutation({
         variables: { 
-          id: "5faf6cd25c1c513fb0cf101f",
+          id: "5faf88594f70ae175c5a44c2",
           phoneId: item.id,
           number: values.number
         },

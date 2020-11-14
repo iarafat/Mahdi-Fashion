@@ -51,7 +51,6 @@ const ProductPage: NextPage<Props> = ({ data, deviceType }) => {
           }}
           >
             {content}
-            <CartPopUp deviceType={deviceType} />
           </ProductSingleContainer>
         </ProductSingleWrapper>
       </Modal>

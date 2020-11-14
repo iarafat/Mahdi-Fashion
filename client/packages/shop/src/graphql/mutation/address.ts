@@ -25,16 +25,18 @@ mutation AddDeliveryAddress(
 
 
 export const UPDATE_ADDRESS = gql`
-  mutation AddDeliveryAddress(
+  mutation UpdateDeliveryAddress (
       $id: ID!, 
+      $addressId: String!
       $title: String!,
       $address: String!,
       $division: String,
       $district: String,
       $region: String
      ){
-    addDeliveryAddress(
+      updateDeliveryAddress (
         id: $id, 
+        addressId: $addressId,
         title: $title, 
         address: $address, 
         division: $division,
@@ -45,13 +47,32 @@ export const UPDATE_ADDRESS = gql`
       status
     }
   }
-
 `;
+
+export const SETPRIMARY_ADDRESS = gql`
+  mutation SetDeliveryAddressPrimary (
+      $id: ID!, 
+      $addressId: String!
+     ){
+      setDeliveryAddressPrimary (
+        id: $id, 
+        addressId: $addressId
+    ){
+      message
+      status
+    }
+  }
+`;
+
+
 export const DELETE_ADDRESS = gql`
-  mutation DeleteDeliveryAddress( $id: ID!, $index:  Int!) {
+  mutation DeleteDeliveryAddress( 
+    $id: ID!, 
+    $addressId: String!
+    ) {
     deleteDeliveryAddress(
       id: $id,
-      index: $index,
+      addressId: $addressId,
     ) {
      status
       message

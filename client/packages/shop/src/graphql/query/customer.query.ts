@@ -8,6 +8,7 @@ query GetUser{
     email
     created_at
     delivery_address{
+      id
       title
       address
       division

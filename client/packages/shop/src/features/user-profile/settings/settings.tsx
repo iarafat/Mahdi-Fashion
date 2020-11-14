@@ -2,10 +2,14 @@ import React, { useContext } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { Col } from 'react-styled-flexboxgrid';
 import { openModal } from '@redq/reuse-modal';
+import Router, { useRouter } from 'next/router';
 import RadioCardTWO from 'components/radio-card/radio-card-two';
 import RadioCard from 'components/radio-card/radio-card';
 import { ProfileContext } from 'contexts/profile/profile.context';
-import { DELETE_ADDRESS } from 'graphql/mutation/address';
+import { AuthContext } from 'contexts/auth/auth.context';
+import { DELETE_ADDRESS, SETPRIMARY_ADDRESS } from 'graphql/mutation/address';
+import { UPDATE_USER } from 'graphql/mutation/user';
+import { CHANGE_PASSWORD } from 'graphql/mutation/changePassword';
 import { DELETE_CARD } from 'graphql/mutation/card';
 import { DELETE_PHONENUMBER, SETPRIMARY_PHONENUMBER } from 'graphql/mutation/phone';
 import StripePaymentForm from 'features/payment/stripe-form';
@@ -28,6 +32,7 @@ import { Input } from 'components/forms/input';
 import { UPDATE_ME } from 'graphql/mutation/me';
 import { FormattedMessage } from 'react-intl';
 import { Label } from 'components/forms/label';
+import { ItemCount } from 'components/cart-popup/cart-popup.style';
 
 type SettingsContentProps = {
   deviceType?: {
@@ -39,17 +44,28 @@ type SettingsContentProps = {
 
 const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
   const { state, dispatch } = useContext(ProfileContext);
+  const {
+    authState: { isAuthenticated },
+    authDispatch,
+  } = React.useContext<any>(AuthContext);
   const [updateMeMutation] = useMutation(UPDATE_ME);
+  const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
+
+  const [updateUserMutation] = useMutation(UPDATE_USER);
+  const [changePasswordMutation] = useMutation(CHANGE_PASSWORD);
   const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
+  const [setprimaryAddressMutation] = useMutation(SETPRIMARY_ADDRESS);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
-  const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
+
+ 
 
   const { 
     delivery_address, 
     card,
     name,
     email,
+    id,
     phones
   } = state;
 
@@ -97,7 +113,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
             dispatch({ type: 'DELETE_CONTACT', payload: item.id });
             return await deletePhoneNumberMutation({
               variables: { 
-                id: '5faf6cd25c1c513fb0cf101f',
+                id,
                 phoneId: item.id
               },
             });
@@ -106,11 +122,11 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
           }
         case 'address':
           if(delivery_address.length > 1){
-          dispatch({ type: 'DELETE_ADDRESS', payload: index });
+          dispatch({ type: 'DELETE_ADDRESS', payload: item.id });
             return await deleteAddressMutation({
               variables: { 
-                id: "5faf6cd25c1c513fb0cf101f",
-                index 
+                id,
+                addressId: item.id
               },
             });
           }else{
@@ -122,22 +138,22 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
     }
   };
 
-  const handlePrimary = async (item: any, index: any, type: string, name: string) => {
+  const handlePrimary = async (item: any, name: string) => {
       switch (name) {
         case 'contact':
           dispatch({ type: 'SET_PRIMARY_CONTACT', payload: item.id });
           return await setprimaryPhoneNumberMutation({
             variables: { 
-              id: '5faf6cd25c1c513fb0cf101f',
+              id,
               phoneId: item.id
             },
           });
         case 'address':
-          dispatch({ type: 'DELETE_ADDRESS', payload: index });
-            return await deleteAddressMutation({
+          dispatch({ type: 'SET_PRIMARY_ADDRESS', payload: item.id });
+            return await setprimaryAddressMutation({
               variables: { 
-                id: "5faf6cd25c1c513fb0cf101f",
-                index 
+                id,
+                addressId: item.id
               },
             });
         default:
@@ -147,10 +163,32 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
 
   const handleSave = async () => {
     const { name, email } = state;
-    await updateMeMutation({
-      variables: { meInput: JSON.stringify({ name, email }) },
+    await updateUserMutation({
+      variables: {
+         id,
+         name,
+         email
+        }
     });
   };
+
+  const handleSavePassord = async () => {
+    const { oldPassword , newPassword, confirmPassword } = state;
+      await changePasswordMutation({
+        variables: {
+          id,
+          old_password: oldPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword
+          }
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('access_token');
+        authDispatch({ type: 'SIGN_OUT' });
+        Router.push('/');
+      }
+  };
+
 
   return (
     <SettingsForm>
@@ -228,7 +266,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       title={item.type}
                       content={item.number}
                       checked={item.is_primary === true}
-                      onChange={() =>handlePrimary(item, index, 'setprimary', 'contact')}
+                      onChange={() =>handlePrimary(item, 'contact')}
                       name='contact'
                       onEdit={() => handleEditDelete(item, index, 'edit', 'contact')}
                       onDelete={() =>
@@ -282,12 +320,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       region = {item.region}
                       name='address'
                       isChecked={item.is_primary === true}
-                      onChange={() =>
-                        dispatch({
-                          type: 'SET_PRIMARY_ADDRESS',
-                          payload: index,
-                        })
-                      }
+                      onChange={() =>handlePrimary(item, 'address')}
                       onEdit={() => handleEditDelete(item, index, 'edit', 'address')}
                       onDelete={() =>
                         handleEditDelete(item, index, 'delete', 'address')
@@ -302,7 +335,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       type='button'
                       className='add-button'
                       onClick={() =>
-                        handleModal(UpdateAddressTwo, {}, 'add-address-modal')
+                        handleModal(UpdateAddressTwo, {} , 'add-address-modal')
                       }
                     >
                       <FormattedMessage
@@ -314,6 +347,63 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                 />
               </ButtonGroup>
             </SettingsFormContent>
+          </Col>
+        </Row>
+        <Row style={{ alignItems: 'flex-end', marginBottom: '50px' }}>
+          <Col xs={12} sm={12} md={12} lg={12}>
+            <SettingsFormContent>
+              <HeadingSection>
+                <Title>
+                  <FormattedMessage
+                    id='changePasswordTitle'
+                    defaultMessage='Change Password'
+                  />
+                </Title>
+              </HeadingSection>
+            </SettingsFormContent>
+          </Col>
+          <Col xs={12} sm={2} md={2} lg={3}>
+            <Input
+              type='password'
+              label='Old Password'
+              placeholder='Old Password'
+              name='oldPassword'
+              value={ state.oldPassword || '' }
+              onChange={handleChange}
+              backgroundColor='#F7F7F7'
+              height='48px'
+              // intlInputLabelId="profileNameField"
+            />
+          </Col>
+          <Col xs={12} sm={2} md={2} lg={3}>
+            <Input
+              type='password'
+              label='New Password'
+              placeholder='New Password'
+              name='newPassword'
+              value={ state.newPassword || '' }
+              onChange={handleChange}
+              backgroundColor='#F7F7F7'
+              height='48px'
+              // intlInputLabelId="profileNameField"
+            />
+          </Col>
+          <Col xs={12} sm={2} md={2} lg={3}>
+            <Input
+              type='password'
+              name='confirmPassword'
+              label='Confirm Password'
+              placeholder='Confirm Password'
+              value={ state.confirmPassword || '' }
+              onChange={handleChange}
+              backgroundColor='#F7F7F7'
+              // intlInputLabelId="profileEmailField"
+            />
+          </Col>
+          <Col xs={12} sm={2} md={2} lg={3}>
+            <Button size='big' style={{ width: '100%' }} onClick={handleSavePassord}>
+              <FormattedMessage id='profileSaveBtn' defaultMessage='Save' />
+            </Button>
           </Col>
         </Row>
 
