@@ -4,7 +4,6 @@ import gql from 'graphql-tag';
 import {useMutation} from '@apollo/react-hooks';
 import {useDrawerDispatch} from '../../context/DrawerContext';
 import {Scrollbars} from 'react-custom-scrollbars';
-import Uploader from '../../components/Uploader/Uploader';
 import Input from '../../components/Input/Input';
 import Button, {KIND} from '../../components/Button/Button';
 import DrawerBox from '../../components/DrawerBox/DrawerBox';
@@ -17,23 +16,20 @@ import {
     ButtonGroup,
 } from '../DrawerItems/DrawerItems.style';
 import {FormFields, FormLabel} from '../../components/FormFields/FormFields';
-import {getBase64Value} from "../../helpers/convert-image-base64";
 import {displaySuccessNotification, displayErrorMessage} from "../../helpers/custom-message";
 
-const GET_PAYMENT_OPTIONS = gql`
-    query GetPaymentOptions(
+const GET_DELIVERY_METHODS = gql`
+    query GetDeliveryMethods(
         $searchText: String
         $offset: Int
     ) {
-        paymentOptions(
+        deliveryMethods(
             searchText: $searchText
             offset: $offset
         ) {
             items {
                 id
                 name
-                type
-                image
                 details
                 created_at
             }
@@ -43,13 +39,11 @@ const GET_PAYMENT_OPTIONS = gql`
     }
 `;
 
-const CREATE_PAYMENT_OPTION = gql`    
-    mutation CreatePaymentOption($name: String!, $type: String!, $image: String!, $image_data: String!, $details: String!) {
-        createPaymentOption(name: $name, type: $type, image: $image, image_data: $image_data, details: $details) {
+const CREATE_DELIVERY_METHOD = gql`    
+    mutation CreateDeliveryMethod($name: String!, $details: String!) {
+        createDeliveryMethod(name: $name, details: $details) {
             id
             name
-            type
-            image
             details
             created_at
         }
@@ -58,70 +52,57 @@ const CREATE_PAYMENT_OPTION = gql`
 
 type Props = any;
 
-const AddPaymentOption: React.FC<Props> = props => {
+const AddDeliveryMethod: React.FC<Props> = props => {
     const dispatch = useDrawerDispatch();
     const closeDrawer = useCallback(() => dispatch({type: 'CLOSE_DRAWER'}), [
         dispatch,
     ]);
     const {register, handleSubmit, setValue} = useForm();
 
-    React.useEffect(() => {
-        register({name: 'image_data'});
-        register({name: 'image', required: true});
-    }, [register]);
-    const [createPaymentOption] = useMutation(CREATE_PAYMENT_OPTION, {
+    React.useEffect(() => { }, [register]);
+
+    const [createDeliveryMethod] = useMutation(CREATE_DELIVERY_METHOD, {
         onCompleted: () => {
-            displaySuccessNotification("You've successfully created your payment option!");
+            displaySuccessNotification("You've successfully created your resource!");
         },
         onError: () => {
             displayErrorMessage(
                 "Sorry! We weren't able to create your type. Please try again later."
             );
         },
-        update(cache, {data: {createPaymentOption}}) {
-            const {paymentOptions} = cache.readQuery({
-                query: GET_PAYMENT_OPTIONS,
+        update(cache, {data: {createDeliveryMethod}}) {
+            const {deliveryMethods} = cache.readQuery({
+                query: GET_DELIVERY_METHODS,
             });
 
             cache.writeQuery({
-                query: GET_PAYMENT_OPTIONS,
+                query: GET_DELIVERY_METHODS,
                 data: {
-                    paymentOptions: {
-                        __typename: paymentOptions.__typename,
-                        items: [createPaymentOption, ...paymentOptions.items],
-                        hasMore: paymentOptions.items.length + 1 >= 12,
-                        totalCount: paymentOptions.items.length + 1,
+                    deliveryMethods: {
+                        __typename: deliveryMethods.__typename,
+                        items: [createDeliveryMethod, ...deliveryMethods.items],
+                        hasMore: deliveryMethods.items.length + 1 >= 12,
+                        totalCount: deliveryMethods.items.length + 1,
                     },
                 },
             });
         }
     });
 
-    const onSubmit = ({name, type, details, image, image_data}) => {
-        createPaymentOption({
+    const onSubmit = ({name, details}) => {
+        createDeliveryMethod({
             variables: {
                 name: name,
-                type: type,
                 details: details,
-                image_data: image_data,
-                image: image,
             },
         });
         closeDrawer();
     };
 
-    const handleUploader = files => {
-        setValue('image_data', JSON.stringify({name: files[0].name, size: files[0].size, type: files[0].type}));
-
-        getBase64Value(files[0], imageBase64Value => {
-            setValue('image', imageBase64Value);
-        })
-    };
-
     return (
         <>
             <DrawerTitleWrapper>
-                <DrawerTitle>Add Payment Option</DrawerTitle>
+                <DrawerTitle>Add Delivery Method</DrawerTitle>
             </DrawerTitleWrapper>
 
             <Form onSubmit={handleSubmit(onSubmit)} style={{height: '100%'}} encType={'multipart/form-data'}>
@@ -140,34 +121,8 @@ const AddPaymentOption: React.FC<Props> = props => {
                 >
                     <Row>
                         <Col lg={4}>
-                            <FieldDetails>Upload your PaymentOption image here</FieldDetails>
-                        </Col>
-                        <Col lg={8}>
-                            <DrawerBox
-                                overrides={{
-                                    Block: {
-                                        style: {
-                                            width: '100%',
-                                            height: 'auto',
-                                            padding: '30px',
-                                            borderRadius: '3px',
-                                            backgroundColor: '#ffffff',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        },
-                                    },
-                                }}
-                            >
-                                <Uploader type={'file'} required={true} onChange={handleUploader}/>
-                            </DrawerBox>
-                        </Col>
-                    </Row>
-
-                    <Row>
-                        <Col lg={4}>
                             <FieldDetails>
-                                Add your payment option and necessary information's from here
+                                Add your delivery method and necessary information's from here
                             </FieldDetails>
                         </Col>
 
@@ -178,15 +133,6 @@ const AddPaymentOption: React.FC<Props> = props => {
                                     <Input
                                         inputRef={register({required: true})}
                                         name="name"
-                                        required={true}
-                                    />
-                                </FormFields>
-
-                                <FormFields>
-                                    <FormLabel>Type</FormLabel>
-                                    <Input
-                                        inputRef={register({required: true})}
-                                        name="type"
                                         required={true}
                                     />
                                 </FormFields>
@@ -239,7 +185,7 @@ const AddPaymentOption: React.FC<Props> = props => {
                             },
                         }}
                     >
-                        Create Payment Option
+                        Create Delivery Method
                     </Button>
                 </ButtonGroup>
             </Form>
@@ -247,4 +193,4 @@ const AddPaymentOption: React.FC<Props> = props => {
     );
 };
 
-export default AddPaymentOption;
+export default AddDeliveryMethod;

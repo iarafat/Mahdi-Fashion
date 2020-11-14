@@ -188,7 +188,14 @@ export const typeDefs = gql`
         id: ID!
         name: String!
         details: String!
-    }  
+        created_at: String
+        updated_at: String
+    }
+    type DeliveryMethodPaginationType {
+        items: [DeliveryMethod]
+        totalCount: Int
+        hasMore: Boolean
+    }
     
     type PaymentOption {
         id: ID!
@@ -297,7 +304,7 @@ export const typeDefs = gql`
         shopCategories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         getProduct(slug: String!): Product!
-        deliveryMethods: [DeliveryMethod!]!
+        deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
         orders: [Order!]
         getSetting(key: String!): Setting!
@@ -322,7 +329,7 @@ export const typeDefs = gql`
         deleteProduct(id: ID!): DefaultMessageType!
         createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
         updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
-        deleteDeliveryMethod(id: ID!): DeliveryMethod!
+        deleteDeliveryMethod(id: ID!): DefaultMessageType!
         createPaymentOption(name: String!, type: String!, image: String!, image_data: String!, details: String): PaymentOption!
         updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, image_data: String, details: String): PaymentOption!
         deletePaymentOption(id: ID!): DefaultMessageType!
