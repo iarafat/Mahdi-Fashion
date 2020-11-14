@@ -298,9 +298,9 @@ export const typeDefs = gql`
         setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
         deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
         addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        updateDeliveryAddress(id: ID!, index: Int!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        setDeliveryAddressPrimary(id: ID!, index: Int!): DefaultMessageType!
-        deleteDeliveryAddress(id: ID!, index: Int!): DefaultMessageType!
+        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
+        deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
     }
 `;
