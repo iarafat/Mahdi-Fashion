@@ -69,6 +69,16 @@ export interface ICategory {
     created_at?: string;
     updated_at?: string;
 }
+export interface ICoupon {
+    _id?: ObjectId;
+    title: string;
+    code: string;
+    maximum_discount_amount: number;
+    expiration_date?: string;
+    created_at?: string;
+    updated_at?: string;
+    status: string;
+}
 
 export interface IProductCategory {
     id: string;
@@ -183,4 +193,5 @@ export interface Database {
     payment_options: Collection<IPaymentOption>;
     orders: Collection<IOrder>;
     settings: Collection<ISetting>;
+    coupons: Collection<ICoupon>;
 }
