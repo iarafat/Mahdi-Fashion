@@ -80,12 +80,12 @@ export default () => {
               </FormFields>
 
               <FormFields>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <Field
                   type='text'
                   name='phone'
                   component={MyInput}
-                  placeholder='Ex: 01610010101'
+                  placeholder='Ex: demo@demo.com'
                 />
                 {errors.phone && touched.phone && (
                   <Error>{errors.phone}</Error>
