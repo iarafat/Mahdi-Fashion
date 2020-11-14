@@ -297,6 +297,8 @@ export const typeDefs = gql`
         getSiteSetting(key: String!): Setting!
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
+        getCoupon(code: String!): Coupon!
+
     }
     
     type Mutation {

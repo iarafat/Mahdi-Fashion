@@ -6,7 +6,7 @@ import {
     ICoupon,
     ICommonMessageReturnType,
     ICommonPaginationArgs,
-    ICommonPaginationReturnType
+    ICommonPaginationReturnType, IProduct
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
@@ -33,6 +33,20 @@ export const couponsResolvers: IResolvers = {
                 totalCount: coupons.length,
                 hasMore,
             }
+        },
+
+        getCoupon: async (
+            _root: undefined,
+            {code}: { code: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICoupon> => {
+            const coupons = await db.coupons.findOne({code: code});
+
+            if (!coupons) {
+                throw new Error("Resource not found.");
+            }
+
+            return coupons;
         }
     },
 
