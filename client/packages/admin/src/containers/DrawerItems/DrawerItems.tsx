@@ -14,6 +14,8 @@ import CategoryForm from '../CategoryForm/CategoryForm';
 import CategoryUpdateForm from '../CategoryForm/CategoryUpdateForm';
 import PaymentOptionForm from '../PaymentOptionForm/PaymentOptionForm';
 import PaymentOptionUpdateForm from '../PaymentOptionForm/PaymentOptionUpdateForm';
+import DeliveryMethodForm from '../DeliveryMethodForm/DeliveryMethodForm';
+import DeliveryMethodUpdateForm from '../DeliveryMethodForm/DeliveryMethodUpdateForm';
 import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
 
@@ -28,6 +30,8 @@ const DRAWER_COMPONENTS = {
   CATEGORY_UPDATE_FORM: CategoryUpdateForm,
   PAYMENT_OPTION_FORM: PaymentOptionForm,
   PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,
+  DELIVERY_METHOD_FORM: DeliveryMethodForm,
+  DELIVERY_METHOD_UPDATE_FORM: DeliveryMethodUpdateForm,
   STAFF_MEMBER_FORM: StaffMemberForm,
   SIDEBAR: Sidebar,
 };

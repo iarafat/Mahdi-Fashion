@@ -11,7 +11,7 @@ import {
   CUSTOMERS,
   COUPONS,
   STAFF_MEMBERS,
-  SITE_SETTINGS, PAYMENT_OPTIONS,
+  SITE_SETTINGS, PAYMENT_OPTIONS, DELIVERY_METHODS,
 } from './settings/constants';
 import AuthProvider, { AuthContext } from './context/auth';
 import { InLineLoader } from './components/InlineLoader/InlineLoader';
@@ -21,6 +21,7 @@ const AdminLayout = lazy(() => import('./containers/Layout/Layout'));
 const Dashboard = lazy(() => import('./containers/Dashboard/Dashboard'));
 const Category = lazy(() => import('./containers/Category/Category'));
 const PaymentOptions = lazy(() => import('./containers/PaymentOptions/PaymentOptions'));
+const DeliveryMethods = lazy(() => import('./containers/DeliveryMethods/DeliveryMethods'));
 const Orders = lazy(() => import('./containers/Orders/Orders'));
 const Settings = lazy(() => import('./containers/Settings/Settings'));
 const SiteSettingForm = lazy(() =>
@@ -100,6 +101,13 @@ const Routes = () => {
             <AdminLayout>
               <Suspense fallback={<InLineLoader />}>
                 <PaymentOptions />
+              </Suspense>
+            </AdminLayout>
+          </PrivateRoute>
+          <PrivateRoute path={DELIVERY_METHODS}>
+            <AdminLayout>
+              <Suspense fallback={<InLineLoader />}>
+                <DeliveryMethods />
               </Suspense>
             </AdminLayout>
           </PrivateRoute>
