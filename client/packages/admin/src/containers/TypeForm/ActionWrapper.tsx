@@ -34,6 +34,8 @@ const GET_TYPES = gql`
                 slug
                 image
                 icon
+                home_title
+                home_subtitle
                 meta_title
                 meta_keyword
                 meta_description
@@ -76,12 +78,12 @@ const ActionWrapper: React.FC<Props> =
         const updateItemsQuery = (cache) => {
             const {types} = cache.readQuery({
                 query: GET_TYPES,
-                variables: {offset: itemsOffset},
+                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
             });
 
             cache.writeQuery({
                 query: GET_TYPES,
-                variables: {offset: itemsOffset},
+                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
                 data: {
                     types: {
                         __typename: types.__typename,
