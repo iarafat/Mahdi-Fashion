@@ -8,7 +8,7 @@ import { useMutation } from '@apollo/react-hooks';
 import MaskedInput from 'react-text-mask';
 import { ProfileContext } from 'contexts/profile/profile.context';
 import { Button } from 'components/button/button';
-import { UPDATE_CONTACT } from 'graphql/mutation/contact';
+import { ADD_PHONENUMBER, UPDATE_PHONENUMBER } from 'graphql/mutation/phone';
 import { FieldWrapper, Heading } from './contact-card.style';
 import { FormattedMessage } from 'react-intl';
 
@@ -32,17 +32,38 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
     type: item.type || 'secondary',
     number: item.number || '',
   };
-  const [addContactMutation] = useMutation(UPDATE_CONTACT);
+  const [addPhoneMutation] = useMutation(ADD_PHONENUMBER);
+  const [updatePhoneMutation] = useMutation(UPDATE_PHONENUMBER);
   const { state, dispatch } = useContext(ProfileContext);
-  const handleSubmit = async (values: FormValues, { setSubmitting }: any) => {
-    await addContactMutation({
-      variables: { contactInput: JSON.stringify(values) },
-    });
-    console.log(values, 'formik values');
-    dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: values });
-    closeModal();
-    setSubmitting(false);
+  const handleSubmit = async (values: FormValues) => {
+    if(Object.keys(item).length === 0){
+      const addPhone = await addPhoneMutation({
+        variables: { 
+          id: "5faf6cd25c1c513fb0cf101f",
+          number: values.number
+        },
+      });
+      //console.log(values, 'formik values');
+      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: null }});
+      closeModal();
+      if (typeof window !== 'undefined') {
+        window.location.reload(false);
+      }
+    }else{
+      const updatePhone =  await updatePhoneMutation({
+        variables: { 
+          id: "5faf6cd25c1c513fb0cf101f",
+          phoneId: item.id,
+          number: values.number
+        },
+      });
+      //console.log(values, 'formik values');
+      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: item.id }});
+      closeModal();
+    }
+   
   };
+  
   return (
     <Formik
       initialValues={initialValues}
@@ -52,8 +73,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
       {({
         values,
         handleChange,
-        handleBlur,
-        isSubmitting,
+        handleBlur
       }: FormikProps<FormValues>) => (
         <Form>
           <Heading>
@@ -62,16 +82,18 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
           <FieldWrapper>
             <MaskedInput
               mask={[
-                '(',
-                /[1-9]/,
-                /\d/,
-                /\d/,
-                ')',
-                ' ',
+                /[0-9]/,
                 /\d/,
                 /\d/,
                 /\d/,
-                '-',
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
                 /\d/,
                 /\d/,
                 /\d/,
@@ -93,7 +115,6 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
           <ErrorMessage name='number' component={StyledError} />
 
           <Button
-            disabled={isSubmitting}
             type='submit'
             style={{ width: '100%', height: '44px' }}
           >

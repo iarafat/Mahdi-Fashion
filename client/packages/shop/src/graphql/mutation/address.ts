@@ -1,5 +1,29 @@
 import gql from 'graphql-tag';
 
+export const ADD_ADDRESS = gql`
+mutation AddDeliveryAddress(
+  $id: ID!, 
+  $title: String!,
+  $address: String!,
+  $division: String,
+  $district: String,
+  $region: String
+) {
+  addDeliveryAddress(
+    id: $id, 
+    title: $title, 
+    address: $address, 
+    division: $division,
+    district: $district,
+    region: $region
+  ) {
+   status
+    message
+  }
+}
+`;
+
+
 export const UPDATE_ADDRESS = gql`
   mutation AddDeliveryAddress(
       $id: ID!, 

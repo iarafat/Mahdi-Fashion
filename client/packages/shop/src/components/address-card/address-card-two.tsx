@@ -5,7 +5,7 @@ import { closeModal } from '@redq/reuse-modal';
 import TextField from 'components/forms/text-field';
 import { Button } from 'components/button/button';
 import { useMutation } from '@apollo/react-hooks';
-import { UPDATE_ADDRESS } from 'graphql/mutation/address';
+import { ADD_ADDRESS, UPDATE_ADDRESS } from 'graphql/mutation/address';
 import { FieldWrapper, Heading } from './address-card.style';
 import { ProfileContext } from 'contexts/profile/profile.context';
 import { FormattedMessage } from 'react-intl';
@@ -30,7 +30,7 @@ const FormEnhancer = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) => {
     return {
-      id: "5fa2a3c3c9efe33afc57bc39" || null,
+      id: "5faf6cd25c1c513fb0cf101f" || null,
       title: props.item.title || '',
       address: props.item.address || '',
       division: props.item.division || '',
@@ -64,7 +64,7 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
     isSubmitting,
   } = props;
   const addressValue = {
-    id: "5fa2a3c3c9efe33afc57bc39",
+    id: "5faf6cd25c1c513fb0cf101f",
     title: values.title,
     address: values.address,
     division: values.division,
@@ -73,26 +73,46 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
   };
   const { state, dispatch } = useContext(ProfileContext);
 
-  const [addressMutation, { data }] = useMutation(UPDATE_ADDRESS);
+  const [updateAddressMutation] = useMutation(UPDATE_ADDRESS);
+  const [addAddressMutation] = useMutation(ADD_ADDRESS);
 
   const handleSubmit = async () => {
     if (isValid) {
       const {id, title, address, division, district, region} = addressValue;
-      const addressData = await addressMutation({
-        variables: { 
-          id,
-          title,
-          address, 
-          division,
-          district,
-          region
-         },
-      });
-      dispatch({
-        type: 'ADD_OR_UPDATE_ADDRESS',
-        payload: addressValue 
-      });
-      closeModal();
+      console.log(item);
+      if(Object.keys(item).length === 0){
+        const addressData = await addAddressMutation({
+          variables: { 
+            id,
+            title,
+            address, 
+            division,
+            district,
+            region
+           },
+        });
+        dispatch({
+          type: 'ADD_ADDRESS',
+          payload: addressValue 
+        });
+        closeModal();
+      }else{
+        const addressData = await updateAddressMutation({
+          variables: { 
+            id,
+            title,
+            address, 
+            division,
+            district,
+            region
+           },
+        });
+        dispatch({
+          type: 'ADD_OR_UPDATE_ADDRESS',
+          payload: addressValue 
+        });
+        closeModal();
+      }
     }
   };
   return (

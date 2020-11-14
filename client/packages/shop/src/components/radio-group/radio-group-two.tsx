@@ -19,16 +19,27 @@ const RadioGroupTwo: React.FC<RadioGroupProps> = ({
   containerClassName,
   secondaryComponent,
 }) => {
-  return (
-    <RadioGroupWrapper className={`radioGroup ${containerClassName}`.trim()}>
-      {items.map(
-        (item: any, index: any) => component && component(item, index)
-      )}
+  if(items){
+    return (
+      <RadioGroupWrapper className={`radioGroup ${containerClassName}`.trim()}>
 
-      {items.length < 3 && secondaryComponent}
+        {items.map(
+          (item: any, index: any) => component && component(item, index)
+        )}
 
-    </RadioGroupWrapper>
-  );
+        {items.length < 3 && secondaryComponent}
+
+      </RadioGroupWrapper>
+    );
+  }else{
+    return (
+      <RadioGroupWrapper className={`radioGroup ${containerClassName}`.trim()}>
+
+        {secondaryComponent && secondaryComponent}
+
+      </RadioGroupWrapper>
+    );
+  }
 };
 
 export default RadioGroupTwo;

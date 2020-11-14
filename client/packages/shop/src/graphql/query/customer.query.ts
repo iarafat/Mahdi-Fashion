@@ -17,6 +17,8 @@ query GetUser{
     }
     phones{
       number
+      id
+      is_primary
     }
   }
 }

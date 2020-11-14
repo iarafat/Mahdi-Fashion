@@ -7,7 +7,7 @@ import RadioCard from 'components/radio-card/radio-card';
 import { ProfileContext } from 'contexts/profile/profile.context';
 import { DELETE_ADDRESS } from 'graphql/mutation/address';
 import { DELETE_CARD } from 'graphql/mutation/card';
-import { DELETE_CONTACT } from 'graphql/mutation/contact';
+import { DELETE_PHONENUMBER, SETPRIMARY_PHONENUMBER } from 'graphql/mutation/phone';
 import StripePaymentForm from 'features/payment/stripe-form';
 import {
   SettingsForm,
@@ -18,7 +18,7 @@ import {
   ButtonGroup,
 } from './settings.style';
 import RadioGroupTwo from 'components/radio-group/radio-group-two';
-import RadioGroup from 'components/radio-group/radio-group';
+import RadioGroupThree from 'components/radio-group/radio-group-three';
 
 import PaymentGroup from 'components/payment-group/payment-group';
 import UpdateAddressTwo from 'components/address-card/address-card-two';
@@ -40,7 +40,8 @@ type SettingsContentProps = {
 const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
   const { state, dispatch } = useContext(ProfileContext);
   const [updateMeMutation] = useMutation(UPDATE_ME);
-  const [deleteContactMutation] = useMutation(DELETE_CONTACT);
+  const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
+  const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
 
@@ -88,30 +89,60 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
       switch (name) {
         case 'payment':
           dispatch({ type: 'DELETE_CARD', payload: item.id });
-
           return await deletePaymentCardMutation({
             variables: { cardId: JSON.stringify(item.id) },
           });
         case 'contact':
-          dispatch({ type: 'DELETE_CONTACT', payload: item.id });
-
-          return await deleteContactMutation({
-            variables: { contactId: JSON.stringify(item.id) },
-          });
+          if(phones.length > 1){
+            dispatch({ type: 'DELETE_CONTACT', payload: item.id });
+            return await deletePhoneNumberMutation({
+              variables: { 
+                id: '5faf6cd25c1c513fb0cf101f',
+                phoneId: item.id
+              },
+            });
+          }else{
+            return null
+          }
         case 'address':
+          if(delivery_address.length > 1){
           dispatch({ type: 'DELETE_ADDRESS', payload: index });
-
-          return await deleteAddressMutation({
-            variables: { 
-              id: "5fa2a3c3c9efe33afc57bc39",
-              index 
-            },
-          });
-
+            return await deleteAddressMutation({
+              variables: { 
+                id: "5faf6cd25c1c513fb0cf101f",
+                index 
+              },
+            });
+          }else{
+            return null
+          }
         default:
           return false;
       }
     }
+  };
+
+  const handlePrimary = async (item: any, index: any, type: string, name: string) => {
+      switch (name) {
+        case 'contact':
+          dispatch({ type: 'SET_PRIMARY_CONTACT', payload: item.id });
+          return await setprimaryPhoneNumberMutation({
+            variables: { 
+              id: '5faf6cd25c1c513fb0cf101f',
+              phoneId: item.id
+            },
+          });
+        case 'address':
+          dispatch({ type: 'DELETE_ADDRESS', payload: index });
+            return await deleteAddressMutation({
+              variables: { 
+                id: "5faf6cd25c1c513fb0cf101f",
+                index 
+              },
+            });
+        default:
+          return false;
+      }
   };
 
   const handleSave = async () => {
@@ -188,21 +219,16 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                 </Title>
               </HeadingSection>
               <ButtonGroup>
-                <RadioGroup
+                <RadioGroupThree
                   items={phones}
                   component={(item: any, index: any) => (
                     <RadioCard
                       id={index}
-                      key={item.number}
+                      key={index}
                       title={item.type}
                       content={item.number}
-                      checked={item.type === 'primary'}
-                      onChange={() =>
-                        dispatch({
-                          type: 'SET_PRIMARY_CONTACT',
-                          payload: index.toString(),
-                        })
-                      }
+                      checked={item.is_primary === true}
+                      onChange={() =>handlePrimary(item, index, 'setprimary', 'contact')}
                       name='contact'
                       onEdit={() => handleEditDelete(item, index, 'edit', 'contact')}
                       onDelete={() =>
@@ -217,9 +243,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       type='button'
                       className='add-button'
                       onClick={() =>
-                        handleModal(UpdateContact, {
-
-                        }, 'add-contact-modal')
+                        handleModal(UpdateContact, {}, 'add-contact-modal')
                       }
                     >
                       <FormattedMessage
