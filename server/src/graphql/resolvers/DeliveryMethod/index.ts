@@ -1,17 +1,32 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IDeliveryMethod} from "../../../lib/types";
+import {
+    Database,
+    ICommonMessageReturnType,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType,
+    IDeliveryMethod
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
+import {search} from "../../../lib/utils/search";
 
 export const deliveryMethodsResolvers: IResolvers = {
     Query: {
         deliveryMethods: async (
             _root: undefined,
-            _args: undefined,
+            {limit, offset, searchText}: ICommonPaginationArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<IDeliveryMethod[]> => {
-            return await db.delivery_methods.find({}).toArray();
+        ): Promise<ICommonPaginationReturnType> => {
+            let data = await db.delivery_methods.find({}).sort({_id: -1}).toArray();
+            data = search(data, ['name', 'details'], searchText);
+            const hasMore = data.length > offset + limit;
+
+            return {
+                items: limit == 0 ? data : data.slice(offset, offset + limit),
+                totalCount: data.length,
+                hasMore,
+            }
         }
     },
 
@@ -72,7 +87,7 @@ export const deliveryMethodsResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<IDeliveryMethod> => {
+        ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.delivery_methods.findOneAndDelete({
@@ -83,7 +98,10 @@ export const deliveryMethodsResolvers: IResolvers = {
                 throw new Error("Failed to delete resource.")
             }
 
-            return deleteResult.value;
+            return {
+                message: 'Resource successfully deleted.',
+                status: true
+            };
         },
     },
 
