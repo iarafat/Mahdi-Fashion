@@ -19,26 +19,21 @@ const Icon = ({icon, width = '18px', height = '18px'}) => {
     return <Component width={width} height={height}/>;
 }
 
-const GET_TYPES = gql`
-    query GetTypes(
+const GET_PAYMENT_OPTIONS = gql`
+    query GetPaymentOptions(
         $searchText: String
         $offset: Int
     ) {
-        types(
+        paymentOptions(
             searchText: $searchText
             offset: $offset
         ) {
             items {
                 id
                 name
-                slug
+                type
                 image
-                icon
-                home_title
-                home_subtitle
-                meta_title
-                meta_keyword
-                meta_description
+                details
                 created_at
             }
             totalCount
@@ -47,9 +42,9 @@ const GET_TYPES = gql`
     }
 `;
 
-const DELETE_TYPE = gql`
-    mutation DeleteType($id: ID!) {
-        deleteType(id: $id) {
+const DELETE_PAYMENT_OPTION = gql`
+    mutation DeletePaymentOption($id: ID!) {
+        deletePaymentOption(id: $id) {
             message
             status
         }
@@ -68,7 +63,7 @@ const ActionWrapper: React.FC<Props> =
             () => {
                 dispatch({
                     type: 'OPEN_DRAWER',
-                    drawerComponent: 'TYPE_UPDATE_FORM',
+                    drawerComponent: 'PAYMENT_OPTION_UPDATE_FORM',
                     data: itemData,
                 })
             },
@@ -76,34 +71,34 @@ const ActionWrapper: React.FC<Props> =
         );
         
         const updateItemsQuery = (cache) => {
-            const {types} = cache.readQuery({
-                query: GET_TYPES,
+            const {paymentOptions} = cache.readQuery({
+                query: GET_PAYMENT_OPTIONS,
                 variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
             });
 
             cache.writeQuery({
-                query: GET_TYPES,
+                query: GET_PAYMENT_OPTIONS,
                 variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
                 data: {
-                    types: {
-                        __typename: types.__typename,
-                        items: types.items.filter((item) => {
+                    paymentOptions: {
+                        __typename: paymentOptions.__typename,
+                        items: paymentOptions.items.filter((item) => {
                             return item.id !== itemData.id;
                         }),
-                        hasMore: types.items.length - 1 >= 12,
-                        totalCount: types.items.length - 1,
+                        hasMore: paymentOptions.items.length - 1 >= 12,
+                        totalCount: paymentOptions.items.length - 1,
                     },
                 },
             });
         };
 
-        const [deleteType] = useMutation(DELETE_TYPE, {
+        const [deletePaymentOption] = useMutation(DELETE_PAYMENT_OPTION, {
             update: updateItemsQuery
         });
         const itemDelete = () => {
             // eslint-disable-next-line no-restricted-globals
             if (confirm('Are you sure? You can not undo this.')) {
-                deleteType({
+                deletePaymentOption({
                     variables: {id: itemData.id},
                 });
             }

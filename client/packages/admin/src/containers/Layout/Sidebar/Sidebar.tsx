@@ -16,6 +16,7 @@ import {
   CUSTOMERS,
   COUPONS,
   SETTINGS,
+  PAYMENT_OPTIONS,
 } from '../../../settings/constants';
 import { AuthContext } from '../../../context/auth';
 import {
@@ -28,6 +29,7 @@ import {
   SettingIcon,
   LogoutIcon,
     MenuIcon,
+    Accessories,
 } from '../../../components/AllSvgIcon';
 
 const sidebarMenus = [
@@ -54,6 +56,12 @@ const sidebarMenus = [
     path: PRODUCTS,
     exact: false,
     icon: <ProductIcon />,
+  },
+  {
+    name: 'PaymentOptions',
+    path: PAYMENT_OPTIONS,
+    exact: false,
+    icon: <Accessories />,
   },
  /* {
     name: 'Orders',
