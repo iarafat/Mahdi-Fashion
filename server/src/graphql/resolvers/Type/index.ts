@@ -83,8 +83,6 @@ export const typesResolvers: IResolvers = {
             if (input.image_data) {
                 imagePath = storeImage(input.image, input.image_data.name);
             } else {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 imagePath = input.image;
             }
 

@@ -12,6 +12,8 @@ import ProductUpdateForm from '../ProductForm/ProductUpdateForm';
 import CampaingForm from '../CampaingForm/CampaingForm';
 import CategoryForm from '../CategoryForm/CategoryForm';
 import CategoryUpdateForm from '../CategoryForm/CategoryUpdateForm';
+import PaymentOptionForm from '../PaymentOptionForm/PaymentOptionForm';
+import PaymentOptionUpdateForm from '../PaymentOptionForm/PaymentOptionUpdateForm';
 import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
 
@@ -24,6 +26,8 @@ const DRAWER_COMPONENTS = {
   CAMPAING_FORM: CampaingForm,
   CATEGORY_FORM: CategoryForm,
   CATEGORY_UPDATE_FORM: CategoryUpdateForm,
+  PAYMENT_OPTION_FORM: PaymentOptionForm,
+  PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,
   STAFF_MEMBER_FORM: StaffMemberForm,
   SIDEBAR: Sidebar,
 };
