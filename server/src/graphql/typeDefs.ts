@@ -249,7 +249,10 @@ export const typeDefs = gql`
       payment_option_id: String
       datetime: String
       delivery_address: String!
-      amount: Int!
+      sub_total: Int!
+      total: Int!
+      coupon_code: String
+      discount_amount: Int
       payment_id:  String
       payment_method: String!
       payment_status: String!
@@ -258,6 +261,11 @@ export const typeDefs = gql`
       order_products: [OrderProducts]
       created_at: String
       updated_at: String
+    }
+    type OrderPaginationType {
+        items: [Order]
+        totalCount: Int
+        hasMore: Boolean
     }
     
     type DefaultMessageType {
@@ -280,7 +288,8 @@ export const typeDefs = gql`
         getProduct(slug: String!): Product!
         deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
-        orders: [Order!]
+        orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
+        getUserOrders(id: String!): [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!

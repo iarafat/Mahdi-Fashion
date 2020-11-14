@@ -1,9 +1,10 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, IOrder, IOrderTracker} from "../../../lib/types";
+import {Database, ICommonPaginationArgs, ICommonPaginationReturnType, IOrder, IOrderTracker} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {IOrderInputArgs, IOrderProductInput} from "./types";
+import {search} from "../../../lib/utils/search";
 
 
 const oderTracker: Array<IOrderTracker> = [
@@ -59,12 +60,48 @@ export const ordersResolvers: IResolvers = {
     Query: {
         orders: async (
             _root: undefined,
-            _args: undefined,
+            {status, limit, offset, searchText}: {
+                status: string,
+                limit: ICommonPaginationArgs["limit"],
+                offset: ICommonPaginationArgs["offset"],
+                searchText: ICommonPaginationArgs["searchText"]
+            },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonPaginationReturnType> => {
+            await authorize(req, db);
+
+            let data = await db.orders.find({}).sort({_id: -1}).toArray();
+
+            if (status) {
+                data = data.filter((item) => {
+                    return item.status === status;
+                });
+            }
+
+            data = search(data, [
+                'contact_number',
+                'payment_method',
+                'payment_status',
+                'delivery_address',
+                'datetime',
+                'amount'
+            ], searchText);
+            const hasMore = data.length > offset + limit;
+
+            return {
+                items: limit == 0 ? data : data.slice(offset, offset + limit),
+                totalCount: data.length,
+                hasMore,
+            }
+        },
+        getUserOrders: async (
+            _root: undefined,
+            {id}: { id: string},
             {db, req}: { db: Database, req: Request }
         ): Promise<IOrder[]> => {
             await authorize(req, db);
-            console.dir(req);
-            return await db.orders.find({}).toArray();
+
+            return await db.orders.find({customer_id: id}).sort({_id: -1}).toArray();
         }
     },
 
@@ -96,7 +133,10 @@ export const ordersResolvers: IResolvers = {
                 payment_option_id: input.payment_option_id,
                 datetime: new Date().toUTCString(),
                 delivery_address: input.delivery_address,
-                amount: input.amount,
+                sub_total: input.sub_total,
+                total: input.total,
+                coupon_code: input.coupon_code,
+                discount_amount: input.discount_amount,
                 payment_id: input.payment_id,
                 payment_method: PaymentName,
                 payment_status: "Unpaid",
