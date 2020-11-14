@@ -4,6 +4,7 @@ export const DASHBOARD = '/';
 export const TYPES = '/types';
 export const PRODUCTS = '/products';
 export const CATEGORY = '/categories';
+export const PAYMENT_OPTIONS = '/payment-options';
 export const LOGIN = '/login';
 export const LOGOUT = '/logout';
 export const ORDERS = '/orders';
