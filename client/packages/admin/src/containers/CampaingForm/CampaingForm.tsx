@@ -25,10 +25,9 @@ const GET_COUPONS = gql`
       id
       title
       code
-      number_of_used_coupon
-      number_of_coupon
       expiration_date
       creation_date
+      maximum_discount_amount
       status
     }
   }
@@ -39,10 +38,9 @@ const CREATE_COUPON = gql`
       id
       title
       code
-      number_of_used_coupon
-      number_of_coupon
       expiration_date
       creation_date
+      maximum_discount_amount
       status
     }
   }
