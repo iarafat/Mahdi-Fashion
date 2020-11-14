@@ -1,11 +1,13 @@
 import {Collection, ObjectId} from 'mongodb';
 
 interface Phone {
+    id: string
     number: string,
     status?: boolean,
     is_primary?: boolean
 }
 interface Address {
+    id: string
     title: string,
     address: string,
     division?: string,
@@ -19,8 +21,8 @@ export interface IUser {
     name?: string;
     email?: string;
     password: string;
-    phones?: [Phone];
-    delivery_address?: [Address]
+    phones?: Array<Phone>;
+    delivery_address?: Array<Address>;
     created_at: string;
 }
 
@@ -160,7 +162,7 @@ export interface IOrder {
     updated_at?: string;
 }
 
-export interface ICommonDeleteReturnType {
+export interface ICommonMessageReturnType {
     message: string;
     status: boolean;
 }

@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonDeleteReturnType, ICommonPaginationReturnType, IProduct} from "../../../lib/types";
+import {Database, ICommonMessageReturnType, ICommonPaginationReturnType, IProduct} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {IProductInput, IProductsArgs, IUpdateProductInputArgs} from "./types";
 import {slugify} from "../../../lib/utils/slugify";
@@ -154,7 +154,7 @@ export const productsResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonDeleteReturnType> => {
+        ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.products.findOneAndDelete({

@@ -7,11 +7,13 @@ export const typeDefs = gql`
         type: String!
     }   
     type Phone {
+        id: String
         number: String!
         status: Boolean
         is_primary: Boolean
     }
     type DeliveryAddress {
+        id: String
         title: String
         address: String 
         division: String 
@@ -244,7 +246,7 @@ export const typeDefs = gql`
       updated_at: String
     }
     
-    type DefaultDeleteType {
+    type DefaultMessageType {
         message: String!
         status: Boolean!
     }
@@ -267,6 +269,7 @@ export const typeDefs = gql`
         orders: [Order!]
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
+        getUser: User!
     }
     
     type Mutation {
@@ -274,13 +277,13 @@ export const typeDefs = gql`
         signUp(phone: String!, password: String!): UserAuthPayload!
         createType(input: MainTypeInput): MainType!
         updateType(id: ID!, input: MainTypeInput): MainType!
-        deleteType(id: ID!): DefaultDeleteType!
+        deleteType(id: ID!): DefaultMessageType!
         createCategory(input: CategoryInput): Category!
         updateCategory(id: ID!, input: CategoryInput): Category!
-        deleteCategory(id: ID!): DefaultDeleteType!
+        deleteCategory(id: ID!): DefaultMessageType!
         createProduct(input: ProductInput): Product!
         updateProduct(id: ID!, input: ProductUpdateInput): Product!
-        deleteProduct(id: ID!): DefaultDeleteType!
+        deleteProduct(id: ID!): DefaultMessageType!
         createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
         updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
         deleteDeliveryMethod(id: ID!): DeliveryMethod!
@@ -289,5 +292,15 @@ export const typeDefs = gql`
         deletePaymentOption(id: ID!): PaymentOption!
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
+        updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
+        addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
+        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): DefaultMessageType!
+        setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
+        deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
+        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        updateDeliveryAddress(id: ID!, index: Int!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        setDeliveryAddressPrimary(id: ID!, index: Int!): DefaultMessageType!
+        deleteDeliveryAddress(id: ID!, index: Int!): DefaultMessageType!
+        changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
     }
 `;

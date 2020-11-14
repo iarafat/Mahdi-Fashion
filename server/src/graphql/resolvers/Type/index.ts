@@ -6,7 +6,7 @@ import {
     ICommonPaginationArgs,
     ICommonPaginationReturnType,
     IType,
-    ICommonDeleteReturnType
+    ICommonMessageReturnType
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ITypeInputArgs} from "./types";
@@ -115,7 +115,7 @@ export const typesResolvers: IResolvers = {
             __root: undefined,
             {id}: { id: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonDeleteReturnType> => {
+        ): Promise<ICommonMessageReturnType> => {
             await authorize(req, db);
 
             const deleteResult = await db.types.findOneAndDelete({
