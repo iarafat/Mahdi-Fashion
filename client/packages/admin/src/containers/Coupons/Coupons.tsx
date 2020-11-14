@@ -18,53 +18,30 @@ import {
   StyledHeadCell,
   StyledCell,
   ImageWrapper,
-} from './Category.style';
+} from './Coupon.style';
 
 import {
   Plus,
 } from '../../components/AllSvgIcon';
 import NoResult from '../../components/NoResult/NoResult';
 import {IconWrapper, Image, StyledBodyCell} from '../Types/Types.style';
-import ActionWrapper from '../CategoryForm/ActionWrapper';
+import ActionWrapper from '../CouponForm/ActionWrapper';
 import dayjs from "dayjs";
 import {AllIcons} from "../../assets/icons/all-icons";
 import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
 
-const GET_CATEGORIES = gql`
-  query GetCategories($type: String, $searchText: String, $offset: Int) {
-    categories(type: $type, searchText: $searchText, offset: $offset) {
+const GET_COUPONS = gql`
+  query GetCoupons( $searchText: String, $offset: Int) {
+    coupons(searchText: $searchText, offset: $offset) {
       items{
         id
-        type_id
-        name
-        slug
-        banner
-        icon
-        meta_title
-        meta_keyword
-        meta_description
+        title
+        code
+        maximum_discount_amount
+        expiration_date
+        status
         created_at
       } 
-      totalCount
-      hasMore
-    }
-  }
-`;
-
-const GET_TYPES = gql`
-  query GetTypes {
-    types(limit: 0) {
-      items {
-        id
-        name
-        slug
-        image
-        icon
-        meta_title
-        meta_keyword
-        meta_description
-        created_at
-      }
       totalCount
       hasMore
     }
@@ -101,7 +78,7 @@ const nextButtonDisabledStyles = {
   backgroundColor: '#d8d8d8'
 };
 
-export default function Category() {
+export default function Coupon() {
   const [type, setType] = useState([]);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
@@ -111,8 +88,7 @@ export default function Category() {
     [dispatch]
   );
 
-  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
-  const { data, error, refetch } = useQuery(GET_CATEGORIES);
+  const { data, error, refetch } = useQuery(GET_COUPONS);
 
   if (error) {
     return <div>Error! {error.message}</div>;
@@ -132,7 +108,7 @@ export default function Category() {
     });
   }
   function handlePreviousDisabled(data) {
-    const result = (data ? data.categories.totalCount === 0 : false) || offset === 0;
+    const result = (data ? data.coupons.totalCount === 0 : false) || offset === 0;
     return result;
   }
   function handleNext() {
@@ -142,27 +118,10 @@ export default function Category() {
     });
   }
   function handleNextDisabled(data) {
-    const result = data ? !data.categories.hasMore : true;
+    const result = data ? !data.coupons.hasMore : true;
     return result;
   }
 
-  function handleType({ value }) {
-    setType(value);
-    if (value.length) {
-      refetch({
-        type: value[0].id,
-      });
-    } else {
-      refetch({
-        type: null,
-      });
-    }
-  }
-
-  const Icon = ({ icon }) => {
-    let Component =  AllIcons.hasOwnProperty(icon) ? AllIcons[icon] : 'span';
-    return <Component />;
-  }
   return (
     <Grid fluid={true}>
       <Row>
@@ -174,24 +133,12 @@ export default function Category() {
             }}
           >
             <Col md={2}>
-              <Heading>Categories</Heading>
+              <Heading>Coupons</Heading>
             </Col>
 
             <Col md={10}>
               <Row>
-                <Col md={3} lg={3}>
-                  <Select
-                      options={typeData ? typeData.types.items : [] }
-                      labelKey='name'
-                      valueKey='id'
-                      placeholder='Select Category Type'
-                      value={type}
-                      searchable={true}
-                      onChange={handleType}
-                  />
-                </Col>
-
-                <Col md={5} lg={6}>
+                <Col md={6} lg={7}>
                   <Input
                     value={search}
                     placeholder='Ex: Search By Name'
@@ -200,7 +147,7 @@ export default function Category() {
                   />
                 </Col>
 
-                <Col md={4} lg={3}>
+                <Col md={6} lg={5}>
                   <Button
                     onClick={openDrawer}
                     startEnhancer={() => <Plus />}
@@ -216,7 +163,7 @@ export default function Category() {
                       },
                     }}
                   >
-                    Add Category
+                    Add Coupon
                   </Button>
                 </Col>
               </Row>
@@ -225,31 +172,25 @@ export default function Category() {
 
           <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
             <TableWrapper>
-              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(150px, auto) minmax(70px, 70px) minmax(70px, 70px) minmax(120px, auto) minmax(160px, 160px)'>
+              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(70px, auto) minmax(90px, auto) minmax(100px, auto)  minmax(100px, auto)  minmax(160px, 160px)'>
                 <StyledHeadCell>#</StyledHeadCell>
-                <StyledHeadCell>Name</StyledHeadCell>
-                <StyledHeadCell>Slug</StyledHeadCell>
-                <StyledHeadCell>Image</StyledHeadCell>
-                <StyledHeadCell>Icon</StyledHeadCell>
+                <StyledHeadCell>Title</StyledHeadCell>
+                <StyledHeadCell>Code</StyledHeadCell>
+                <StyledHeadCell>Max Discount</StyledHeadCell>
+                <StyledHeadCell>Expiration Date</StyledHeadCell>
                 <StyledHeadCell>Created At</StyledHeadCell>
                 <StyledHeadCell>Action</StyledHeadCell>
 
                 {data ? (
-                  data.categories.items.length ? (
-                    data.categories.items.map((item, index) => (
+                  data.coupons.items.length ? (
+                    data.coupons.items.map((item, index) => (
                       <React.Fragment key={index}>
                         <StyledBodyCell>{index + 1}</StyledBodyCell>
-                        <StyledBodyCell>{item.name}</StyledBodyCell>
-                        <StyledBodyCell>{item.slug}</StyledBodyCell>
+                        <StyledBodyCell>{item.title}</StyledBodyCell>
+                        <StyledBodyCell>{item.code}</StyledBodyCell>
+                        <StyledBodyCell>{item.maximum_discount_amount}</StyledBodyCell>
                         <StyledBodyCell>
-                          <ImageWrapper>
-                            <Image src={`${ADMIN_IMAGE_HOST}${item.banner}`} />
-                          </ImageWrapper>
-                        </StyledBodyCell>
-                        <StyledBodyCell>
-                          <IconWrapper>
-                            <Icon icon={item.icon} />
-                          </IconWrapper>
+                          {dayjs(item.expiration_date).format('DD MMM YYYY hh:mm:ss A')}
                         </StyledBodyCell>
                         <StyledBodyCell>
                           {dayjs(item.created_at).format('DD MMM YYYY hh:mm:ss A')}

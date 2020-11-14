@@ -16,6 +16,7 @@ import PaymentOptionForm from '../PaymentOptionForm/PaymentOptionForm';
 import PaymentOptionUpdateForm from '../PaymentOptionForm/PaymentOptionUpdateForm';
 import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
+import CouponForm from '../CouponForm/CouponForm';
 
 /** Components Name Constants */
 const DRAWER_COMPONENTS = {
@@ -29,6 +30,7 @@ const DRAWER_COMPONENTS = {
   PAYMENT_OPTION_FORM: PaymentOptionForm,
   PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,
   STAFF_MEMBER_FORM: StaffMemberForm,
+  COUPON_UPDATE_FORM: CouponForm,
   SIDEBAR: Sidebar,
 };
 
