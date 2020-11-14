@@ -8,8 +8,12 @@ interface IOrderInput {
     customer_id: string;
     contact_number: string;
     payment_option_id: string;
+    delivery_method_id: string;
     delivery_address: string;
-    amount: number;
+    sub_total: number;
+    total: number;
+    coupon_code?: string;
+    discount_amount?: number;
     products: Array<IOrderProductInput>;
     payment_id?:  string;
 }

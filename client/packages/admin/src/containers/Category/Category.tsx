@@ -44,7 +44,7 @@ const GET_CATEGORIES = gql`
         meta_keyword
         meta_description
         created_at
-      }
+      } 
       totalCount
       hasMore
     }

@@ -223,8 +223,12 @@ export const typeDefs = gql`
         customer_id: String!
         contact_number: String!
         payment_option_id: String!
+        delivery_method_id: String!
         delivery_address: String!
-        amount: Int!
+        sub_total: Int
+        total: Int
+        coupon_code: String
+        discount_amount: Int
         products: [OrderProductInput!]!
         payment_id:  String
     }
@@ -233,6 +237,7 @@ export const typeDefs = gql`
         status: String!
         ordering: Int!
         is_current: Boolean!
+        step_competed: Boolean
     }
 
     type OrderProducts {
@@ -244,12 +249,17 @@ export const typeDefs = gql`
     
     type Order {
       id: ID!
+      order_code: String
       customer_id: String!
       contact_number: String!
       payment_option_id: String
       datetime: String
+      delivery_method: DeliveryMethod
       delivery_address: String!
-      amount: Int!
+      sub_total: Int
+      total: Int
+      coupon_code: String
+      discount_amount: Int
       payment_id:  String
       payment_method: String!
       payment_status: String!
@@ -258,6 +268,11 @@ export const typeDefs = gql`
       order_products: [OrderProducts]
       created_at: String
       updated_at: String
+    }
+    type OrderPaginationType {
+        items: [Order]
+        totalCount: Int
+        hasMore: Boolean
     }
     
     type DefaultMessageType {
@@ -271,6 +286,32 @@ export const typeDefs = gql`
         value: String
     }
 
+
+    type Coupon {
+        id: ID!
+        title: String
+        code: String
+        maximum_discount_amount: Int
+        expiration_date: String
+        status: String
+        created_at: String
+        updated_at: String
+    }
+    type CouponPaginationType {
+        items: [Coupon]
+        totalCount: Int
+        hasMore: Boolean
+    }
+
+
+    input CouponInput {
+        title: String!
+        code: String!
+        maximum_discount_amount: Int
+        expiration_date: String!
+        status: String
+    }
+
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
@@ -280,10 +321,14 @@ export const typeDefs = gql`
         getProduct(slug: String!): Product!
         deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
-        orders: [Order!]
+        orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
+        getUserOrders(id: String!): [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!
+        coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
+        getCoupon(code: String!): Coupon!
+
     }
     
     type Mutation {
@@ -316,5 +361,10 @@ export const typeDefs = gql`
         setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
+        updateOrderStatus(id: ID!, orderingPosition: Int!): Order!
+
+        createCoupon(input: CouponInput): Coupon!
+        updateCoupon(id: ID!, input: CouponInput): Coupon!
+        deleteCoupon(id: ID!): DefaultMessageType!
     }
 `;

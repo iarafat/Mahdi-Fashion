@@ -1,338 +1,355 @@
-import React, { useState } from 'react';
-import { styled, withStyle, createThemedUseStyletron } from 'baseui';
+import React, {useState} from 'react';
+import {styled, withStyle, createThemedUseStyletron} from 'baseui';
 import dayjs from 'dayjs';
 import {
-  Grid,
-  Row as Rows,
-  Col as Column,
+    Grid,
+    Row as Rows,
+    Col as Column,
 } from '../../components/FlexBox/FlexBox';
 import Select from '../../components/Select/Select';
 import Input from '../../components/Input/Input';
 
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
-import { Wrapper, Header, Heading } from '../../components/WrapperStyle';
-import Checkbox from '../../components/CheckBox/CheckBox';
+import {useQuery} from '@apollo/react-hooks';
+import {Wrapper, Header, Heading} from '../../components/WrapperStyle';
 
 import {
-  TableWrapper,
-  StyledTable,
-  StyledHeadCell,
-  StyledCell,
+    TableWrapper,
+    StyledTable,
+    StyledHeadCell,
+    StyledCell,
 } from './Orders.style';
 import NoResult from '../../components/NoResult/NoResult';
+import Button from "../../components/Button/Button";
+import ActionWrapper from "../Orders/ActionWrapper";
+import {StyledBodyCell} from "../Types/Types.style";
 
 const GET_ORDERS = gql`
-  query getOrders($status: String, $limit: Int, $searchText: String) {
-    orders(status: $status, limit: $limit, searchText: $searchText) {
-      id
-      customer_id
-      creation_date
-      delivery_address
-      amount
-      payment_method
-      contact_number
-      status
+    query GetOrders(
+        $status: String,
+        $searchText: String
+        $offset: Int
+    ) {
+        orders(
+            status: $status,
+            searchText: $searchText,
+            offset: $offset,
+        ) {
+            items {
+                id
+                order_code
+                customer_id
+                contact_number
+                datetime
+                delivery_address
+                payment_method
+                payment_status
+                status
+                coupon_code
+                discount_amount
+                sub_total
+                total
+                delivery_method {
+                    name
+                    details
+                }
+                order_tracking {
+                    status
+                    ordering
+                    is_current
+                    step_competed
+                }
+            }
+            totalCount
+            hasMore
+        }
     }
-  }
 `;
 
 type CustomThemeT = { red400: string; textNormal: string; colors: any };
 const themedUseStyletron = createThemedUseStyletron<CustomThemeT>();
 
-const Status = styled('div', ({ $theme }) => ({
-  ...$theme.typography.fontBold14,
-  color: $theme.colors.textDark,
-  display: 'flex',
-  alignItems: 'center',
-  lineHeight: '1',
-  textTransform: 'capitalize',
+const Status = styled('div', ({$theme}) => ({
+    ...$theme.typography.fontBold14,
+    color: $theme.colors.textDark,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '1',
+    textTransform: 'capitalize',
 
-  ':before': {
-    content: '""',
-    width: '10px',
-    height: '10px',
-    display: 'inline-block',
-    borderTopLeftRadius: '10px',
-    borderTopRightRadius: '10px',
-    borderBottomRightRadius: '10px',
-    borderBottomLeftRadius: '10px',
-    backgroundColor: $theme.borders.borderE6,
-    marginRight: '10px',
-  },
+    ':before': {
+        content: '""',
+        width: '10px',
+        height: '10px',
+        display: 'inline-block',
+        borderTopLeftRadius: '10px',
+        borderTopRightRadius: '10px',
+        borderBottomRightRadius: '10px',
+        borderBottomLeftRadius: '10px',
+        backgroundColor: $theme.borders.borderE6,
+        marginRight: '10px',
+    },
 }));
 
 const Col = withStyle(Column, () => ({
-  '@media only screen and (max-width: 767px)': {
-    marginBottom: '20px',
+    '@media only screen and (max-width: 767px)': {
+        marginBottom: '20px',
 
-    ':last-child': {
-      marginBottom: 0,
+        ':last-child': {
+            marginBottom: 0,
+        },
     },
-  },
 }));
 
 const Row = withStyle(Rows, () => ({
-  '@media only screen and (min-width: 768px)': {
-    alignItems: 'center',
-  },
+    '@media only screen and (min-width: 768px)': {
+        alignItems: 'center',
+    },
 }));
 
+const prevButtonDisabledStyles = {
+    width: '90px',
+    marginRight: '10px',
+    color: '#6f6f6f',
+    backgroundColor: '#d8d8d8'
+};
+const nextButtonDisabledStyles = {
+    width: '90px',
+    marginLeft: '10px',
+    color: '#6f6f6f',
+    backgroundColor: '#d8d8d8'
+};
+
+
 const statusSelectOptions = [
-  { value: 'delivered', label: 'Delivered' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'processing', label: 'Processing' },
-  { value: 'failed', label: 'Failed' },
-];
-const limitSelectOptions = [
-  { value: 7, label: 'Last 7 orders' },
-  { value: 15, label: 'Last 15 orders' },
-  { value: 30, label: 'Last 30 orders' },
+    {value: 'Pending', label: 'Pending'},
+    {value: 'Received', label: 'Received'},
+    {value: 'Processing', label: 'Processing'},
+    {value: 'InTransit', label: 'InTransit'},
+    {value: 'Delivered', label: 'Delivered'},
+    {value: 'Cancel', label: 'Cancel'},
+    {value: 'Failed', label: 'Failed'},
 ];
 
 export default function Orders() {
-  const [checkedId, setCheckedId] = useState([]);
-  const [checked, setChecked] = useState(false);
 
-  const [useCss, theme] = themedUseStyletron();
-  const sent = useCss({
-    ':before': {
-      content: '""',
-      backgroundColor: theme.colors.primary,
-    },
-  });
-  const failed = useCss({
-    ':before': {
-      content: '""',
-      backgroundColor: theme.colors.red400,
-    },
-  });
-  const processing = useCss({
-    ':before': {
-      content: '""',
-      backgroundColor: theme.colors.textNormal,
-    },
-  });
-  const paid = useCss({
-    ':before': {
-      content: '""',
-      backgroundColor: theme.colors.blue400,
-    },
-  });
+    const [useCss, theme] = themedUseStyletron();
+    const sent = useCss({
+        ':before': {
+            content: '""',
+            backgroundColor: theme.colors.primary,
+        },
+    });
+    const failed = useCss({
+        ':before': {
+            content: '""',
+            backgroundColor: theme.colors.red400,
+        },
+    });
+    const processing = useCss({
+        ':before': {
+            content: '""',
+            backgroundColor: theme.colors.textNormal,
+        },
+    });
+    const paid = useCss({
+        ':before': {
+            content: '""',
+            backgroundColor: theme.colors.blue400,
+        },
+    });
 
-  const [status, setStatus] = useState([]);
-  const [limit, setLimit] = useState([]);
-  const [search, setSearch] = useState([]);
+    const [status, setStatus] = useState([]);
+    const [search, setSearch] = useState([]);
+    const [offset, setOffset] = useState(0);
 
-  const { data, error, refetch } = useQuery(GET_ORDERS);
-  if (error) {
-    return <div>Error! {error.message}</div>;
-  }
+    const {data, error, refetch} = useQuery(GET_ORDERS);
 
-  function handleStatus({ value }) {
-    setStatus(value);
-    if (value.length) {
-      refetch({
-        status: value[0].value,
-        limit: limit.length ? limit[0].value : null,
-      });
-    } else {
-      refetch({ status: null });
+    if (error) {
+        return <div>Error! {error.message}</div>;
     }
-  }
 
-  function handleLimit({ value }) {
-    setLimit(value);
-    if (value.length) {
-      refetch({
-        status: status.length ? status[0].value : null,
-        limit: value[0].value,
-      });
-    } else {
-      refetch({
-        limit: null,
-      });
+    function handleStatus({value}) {
+        setStatus(value);
+        if (value.length) {
+            refetch({
+                status: value[0].value,
+            });
+        } else {
+            refetch({status: null});
+        }
     }
-  }
-  function handleSearch(event) {
-    const { value } = event.currentTarget;
-    setSearch(value);
-    refetch({ searchText: value });
-  }
-  function onAllCheck(event) {
-    if (event.target.checked) {
-      const idx = data && data.orders.map((order) => order.id);
-      setCheckedId(idx);
-    } else {
-      setCheckedId([]);
-    }
-    setChecked(event.target.checked);
-  }
 
-  function handleCheckbox(event) {
-    const { name } = event.currentTarget;
-    if (!checkedId.includes(name)) {
-      setCheckedId((prevState) => [...prevState, name]);
-    } else {
-      setCheckedId((prevState) => prevState.filter((id) => id !== name));
+    function handleSearch(event) {
+        const {value} = event.currentTarget;
+        setSearch(value);
+        refetch({searchText: value});
     }
-  }
-  return (
-    <Grid fluid={true}>
-      <Row>
-        <Col md={12}>
-          <Header
-            style={{
-              marginBottom: 30,
-              boxShadow: '0 0 8px rgba(0, 0 ,0, 0.1)',
-            }}
-          >
-            <Col md={3} xs={12}>
-              <Heading>Orders</Heading>
-            </Col>
 
-            <Col md={9} xs={12}>
-              <Row>
-                <Col md={3} xs={12}>
-                  <Select
-                    options={statusSelectOptions}
-                    labelKey="label"
-                    valueKey="value"
-                    placeholder="Status"
-                    value={status}
-                    searchable={false}
-                    onChange={handleStatus}
-                  />
+    function handlePrevious() {
+        setOffset(offset-12);
+        refetch({
+            offset: offset - 12,
+        });
+    }
+
+    function handlePreviousDisabled(data) {
+        const result = (data ? data.orders.totalCount === 0 : false) || offset === 0;
+        return result;
+    }
+
+    function handleNext() {
+        setOffset(offset+12);
+        refetch({
+            offset: offset + 12,
+        });
+    }
+
+    function handleNextDisabled(data) {
+        const result = data ? !data.orders.hasMore : true;
+        return result;
+    }
+
+    return (
+        <Grid fluid={true}>
+            <Row>
+                <Col md={12}>
+                    <Header
+                        style={{
+                            marginBottom: 30,
+                            boxShadow: '0 0 8px rgba(0, 0 ,0, 0.1)',
+                        }}
+                    >
+                        <Col md={3} xs={12}>
+                            <Heading>Orders</Heading>
+                        </Col>
+
+                        <Col md={9} xs={12}>
+                            <Row>
+                                <Col md={3} xs={12}>
+                                    <Select
+                                        options={statusSelectOptions}
+                                        labelKey="label"
+                                        valueKey="value"
+                                        placeholder="Status"
+                                        value={status}
+                                        searchable={false}
+                                        onChange={handleStatus}
+                                    />
+                                </Col>
+
+                                <Col md={6} xs={12}>
+                                    <Input
+                                        value={search}
+                                        placeholder="Ex: Search By Address"
+                                        onChange={handleSearch}
+                                        clearable
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Header>
+
+                    <Wrapper style={{boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)'}}>
+                        <TableWrapper>
+                            <StyledTable
+                                $gridTemplateColumns="minmax(150px, auto) minmax(150px, auto) minmax(200px, auto) minmax(200px, auto) minmax(200px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto)">
+                                <StyledHeadCell>Action</StyledHeadCell>
+                                <StyledHeadCell>Order Code</StyledHeadCell>
+                                <StyledHeadCell>Customer ID</StyledHeadCell>
+                                <StyledHeadCell>Customer Contact</StyledHeadCell>
+                                <StyledHeadCell>Delivery Address</StyledHeadCell>
+                                <StyledHeadCell>Delivery Method</StyledHeadCell>
+                                <StyledHeadCell>Payment Method</StyledHeadCell>
+                                <StyledHeadCell>Payment Status</StyledHeadCell>
+                                <StyledHeadCell>SubTotal</StyledHeadCell>
+                                <StyledHeadCell>Total</StyledHeadCell>
+                                <StyledHeadCell>Coupon Code</StyledHeadCell>
+                                <StyledHeadCell>Discount Amount</StyledHeadCell>
+                                <StyledHeadCell>Status</StyledHeadCell>
+                                <StyledHeadCell>DateTime</StyledHeadCell>
+
+                                {data ? (
+                                    data.orders.items.length ? (
+                                        data.orders.items.map((item: any, index: number) => {
+                                            return (
+                                                <React.Fragment key={index + 1}>
+                                                    <StyledCell>
+                                                        <ActionWrapper itemsOffset={offset} itemData={item}/>
+                                                    </StyledCell>
+                                                    <StyledCell>{item.order_code}</StyledCell>
+                                                    <StyledCell>{item.customer_id}</StyledCell>
+                                                    <StyledCell>{item.contact_number}</StyledCell>
+                                                    <StyledCell>{item.delivery_address}</StyledCell>
+                                                    <StyledCell>
+                                                        {item.delivery_method ? item.delivery_method.name+', ' : ''}
+                                                        {item.delivery_method ? item.delivery_method.details : ''}
+                                                    </StyledCell>
+                                                    <StyledCell>{item.payment_method}</StyledCell>
+                                                    <StyledCell>{item.payment_status}</StyledCell>
+                                                    <StyledCell>{item.sub_total}</StyledCell>
+                                                    <StyledCell>{item.total}</StyledCell>
+                                                    <StyledCell>{item.coupon_code}</StyledCell>
+                                                    <StyledCell>{item.discount_amount}</StyledCell>
+                                                    <StyledCell style={{justifyContent: 'center'}}>
+                                                        <Status
+                                                            className={
+                                                                item.status.toLowerCase() === 'delivered'
+                                                                    ? sent
+                                                                    : item.status.toLowerCase() === 'pending'
+                                                                    ? paid
+                                                                    : item.status.toLowerCase() === 'processing'
+                                                                        ? processing
+                                                                        : item.status.toLowerCase() === 'failed'
+                                                                            ? failed
+                                                                            : ''
+                                                            }
+                                                        >
+                                                            {item.status}
+                                                        </Status>
+                                                    </StyledCell>
+                                                    <StyledCell>
+                                                        {/*{dayjs(item.datetime).format('DD MMM YYYY hh:mm:ss A')}*/}
+                                                    </StyledCell>
+                                                </React.Fragment>
+                                            );
+                                        })
+                                    ) : (
+                                        <NoResult
+                                            hideButton={false}
+                                            style={{
+                                                gridColumnStart: '1',
+                                                gridColumnEnd: 'one',
+                                            }}
+                                        />
+                                    )
+                                ) : null}
+                            </StyledTable>
+                        </TableWrapper>
+                    </Wrapper>
+
+                    <Row>
+                        <Col md={8}>
+                        </Col>
+                        <Col md={4}
+                             style={{ display: 'block', textAlign: 'right', marginTop: '20px' }}
+                        >
+                            <Button
+                                style={ handlePreviousDisabled(data) ? prevButtonDisabledStyles : {marginRight: '10px'}}
+                                disabled={handlePreviousDisabled(data)}
+                                onClick={handlePrevious}>
+                                Previous
+                            </Button>
+                            <Button
+                                style={ handleNextDisabled(data) ? nextButtonDisabledStyles : null}
+                                disabled={handleNextDisabled(data)}
+                                onClick={handleNext}>
+                                Next
+                            </Button>
+                        </Col>
+                    </Row>
                 </Col>
-
-                <Col md={3} xs={12}>
-                  <Select
-                    options={limitSelectOptions}
-                    labelKey="label"
-                    valueKey="value"
-                    value={limit}
-                    placeholder="Order Limits"
-                    searchable={false}
-                    onChange={handleLimit}
-                  />
-                </Col>
-
-                <Col md={6} xs={12}>
-                  <Input
-                    value={search}
-                    placeholder="Ex: Search By Address"
-                    onChange={handleSearch}
-                    clearable
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Header>
-
-          <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
-            <TableWrapper>
-              <StyledTable $gridTemplateColumns="minmax(70px, 70px) minmax(70px, 70px) minmax(150px, auto) minmax(150px, auto) minmax(200px, max-content) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto) minmax(150px, auto)">
-                <StyledHeadCell>
-                  <Checkbox
-                    type="checkbox"
-                    value="checkAll"
-                    checked={checked}
-                    onChange={onAllCheck}
-                    overrides={{
-                      Checkmark: {
-                        style: {
-                          borderTopWidth: '2px',
-                          borderRightWidth: '2px',
-                          borderBottomWidth: '2px',
-                          borderLeftWidth: '2px',
-                          borderTopLeftRadius: '4px',
-                          borderTopRightRadius: '4px',
-                          borderBottomRightRadius: '4px',
-                          borderBottomLeftRadius: '4px',
-                        },
-                      },
-                    }}
-                  />
-                </StyledHeadCell>
-                <StyledHeadCell>ID</StyledHeadCell>
-                <StyledHeadCell>Customer ID</StyledHeadCell>
-                <StyledHeadCell>Time</StyledHeadCell>
-                <StyledHeadCell>Delivery Address</StyledHeadCell>
-                <StyledHeadCell>Amount</StyledHeadCell>
-                <StyledHeadCell>Payment Method</StyledHeadCell>
-                <StyledHeadCell>Contact</StyledHeadCell>
-                <StyledHeadCell>Status</StyledHeadCell>
-
-                {data ? (
-                  data.orders.length ? (
-                    data.orders
-                      .map((item) => Object.values(item))
-                      .map((row, index) => (
-                        <React.Fragment key={index}>
-                          <StyledCell>
-                            <Checkbox
-                              name={row[0]}
-                              checked={checkedId.includes(row[0])}
-                              onChange={handleCheckbox}
-                              overrides={{
-                                Checkmark: {
-                                  style: {
-                                    borderTopWidth: '2px',
-                                    borderRightWidth: '2px',
-                                    borderBottomWidth: '2px',
-                                    borderLeftWidth: '2px',
-                                    borderTopLeftRadius: '4px',
-                                    borderTopRightRadius: '4px',
-                                    borderBottomRightRadius: '4px',
-                                    borderBottomLeftRadius: '4px',
-                                  },
-                                },
-                              }}
-                            />
-                          </StyledCell>
-                          <StyledCell>{row[0]}</StyledCell>
-                          <StyledCell>{row[1]}</StyledCell>
-                          <StyledCell>
-                            {dayjs(row[2]).format('DD MMM YYYY')}
-                          </StyledCell>
-                          <StyledCell>{row[3]}</StyledCell>
-                          <StyledCell>${row[4]}</StyledCell>
-                          <StyledCell>{row[5]}</StyledCell>
-                          <StyledCell>{row[6]}</StyledCell>
-                          <StyledCell style={{ justifyContent: 'center' }}>
-                            <Status
-                              className={
-                                row[7].toLowerCase() === 'delivered'
-                                  ? sent
-                                  : row[7].toLowerCase() === 'pending'
-                                  ? paid
-                                  : row[7].toLowerCase() === 'processing'
-                                  ? processing
-                                  : row[7].toLowerCase() === 'failed'
-                                  ? failed
-                                  : ''
-                              }
-                            >
-                              {row[7]}
-                            </Status>
-                          </StyledCell>
-                        </React.Fragment>
-                      ))
-                  ) : (
-                    <NoResult
-                      hideButton={false}
-                      style={{
-                        gridColumnStart: '1',
-                        gridColumnEnd: 'one',
-                      }}
-                    />
-                  )
-                ) : null}
-              </StyledTable>
-            </TableWrapper>
-          </Wrapper>
-        </Col>
-      </Row>
-    </Grid>
-  );
+            </Row>
+        </Grid>
+    );
 }
