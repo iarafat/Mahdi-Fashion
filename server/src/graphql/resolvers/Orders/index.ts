@@ -1,47 +1,61 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonPaginationArgs, ICommonPaginationReturnType, IOrder, IOrderTracker} from "../../../lib/types";
+import {
+    Database,
+    ICategory,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType,
+    IOrder,
+    IOrderTracker
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {IOrderInputArgs, IOrderProductInput} from "./types";
 import {search} from "../../../lib/utils/search";
-
+import shortid from "shortid";
 
 const oderTracker: Array<IOrderTracker> = [
     {
         status: "Pending",
         ordering: 1,
-        is_current: true
+        is_current: true,
+        step_competed: true,
     },
     {
         status: "Received",
         ordering: 2,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     },
     {
         status: "Processing",
         ordering: 3,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     },
     {
-        status: "In Transit",
+        status: "InTransit",
         ordering: 4,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     },
     {
         status: "Delivered",
         ordering: 5,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     },
     {
         status: "Cancel",
         ordering: 6,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     },
     {
         status: "Failed",
         ordering: 7,
-        is_current: false
+        is_current: false,
+        step_competed: false,
     }
 ];
 
@@ -54,6 +68,11 @@ const makeObjectIds =  (productsInput: IOrderProductInput[]) =>  {
     });
 
     return objIds;
+}
+
+const generateOrderCode = () => {
+    shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@');
+    return 'OC_'+shortid.generate();
 }
 
 export const ordersResolvers: IResolvers = {
@@ -79,6 +98,8 @@ export const ordersResolvers: IResolvers = {
             }
 
             data = search(data, [
+                'order_code',
+                'customer_id',
                 'contact_number',
                 'payment_method',
                 'payment_status',
@@ -128,9 +149,11 @@ export const ordersResolvers: IResolvers = {
 
             const insertData: IOrder = {
                 _id: new ObjectId(),
+                order_code: generateOrderCode(),
                 customer_id: input.customer_id,
                 contact_number: input.contact_number,
                 payment_option_id: input.payment_option_id,
+                delivery_method: input.delivery_method_id,
                 datetime: new Date().toUTCString(),
                 delivery_address: input.delivery_address,
                 sub_total: input.sub_total,
@@ -149,41 +172,89 @@ export const ordersResolvers: IResolvers = {
             const insertResult = await db.orders.insertOne(insertData);
             return insertResult.ops[0];
         },
-
-       /* updatePaymentOption: async (
+        updateOrderStatus: async (
             _root: undefined,
-            {id, name, type, image, details}: { id: string, name: string, type: string, image: string, details: string },
+            {id, orderingPosition}: { id: string, orderingPosition: number},
             {db, req}: { db: Database, req: Request }
         ): Promise<IOrder> => {
             await authorize(req, db);
 
-            const existsData = await db.payment_options.findOne({_id: new ObjectId(id)});
-            if (!existsData) {
-                throw new Error("Resource not found.");
+            const orderResult = await db.orders.findOne({_id: new ObjectId(id)});
+            if (!orderResult) {
+                throw new Error("Order dose not exits.");
+            }
+            let statuses = [];
+
+            statuses = orderResult.order_tracking.map(item => {
+               if (item.ordering == orderingPosition) {
+                   return  {
+                       status: item.status,
+                       ordering: item.ordering,
+                       is_current: true,
+                       step_competed: item.step_competed,
+                   }
+               } else  {
+                   return  {
+                       status: item.status,
+                       ordering: item.ordering,
+                       is_current: false,
+                       step_competed: item.step_competed,
+                   }
+               }
+            });
+
+            statuses = statuses.map(item => {
+                if (item.ordering <= orderingPosition) {
+                    return  {
+                        status: item.status,
+                        ordering: item.ordering,
+                        is_current: item.is_current,
+                        step_competed: true,
+                    }
+                } else {
+                    return  {
+                        status: item.status,
+                        ordering: item.ordering,
+                        is_current: item.is_current,
+                        step_competed: false,
+                    }
+                }
+            });
+
+            if (orderingPosition == 6 || orderingPosition == 7) {
+                statuses = statuses.map(item => {
+                    return  {
+                        status: item.status,
+                        ordering: item.ordering,
+                        is_current: item.is_current,
+                        step_competed: false,
+                    }
+                });
             }
 
-            const updateData: IOrder = {
-                name: name,
-                type: type,
-                image: image,
-                details: details ? details : existsData.details,
-                updated_at: new Date().toUTCString(),
-            };
+            const currentStatus = statuses.filter(item => {
+                if (item.ordering == orderingPosition) return item;
+            })[0];
 
-            await db.payment_options.updateOne(
+
+            await db.orders.updateOne(
                 {_id: new ObjectId(id)},
-                {$set: updateData}
+                {$set: {"order_tracking": statuses, "status": currentStatus.status}}
             );
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            return await db.payment_options.findOne({_id: new ObjectId(id)});
-        },*/
+            return await db.orders.findOne({_id: new ObjectId(id)});
+        },
     },
 
     Order: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        id: (type: IOrder): string => type._id.toString(),
+        id: (order: IOrder): string => order._id.toString(),
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        delivery_method: async (order: IOrder, _args: {}, { db }: { db: Database }) => {
+            return await db.delivery_methods.findOne({_id: new ObjectId(order.delivery_method)})
+        }
     }
 }

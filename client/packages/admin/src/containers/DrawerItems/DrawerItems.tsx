@@ -16,6 +16,7 @@ import PaymentOptionForm from '../PaymentOptionForm/PaymentOptionForm';
 import PaymentOptionUpdateForm from '../PaymentOptionForm/PaymentOptionUpdateForm';
 import DeliveryMethodForm from '../DeliveryMethodForm/DeliveryMethodForm';
 import DeliveryMethodUpdateForm from '../DeliveryMethodForm/DeliveryMethodUpdateForm';
+import OrderStatusUpdateForm from '../Orders/OrderStatusUpdateForm';
 import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
 import CouponForm from '../CouponForm/CouponForm';
@@ -33,6 +34,7 @@ const DRAWER_COMPONENTS = {
   PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,
   DELIVERY_METHOD_FORM: DeliveryMethodForm,
   DELIVERY_METHOD_UPDATE_FORM: DeliveryMethodUpdateForm,
+  ORDER_STATUS_UPDATE_FORM: OrderStatusUpdateForm,
   STAFF_MEMBER_FORM: StaffMemberForm,
   COUPON_UPDATE_FORM: CouponForm,
   SIDEBAR: Sidebar,

@@ -223,8 +223,12 @@ export const typeDefs = gql`
         customer_id: String!
         contact_number: String!
         payment_option_id: String!
+        delivery_method_id: String!
         delivery_address: String!
-        amount: Int!
+        sub_total: Int
+        total: Int
+        coupon_code: String
+        discount_amount: Int
         products: [OrderProductInput!]!
         payment_id:  String
     }
@@ -233,6 +237,7 @@ export const typeDefs = gql`
         status: String!
         ordering: Int!
         is_current: Boolean!
+        step_competed: Boolean
     }
 
     type OrderProducts {
@@ -244,13 +249,15 @@ export const typeDefs = gql`
     
     type Order {
       id: ID!
+      order_code: String
       customer_id: String!
       contact_number: String!
       payment_option_id: String
       datetime: String
+      delivery_method: DeliveryMethod
       delivery_address: String!
-      sub_total: Int!
-      total: Int!
+      sub_total: Int
+      total: Int
       coupon_code: String
       discount_amount: Int
       payment_id:  String
@@ -354,6 +361,7 @@ export const typeDefs = gql`
         setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
+        updateOrderStatus(id: ID!, orderingPosition: Int!): Order!
 
         createCoupon(input: CouponInput): Coupon!
         updateCoupon(id: ID!, input: CouponInput): Coupon!

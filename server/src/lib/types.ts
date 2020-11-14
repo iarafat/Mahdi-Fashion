@@ -145,6 +145,7 @@ export interface IOrderTracker {
     status: string;
     ordering: number;
     is_current: boolean;
+    step_competed: boolean;
 }
 
 export interface OrderProducts {
@@ -156,10 +157,12 @@ export interface OrderProducts {
 
 export interface IOrder {
     _id?: ObjectId;
+    order_code: string;
     customer_id: string;
     contact_number: string;
     payment_option_id: string;
     datetime: string;
+    delivery_method?: string;
     delivery_address: string;
     sub_total: number;
     total: number;

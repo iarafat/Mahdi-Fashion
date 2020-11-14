@@ -8,6 +8,7 @@ interface IOrderInput {
     customer_id: string;
     contact_number: string;
     payment_option_id: string;
+    delivery_method_id: string;
     delivery_address: string;
     sub_total: number;
     total: number;
