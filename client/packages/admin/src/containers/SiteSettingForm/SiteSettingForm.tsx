@@ -53,6 +53,18 @@ const Thumbcus = styled('div', ({ $theme }) => ({
   boxSizing: 'border-box',
 }));
 
+const Thumbfav = styled('div', ({ $theme }) => ({
+  ...$theme.borders.borderEA,
+  display: 'inline-flex',
+  borderRadius: '2px',
+  marginBottom: '8px',
+  marginRight: '8px',
+  width: '50px',
+  height: '50px',
+  padding: '4px',
+  boxSizing: 'border-box',
+}));
+
 const thumbInner = {
   display: 'flex',
   minWidth: 0,
@@ -64,6 +76,12 @@ const img = {
   width: '140px',
   height: '100%',
 }
+
+const fav = {
+  display: 'block',
+  width: '45px',
+  height: '100%',
+}
 const cThumb = (url) => {
   return  <Thumbcus key="site-image">
     <div style={thumbInner}>
@@ -71,9 +89,17 @@ const cThumb = (url) => {
     </div>
   </Thumbcus>;
 };
+const FavThumb = (url) => {
+  return  <Thumbfav key="site-fav">
+    <div style={thumbInner}>
+      <img src={url} style={fav} alt="site-fav" />
+    </div>
+  </Thumbfav>;
+};
 
 type Props = {};
 type ValueType = {
+  favicon: string,
   image: string,
   site_title: string,
   site_keyword: string,
@@ -85,12 +111,15 @@ const SiteSettingsForm: React.FC<Props> = () => {
   const { register, handleSubmit, setValue } = useForm();
   const [image_data, setImageData] = React.useState<any | null>(null);
   const [image, setImage] = React.useState('');
+  const [favicon_data, setFaviconData] = React.useState<any | null>(null);
+  const [favicon, setFavicon] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [keyword, setKeyword] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [siteData, setSiteData] = React.useState<ValueType>();
   const settingData = (): ValueType => {
     const settingData = JSON.parse(data.getSiteSetting.value);
+    setFavicon(settingData.favicon);
     setImage(settingData.image);
     setTitle(settingData.site_title);
     setKeyword(settingData.site_keyword);
@@ -112,6 +141,12 @@ const SiteSettingsForm: React.FC<Props> = () => {
       setImage(imageBase64Value)
     })
   };
+  const handleFaviconUploader = (files) => {
+    setFaviconData({name: files[0].name, size: files[0].size, type: files[0].type});
+    getBase64Value(files[0], imageBase64Value => {
+      setFavicon(imageBase64Value)
+    })
+  };
 
 
   React.useEffect(() => {
@@ -127,6 +162,8 @@ const SiteSettingsForm: React.FC<Props> = () => {
     const settingsValue = {
       image: image,
       image_data: image_data,
+      favicon: favicon,
+      favicon_data: favicon_data,
       site_title: title,
       site_keyword: keyword,
       site_description: description,
@@ -153,6 +190,19 @@ const SiteSettingsForm: React.FC<Props> = () => {
               <div style={{ display: !image_data ? "block" : "none" }}>
                 <p>Site Logo:</p>
                 <ThumbsContainer>{cThumb(siteData ? ADMIN_IMAGE_HOST+siteData.image : null)}</ThumbsContainer>
+              </div>
+            </DrawerBox>
+          </Col>
+          <Col md={4}>
+            <FieldDetails>Upload your site favicon here</FieldDetails>
+          </Col>
+
+          <Col md={8}>
+            <DrawerBox>
+              <Uploader onChange={handleFaviconUploader} imageURL={siteData ? ADMIN_IMAGE_HOST+siteData.favicon : null} />
+              <div style={{ display: !favicon_data ? "block" : "none" }}>
+                <p>Site Favicon:</p>
+                <ThumbsContainer>{FavThumb(siteData ? ADMIN_IMAGE_HOST+siteData.favicon : null)}</ThumbsContainer>
               </div>
             </DrawerBox>
           </Col>

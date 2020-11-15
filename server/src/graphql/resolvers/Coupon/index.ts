@@ -6,13 +6,24 @@ import {
     ICoupon,
     ICommonMessageReturnType,
     ICommonPaginationArgs,
-    ICommonPaginationReturnType, IProduct
+    ICommonPaginationReturnType, IProduct, ICouponValid
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
-import {slugify} from "../../../lib/utils/slugify";
 import {search} from "../../../lib/utils/search";
 import {RUNNING} from "../../../lib/utils/constant";
+
+const checkCouponValidity = function (coupon: ICoupon): boolean {
+
+    const expireDate = new Date(coupon.expiration_date ? coupon.expiration_date : new Date);
+    const today = new Date();
+
+    if(expireDate < today)  throw new Error("Sorry ! This Token is Expired.");
+
+    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Token is Disabled.");
+
+    return true;
+};
 
 export const couponsResolvers: IResolvers = {
     Query: {
@@ -40,13 +51,32 @@ export const couponsResolvers: IResolvers = {
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICoupon> => {
-            const coupons = await db.coupons.findOne({code: code});
+            const coupon = await db.coupons.findOne({code: code});
 
-            if (!coupons) {
-                throw new Error("Resource not found.");
+            if (!coupon) throw new Error("Resource not found.");
+
+            coupon.valid = checkCouponValidity(coupon);
+
+            return coupon;
+        },
+
+        validateCoupon: async (
+            _root: undefined,
+            {code}: { code: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICouponValid> => {
+            try{
+                const coupon = await db.coupons.findOne({code: code});
+                if (!coupon) throw new Error("Resource not found.");
+
+                const validity = checkCouponValidity(coupon);
+
+                return { valid: validity };
+
+            } catch (error) {
+                console.log(error.message)
+                throw error
             }
-
-            return coupons;
         }
     },
 
@@ -57,7 +87,7 @@ export const couponsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICoupon> => {
 
-            // await authorize(req, db);
+            await authorize(req, db);
 
             const existsData = await db.coupons.findOne({code: input.code});
             if (existsData) {
@@ -68,6 +98,7 @@ export const couponsResolvers: IResolvers = {
                 _id: new ObjectId(),
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status ? input.status : RUNNING,
@@ -93,6 +124,7 @@ export const couponsResolvers: IResolvers = {
             const updateData: ICoupon = {
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status,
