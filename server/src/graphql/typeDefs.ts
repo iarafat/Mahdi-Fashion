@@ -296,6 +296,7 @@ export const typeDefs = gql`
         status: String
         created_at: String
         updated_at: String
+        valid: Boolean
     }
     type CouponPaginationType {
         items: [Coupon]
@@ -311,6 +312,10 @@ export const typeDefs = gql`
         expiration_date: String!
         status: String
     }
+    type CouponValid {
+        valid: Boolean
+    }
+
 
     type Query {
         users: [User!]!
@@ -328,6 +333,7 @@ export const typeDefs = gql`
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
         getCoupon(code: String!): Coupon!
+        validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
     }
     
