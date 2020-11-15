@@ -3,7 +3,7 @@ import Router from 'next/router';
 import { Button } from 'components/button/button';
 import RadioCard from 'components/radio-card/radio-card';
 import RadioGroup from 'components/radio-group/radio-group';
-import PaymentGroup from 'components/payment-group/payment-group';
+//import PaymentGroup from 'components/payment-group/payment-group';
 import UpdateAddress from 'components/address-card/address-card';
 import UpdateContact from 'components/contact-card/contact-card';
 import StripePaymentForm from 'features/payment/stripe-form';
@@ -393,7 +393,7 @@ const Checkout: React.FC<MyFormProps> = ({ token, deviceType }) => {
                 defaultMessage="Select Payment Option"
               />
             </Heading>
-            <PaymentGroup
+            {/*<PaymentGroup
               name="payment"
               deviceType={deviceType}
               items={card}
@@ -413,7 +413,7 @@ const Checkout: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   'add-address-modal stripe-modal'
                 );
               }}
-            />
+            />*/}
           </PaymentOption>
           {/* CheckoutSubmit */}
           <CheckoutSubmit>
