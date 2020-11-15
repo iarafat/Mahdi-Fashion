@@ -20,15 +20,17 @@ const Icon = ({icon, width = '18px', height = '18px'}) => {
 }
 
 const GET_COUPONS = gql`
-  query getCoupons($searchText: String, $offset: Int) {
+query GetCoupons( $searchText: String, $offset: Int) {
     coupons(searchText: $searchText, offset: $offset) {
       items{
         id
-        name
-        slug
-        icon
-        banner
-      }
+        title
+        code
+        maximum_discount_amount
+        expiration_date
+        status
+        created_at
+      } 
       totalCount
       hasMore
     }
@@ -63,15 +65,14 @@ const ActionWrapper: React.FC<Props> =
             [dispatch, itemData]
         );
         
+        
         const updateItemsQuery = (cache) => {
             const {coupons} = cache.readQuery({
                 query: GET_COUPONS,
-                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
             });
 
             cache.writeQuery({
                 query: GET_COUPONS,
-                variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
                 data: {
                     coupons: {
                         __typename: coupons.__typename,
