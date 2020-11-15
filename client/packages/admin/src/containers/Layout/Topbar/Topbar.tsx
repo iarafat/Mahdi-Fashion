@@ -54,6 +54,10 @@ const AUTH_CHECK = gql`
     }
 `;
 
+function getFaviconEl() {
+    return document.getElementById("favicon") as HTMLAnchorElement;
+}
+
 const Topbar = ({ refs }: any) => {
     const {data: authData, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
     const {data, error, refetch} = useQuery(GET_SETTING)
@@ -64,6 +68,11 @@ const Topbar = ({ refs }: any) => {
             setSiteSettingData(JSON.parse(data.getSiteSetting.value))
         }
     }, [data])
+
+    let fav = getFaviconEl();
+    if (siteSettingData) {
+        fav.href = ADMIN_IMAGE_HOST+siteSettingData.favicon;
+    }
 
     const dispatch = useDrawerDispatch()
     const {signout} = React.useContext(AuthContext);
@@ -83,7 +92,7 @@ const Topbar = ({ refs }: any) => {
     <TopbarWrapper ref={refs}>
       <Logo>
         <Link to='/'>
-          <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
+          <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt={siteSettingData ? siteSettingData.site_title : ''} />
         </Link>
       </Logo>
 

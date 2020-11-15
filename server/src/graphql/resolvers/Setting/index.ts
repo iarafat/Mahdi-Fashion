@@ -49,6 +49,7 @@ export const settingsResolvers: IResolvers = {
 
             if (!siteSetting) {
                 let imagePath: string | null = '';
+                let faviconPath: string | null = '';
 
                 if (settingValues.image_data) {
                     imagePath = storeImage(settingValues.image, settingValues.image_data.name);
@@ -56,11 +57,18 @@ export const settingsResolvers: IResolvers = {
                     imagePath = null;
                 }
 
+                if (settingValues.favicon_data) {
+                    faviconPath = storeImage(settingValues.favicon, settingValues.favicon_data.name);
+                } else {
+                    faviconPath = null;
+                }
+
                 const settingData = {
                     _id: new ObjectId(),
                     key: key,
                     value: {
                         image: imagePath,
+                        favicon: faviconPath,
                         site_title: settingValues.site_title,
                         site_keyword: settingValues.site_keyword,
                         site_description: settingValues.site_description,
@@ -84,10 +92,18 @@ export const settingsResolvers: IResolvers = {
                 imagePath = settingValues.image;
             }
 
+            let faviconPath = '';
+            if (settingValues.favicon_data) {
+                faviconPath = storeImage(settingValues.favicon, settingValues.favicon_data.name);
+            } else {
+                faviconPath = settingValues.favicon;
+            }
+
             const settingData = {
                 key: key,
                 value: {
                     image: imagePath,
+                    favicon: faviconPath,
                     site_title: settingValues.site_title,
                     site_keyword: settingValues.site_keyword,
                     site_description: settingValues.site_description,

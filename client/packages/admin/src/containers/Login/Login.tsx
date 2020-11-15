@@ -30,6 +30,9 @@ const GET_SETTING = gql`
         }
     }
 `;
+function getFaviconEl() {
+    return document.getElementById("favicon") as HTMLAnchorElement;
+}
 
 const getLoginValidationSchema = () => {
   return Yup.object().shape({
@@ -53,6 +56,11 @@ export default () => {
         }
     }, [data])
 
+    let fav = getFaviconEl();
+    if (siteSettingData) {
+        fav.href = ADMIN_IMAGE_HOST+siteSettingData.favicon;
+    }
+
   let history = useHistory();
   let location = useLocation();
   const { authenticate, isAuthenticated } = useContext(AuthContext);
@@ -74,7 +82,7 @@ export default () => {
             <Form>
               <FormFields>
                 <LogoWrapper>
-                  <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
+                  <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt={siteSettingData ? siteSettingData.site_title : ''} />
                 </LogoWrapper>
                 <FormTitle>Log in to admin</FormTitle>
               </FormFields>
