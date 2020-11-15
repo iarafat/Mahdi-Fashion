@@ -10,9 +10,20 @@ import {
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
-import {slugify} from "../../../lib/utils/slugify";
 import {search} from "../../../lib/utils/search";
 import {RUNNING} from "../../../lib/utils/constant";
+
+const checkCouponValidity = function (coupon: ICoupon): boolean {
+
+    const expireDate = new Date(coupon.expiration_date ? coupon.expiration_date : new Date);
+    const today = new Date();
+
+    if(expireDate < today)  throw new Error("Sorry ! This Token is Expired.");
+
+    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Token is Disabled.");
+
+    return true;
+};
 
 export const couponsResolvers: IResolvers = {
     Query: {
@@ -40,13 +51,13 @@ export const couponsResolvers: IResolvers = {
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<ICoupon> => {
-            const coupons = await db.coupons.findOne({code: code});
+            const coupon = await db.coupons.findOne({code: code});
 
-            if (!coupons) {
-                throw new Error("Resource not found.");
-            }
+            if (!coupon) throw new Error("Resource not found.");
 
-            return coupons;
+            coupon.valid = checkCouponValidity(coupon);
+
+            return coupon;
         },
 
         validateCoupon: async (
@@ -58,14 +69,9 @@ export const couponsResolvers: IResolvers = {
                 const coupon = await db.coupons.findOne({code: code});
                 if (!coupon) throw new Error("Resource not found.");
 
-                const expireDate = new Date(coupon.expiration_date ? coupon.expiration_date : new Date);
-                const today = new Date();
+                const validity = checkCouponValidity(coupon);
 
-                if(expireDate < today)  throw new Error("Sorry ! This Token is Expired.");
-
-                if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Token is Disabled.");
-
-                return { valid: true };
+                return { valid: validity };
 
             } catch (error) {
                 console.log(error.message)

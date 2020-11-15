@@ -296,6 +296,7 @@ export const typeDefs = gql`
         status: String
         created_at: String
         updated_at: String
+        valid: Boolean
     }
     type CouponPaginationType {
         items: [Coupon]
