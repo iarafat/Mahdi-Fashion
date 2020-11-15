@@ -73,6 +73,7 @@ export interface ICoupon {
     _id?: ObjectId;
     title: string;
     code: string;
+    percentage: number;
     maximum_discount_amount: number;
     expiration_date?: string;
     created_at?: string;

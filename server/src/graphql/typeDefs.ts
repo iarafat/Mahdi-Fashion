@@ -291,6 +291,7 @@ export const typeDefs = gql`
         id: ID!
         title: String
         code: String
+        percentage: Int
         maximum_discount_amount: Int
         expiration_date: String
         status: String
@@ -308,6 +309,7 @@ export const typeDefs = gql`
     input CouponInput {
         title: String!
         code: String!
+        percentage: Int
         maximum_discount_amount: Int
         expiration_date: String!
         status: String
