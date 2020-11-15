@@ -19,6 +19,7 @@ import DeliveryMethodUpdateForm from '../DeliveryMethodForm/DeliveryMethodUpdate
 import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
 import CouponForm from '../CouponForm/CouponForm';
+import CouponUpdateForm from '../CouponForm/CouponUpdateForm';
 
 /** Components Name Constants */
 const DRAWER_COMPONENTS = {
@@ -27,14 +28,14 @@ const DRAWER_COMPONENTS = {
   PRODUCT_FORM: ProductForm,
   PRODUCT_UPDATE_FORM: ProductUpdateForm,
   CAMPAING_FORM: CampaingForm,
-  CATEGORY_FORM: CategoryForm,
   CATEGORY_UPDATE_FORM: CategoryUpdateForm,
   PAYMENT_OPTION_FORM: PaymentOptionForm,
   PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,
   DELIVERY_METHOD_FORM: DeliveryMethodForm,
   DELIVERY_METHOD_UPDATE_FORM: DeliveryMethodUpdateForm,
   STAFF_MEMBER_FORM: StaffMemberForm,
-  COUPON_UPDATE_FORM: CouponForm,
+  COUPON_FORM: CouponForm,
+  COUPON_UPDATE_FORM: CouponUpdateForm,
   SIDEBAR: Sidebar,
 };
 

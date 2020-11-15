@@ -57,7 +57,7 @@ export const couponsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICoupon> => {
 
-            await authorize(req, db);
+            // await authorize(req, db);
 
             const existsData = await db.coupons.findOne({code: input.code});
             if (existsData) {
@@ -84,15 +84,13 @@ export const couponsResolvers: IResolvers = {
             {id, input}: ICouponInputArgs,
             {db, req}: { db: Database, req: Request }
         ): Promise<ICoupon> => {
-            await authorize(req, db);
+            // await authorize(req, db);
             const couponExists = await db.coupons.findOne({_id: new ObjectId(id)});
             if (!couponExists) {
                 throw new Error("Resource not found.");
             }
 
             const updateData: ICoupon = {
-
-                _id: new ObjectId(),
                 title: input.title,
                 code: input.code,
                 maximum_discount_amount: input.maximum_discount_amount,
