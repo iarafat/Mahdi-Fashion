@@ -24,20 +24,23 @@ interface FormValues {
 // The type of props MyForm receives
 interface MyFormProps {
   item?: any | null;
+  id?: any | null;
 }
 
 // Wrap our form with the using withFormik HoC
 const FormEnhancer = withFormik<MyFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) => {
+    const ID = props.item.id;
+    const addressItem = props.item.item;
     return {
-      id: "5faf88594f70ae175c5a44c2" || null,
-      addressId: props.item.id || null,
-      title: props.item.title || '',
-      address: props.item.address || '',
-      division: props.item.division || '',
-      district: props.item.district || '',
-      region: props.item.region || '',
+      id: ID || null,
+      addressId: addressItem.id || null,
+      title: addressItem.title || '',
+      address: addressItem.address || '',
+      division: addressItem.division || '',
+      district: addressItem.district || '',
+      region: addressItem.region || '',
     };
   },
   validationSchema: Yup.object().shape({
@@ -45,7 +48,6 @@ const FormEnhancer = withFormik<MyFormProps, FormValues>({
     address: Yup.string().required('Address is required'),
   }),
   handleSubmit: (values) => {
-    //console.log(values, 'values');
     // do submitting things
   },
 });
@@ -64,9 +66,11 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
     handleReset,
     isSubmitting,
   } = props;
+  const ID = item.id;
+  const addressItem = item.item;
   const addressValue = {
-    id: "5faf88594f70ae175c5a44c2",
-    addressId: item.id, 
+    id: ID,
+    addressId: addressItem.id, 
     title: values.title,
     address: values.address,
     division: values.division,
@@ -79,10 +83,9 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
   const [addAddressMutation] = useMutation(ADD_ADDRESS);
 
   const handleSubmit = async () => {
-    console.log(isValid)
     if (isValid) {
       const {id, addressId, title, address, division, district, region} = addressValue;
-      if(Object.keys(item).length === 0){
+      if(Object.keys(addressItem).length === 0){
         const addressData = await addAddressMutation({
           variables: { 
             id,
@@ -99,9 +102,6 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
         });
         closeModal();
       }else{
-        console.log(item)
-        //console.log ("id: "+id, "item-ID: "+addressId, "title"+title, "address "+address, "division "+division, " "+district, " region"+region,)
-        console.log(id, addressId)
         const updateAddressData = await updateAddressMutation({
           variables: { 
             id,
@@ -115,7 +115,7 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
         });
         dispatch({
           type: 'UPDATE_ADDRESS',
-          payload: { value: addressValue, id: item.id }
+          payload: { value: addressValue, id: addressItem.id }
 
         });
         closeModal();
@@ -124,7 +124,7 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
   };
   return (
     <Form>
-      <Heading>{item && item.id ? 'Edit Address' : 'Add New Address'}</Heading>
+      <Heading>{addressItem && addressItem.id ? 'Edit Address' : 'Add New Address'}</Heading>
       <FieldWrapper>
         <TextField
           id="title"

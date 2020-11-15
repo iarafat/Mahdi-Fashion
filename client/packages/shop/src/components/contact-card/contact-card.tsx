@@ -14,10 +14,11 @@ import { FormattedMessage } from 'react-intl';
 
 type Props = {
   item?: any | null;
+  id?: any | null;
 };
 // Shape of form values
 type FormValues = {
-  id?: number | null;
+  id?: any | null;
   type?: string;
   number?: string;
 };
@@ -27,23 +28,26 @@ const ContactValidationSchema = Yup.object().shape({
 });
 
 const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
+
+  const ContactItem = item.item;
+  const ID = item.id;
+  
   const initialValues = {
-    id: item.id || null,
-    type: item.type || 'secondary',
-    number: item.number || '',
+    id: ContactItem.id || null,
+    type: ContactItem.type || 'secondary',
+    number: ContactItem.number || '',
   };
   const [addPhoneMutation] = useMutation(ADD_PHONENUMBER);
   const [updatePhoneMutation] = useMutation(UPDATE_PHONENUMBER);
   const { state, dispatch } = useContext(ProfileContext);
   const handleSubmit = async (values: FormValues) => {
-    if(Object.keys(item).length === 0){
+    if(Object.keys(ContactItem).length === 0){
       const addPhone = await addPhoneMutation({
         variables: { 
-          id: "5faf88594f70ae175c5a44c2",
+          id: ID,
           number: values.number
         },
       });
-      //console.log(values, 'formik values');
       dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: null }});
       closeModal();
       if (typeof window !== 'undefined') {
@@ -52,13 +56,12 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
     }else{
       const updatePhone =  await updatePhoneMutation({
         variables: { 
-          id: "5faf88594f70ae175c5a44c2",
-          phoneId: item.id,
+          id: ID,
+          phoneId: ContactItem.id,
           number: values.number
         },
       });
-      //console.log(values, 'formik values');
-      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: item.id }});
+      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: ContactItem.id }});
       closeModal();
     }
    
@@ -77,7 +80,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
       }: FormikProps<FormValues>) => (
         <Form>
           <Heading>
-            {item && item.id ? 'Edit Contact' : 'Add New Contact'}
+            {ContactItem && ContactItem.id ? 'Edit Contact' : 'Add New Contact'}
           </Heading>
           <FieldWrapper>
             <MaskedInput

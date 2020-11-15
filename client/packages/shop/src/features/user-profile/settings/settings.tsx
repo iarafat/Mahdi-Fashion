@@ -100,7 +100,10 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
   const handleEditDelete = async (item: any, index: any, type: string, name: string) => {
     if (type === 'edit') {
       const modalComponent = name === 'address' ? UpdateAddressTwo : UpdateContact;
-      handleModal(modalComponent, item);
+      handleModal(modalComponent,{
+        item,
+        id
+      });
     } else {
       switch (name) {
         case 'payment':
@@ -280,8 +283,14 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       variant='outlined'
                       type='button'
                       className='add-button'
-                      onClick={() =>
-                        handleModal(UpdateContact, {}, 'add-contact-modal')
+                      onClick={() =>handleModal(
+                         UpdateContact, 
+                         {
+                          item:{},
+                          id
+                        }, 
+                        'add-contact-modal'
+                        )
                       }
                     >
                       <FormattedMessage
@@ -334,8 +343,13 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                       variant='outlined'
                       type='button'
                       className='add-button'
-                      onClick={() =>
-                        handleModal(UpdateAddressTwo, {} , 'add-address-modal')
+                      onClick={() =>handleModal(
+                          UpdateAddressTwo, 
+                          {
+                            item:{},
+                            id
+                          },
+                          'add-address-modal')
                       }
                     >
                       <FormattedMessage

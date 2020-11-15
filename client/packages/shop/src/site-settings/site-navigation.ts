@@ -51,8 +51,8 @@ export const PROFILE_MENU_ITEM = {
   href: PROFILE_PAGE,
 };
 export const AUTHORIZED_MENU_ITEMS = [
-  /*PROFILE_MENU_ITEM,
-  {
+  PROFILE_MENU_ITEM,
+  /*{
     id: 'nav.checkout',
     defaultMessage: 'Checkout',
     href: CHECKOUT_PAGE,
