@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import { Button } from 'components/button/button';
+import LogoImage from 'assets/images/logo.svg';
 import {
   ProductDetailsWrapper,
   ProductPreview,
@@ -226,7 +227,7 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
         />
       </RelatedItems>
       */}
-      <Footer/>
+      <Footer logo={LogoImage} />
     </>
   );
 };
