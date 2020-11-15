@@ -84,7 +84,7 @@ export default function Coupon() {
   const [offset, setOffset] = useState(0);
   const dispatch = useDrawerDispatch();
   const openDrawer = useCallback(
-    () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'CATEGORY_FORM' }),
+    () => dispatch({ type: 'OPEN_DRAWER', drawerComponent: 'COUPON_FORM' }),
     [dispatch]
   );
 
