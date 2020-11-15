@@ -334,7 +334,7 @@ export const typeDefs = gql`
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
         getCoupon(code: String!): Coupon!
         validateCoupon(code: String!): CouponValid!
-
+        userAuthCheck: DefaultMessageType!
     }
     
     type Mutation {
