@@ -33,6 +33,7 @@ const GET_COUPONS = gql`
         id
         title
         code
+        percentage
         maximum_discount_amount
         expiration_date
         status
@@ -50,6 +51,7 @@ const CREATE_COUPON = gql`
         id
         title
         code
+        percentage
         maximum_discount_amount
         expiration_date
         status
@@ -69,6 +71,7 @@ const AddCoupon: React.FC<Props> = props => {
   const [dateExpired, setDateExpired] = useState('');
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
+  const [percentage, setPercentage] = useState('');
   const [maximumDiscountAmount, setMaximumDiscountAmount] = useState('');
   const [status, setStatus] = useState('running');
 
@@ -108,6 +111,7 @@ const AddCoupon: React.FC<Props> = props => {
     const newCoupon = {
       title: title,
       code: code,
+      percentage: parseFloat(percentage),
       maximum_discount_amount: parseFloat(maximumDiscountAmount),
       expiration_date: dateExpired,
       status: status
@@ -164,6 +168,14 @@ const AddCoupon: React.FC<Props> = props => {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     name="code"
+                  />
+                </FormFields>
+                <FormFields>
+                  <FormLabel>Discount Percentage</FormLabel>
+                  <Input
+                    value={percentage}
+                    onChange={(e) => setPercentage(e.target.value)}
+                    name="percentage"
                   />
                 </FormFields>
                 <FormFields>

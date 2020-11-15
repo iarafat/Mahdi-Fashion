@@ -98,6 +98,7 @@ export const couponsResolvers: IResolvers = {
                 _id: new ObjectId(),
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status ? input.status : RUNNING,
@@ -123,6 +124,7 @@ export const couponsResolvers: IResolvers = {
             const updateData: ICoupon = {
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status,
