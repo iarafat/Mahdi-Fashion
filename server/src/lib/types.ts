@@ -80,6 +80,10 @@ export interface ICoupon {
     status: string;
 }
 
+export interface ICouponValid {
+    valid: boolean
+}
+
 export interface IProductCategory {
     id: string;
     name: string;
