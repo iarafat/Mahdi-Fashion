@@ -2,6 +2,11 @@ import React, { useReducer } from 'react';
 import schedules from 'features/checkouts/data';
 import { ProfileContext } from './profile.context';
 
+import { DELIVERY_METHOD } from 'graphql/query/delivery';
+import { useQuery } from '@apollo/react-hooks';
+
+
+
 type Action =
   | { type: 'HANDLE_ON_INPUT_CHANGE'; payload: any }
   | { type: 'HANDLE_PASSWORD_CLEAR'; payload: any }
@@ -112,12 +117,13 @@ function reducer(state: any, action: Action): any {
         ),
       };
     case 'SET_PRIMARY_SCHEDULE':
+      console.log(state)
       return {
         ...state,
         schedules: state.schedules.map((item: any) =>
           item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+          ? { ...item, type: 'primary' }
+          : { ...item, type: 'secondary' }
         ),
       };
     case 'SET_PRIMARY_CARD':
@@ -138,13 +144,17 @@ type ProfileProviderProps = {
   initData: any;
 };
 
-export const ProfileProvider: React.FunctionComponent<ProfileProviderProps> = ({
+export const ProfileProvider:  React.FunctionComponent<ProfileProviderProps>  =  ({
   children,
   initData,
-}) => {
-  const [state, dispatch] = useReducer(reducer, { ...initData, schedules });
-  // console.log(state, 'profile provider state');
+}) =>  {
 
+  const { data, error, loading } =  useQuery(DELIVERY_METHOD)
+ 
+  const schedules = data?.deliveryMethods.items;
+
+  const [state, dispatch] = useReducer(reducer, { ...initData, schedules });
+ 
   return (
     <ProfileContext.Provider value={{ state, dispatch }}>
       {children}

@@ -9,7 +9,7 @@ export const cartItemsTotalPrice = (items, coupon = null) => {
   }, 0);
   // const discountRate = 1 - discountInPercent;
   const discount = coupon
-    ? (itemCost * Number(coupon.discountInPercent)) / 100
+    ? (itemCost * Number(coupon.percentage)) / 100
     : 0;
   // itemCost * discountRate * TAX_RATE + shipping;
   // return itemCost * discountRate;

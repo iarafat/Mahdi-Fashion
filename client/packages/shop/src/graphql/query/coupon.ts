@@ -5,6 +5,7 @@ query GetCoupon( $code: String! ){
     getCoupon( code: $code ) {
         title
         code
+        percentage
         maximum_discount_amount
         expiration_date
         status

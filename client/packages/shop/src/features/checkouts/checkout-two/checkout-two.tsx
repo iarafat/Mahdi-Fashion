@@ -14,6 +14,7 @@ import StripePaymentForm from 'features/payment/stripe-form';
 import { DELETE_ADDRESS, SETPRIMARY_ADDRESS } from 'graphql/mutation/address';
 import { DELETE_PHONENUMBER, SETPRIMARY_PHONENUMBER } from 'graphql/mutation/phone';
 import { GET_COUPON } from 'graphql/query/coupon';
+import { DELIVERY_METHOD } from 'graphql/query/delivery';
 import { DELETE_CARD } from 'graphql/mutation/card';
 import { DELETE_CONTACT } from 'graphql/mutation/contact';
 import { CURRENCY } from 'utils/constant';
@@ -132,8 +133,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     email,
     id 
     } = state;
-
-
+    console.log(schedules)
   const [setprimaryAddressMutation] = useMutation(SETPRIMARY_ADDRESS);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
@@ -145,7 +145,10 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
   /*const { data: CouponData  , error: CouponError, refetch: CouponRefetch } = useQuery(GET_COUPON);*/
   const { data , error, refetch } = useQuery(GET_COUPON);
-  
+  const { data: schedulesData, error: scheduleError, loading: scheduleLoading } =  useQuery(DELIVERY_METHOD)
+  const scheduleItems = schedulesData?.deliveryMethods.items;
+
+
   const handleSubmit = async () => {
     setLoading(true);
     if (isValid) {
@@ -296,9 +299,8 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
   const handleApplyCoupon = async () => {
     const { data }: any = await refetch({
-      code: 'MATE-13'
+      code: couponCode
     });
-
     if (data.getCoupon && data.getCoupon.maximum_discount_amount) {
       applyCoupon(data.getCoupon);
       setCouponCode('');
@@ -377,14 +379,14 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                     defaultMessage='Select Your Delivery Schedule'
                   />
                 </Heading>
-                <RadioGroup
-                  items={schedules}
+                <RadioGroupTwo
+                  items={scheduleItems}
                   component={(item: any, index: any) => (
                     <RadioCard
                       id={item.id}
                       key={item.id}
-                      title={item.title}
-                      content={item.time_slot}
+                      title={item.name}
+                      content={item.details}
                       name='schedule'
                       checked={item.type === 'primary'}
                       withActionButtons={false}

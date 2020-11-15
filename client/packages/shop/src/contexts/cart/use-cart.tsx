@@ -49,16 +49,18 @@ const useCartActions = (initialCart = INITIAL_STATE) => {
     return state.items?.find((item) => item.id === id);
   };
   const getCartItemsPrice = () => cartItemsTotalPrice(state.items).toFixed(2);
+
   const getCartItemsTotalPrice = () =>
     cartItemsTotalPrice(state.items, state.coupon).toFixed(2);
 
   const getDiscount = () => {
     const total = cartItemsTotalPrice(state.items);
     const discount = state.coupon
-      ? (total * Number(state.coupon?.maximum_discount_amount)) / 100
+      ? (total * Number(state.coupon?.percentage)) / 100
       : 0;
     return discount.toFixed(2);
   };
+
   const getItemsCount = state.items?.reduce(
     (acc, item) => acc + item.quantity,
     0
