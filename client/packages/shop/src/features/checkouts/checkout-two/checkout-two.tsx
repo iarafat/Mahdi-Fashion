@@ -13,11 +13,12 @@ import UpdateContact from 'components/contact-card/contact-card';
 import StripePaymentForm from 'features/payment/stripe-form';
 import { DELETE_ADDRESS, SETPRIMARY_ADDRESS } from 'graphql/mutation/address';
 import { DELETE_PHONENUMBER, SETPRIMARY_PHONENUMBER } from 'graphql/mutation/phone';
+import { GET_COUPON } from 'graphql/query/coupon';
 import { DELETE_CARD } from 'graphql/mutation/card';
 import { DELETE_CONTACT } from 'graphql/mutation/contact';
 import { CURRENCY } from 'utils/constant';
 import { openModal } from '@redq/reuse-modal';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Scrollbars } from 'react-custom-scrollbars';
 import CheckoutWrapper, {
   CheckoutContainer,
@@ -84,6 +85,7 @@ type CartItemProps = {
 const OrderItem: React.FC<CartItemProps> = ({ product }) => {
   const { id, quantity, title, name, unit, price, salePrice } = product;
   const displayPrice = salePrice ? salePrice : price;
+
   return (
     <Items key={id}>
       <Quantity>{quantity}</Quantity>
@@ -137,12 +139,13 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
   const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
 
-
   const [deleteContactMutation] = useMutation(DELETE_CONTACT);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
-  const [appliedCoupon] = useMutation(APPLY_COUPON);
   const size = useWindowSize();
 
+  /*const { data: CouponData  , error: CouponError, refetch: CouponRefetch } = useQuery(GET_COUPON);*/
+  const { data , error, refetch } = useQuery(GET_COUPON);
+  
   const handleSubmit = async () => {
     setLoading(true);
     if (isValid) {
@@ -292,11 +295,12 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   };
 
   const handleApplyCoupon = async () => {
-    const { data }: any = await appliedCoupon({
-      variables: { code: couponCode },
+    const { data }: any = await refetch({
+      code: 'MATE-13'
     });
-    if (data.applyCoupon && data.applyCoupon.discountInPercent) {
-      applyCoupon(data.applyCoupon);
+
+    if (data.getCoupon && data.getCoupon.maximum_discount_amount) {
+      applyCoupon(data.getCoupon);
       setCouponCode('');
     } else {
       setError('Invalid Coupon');

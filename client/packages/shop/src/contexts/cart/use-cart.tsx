@@ -55,7 +55,7 @@ const useCartActions = (initialCart = INITIAL_STATE) => {
   const getDiscount = () => {
     const total = cartItemsTotalPrice(state.items);
     const discount = state.coupon
-      ? (total * Number(state.coupon?.discountInPercent)) / 100
+      ? (total * Number(state.coupon?.maximum_discount_amount)) / 100
       : 0;
     return discount.toFixed(2);
   };
