@@ -16,6 +16,7 @@ import {
   CUSTOMERS,
   COUPONS,
   SETTINGS,
+  PAYMENT_OPTIONS, DELIVERY_METHODS,
 } from '../../../settings/constants';
 import { AuthContext } from '../../../context/auth';
 import {
@@ -28,6 +29,8 @@ import {
   SettingIcon,
   LogoutIcon,
     MenuIcon,
+    Accessories,
+    CarretUpIcon
 } from '../../../components/AllSvgIcon';
 
 const sidebarMenus = [
@@ -55,24 +58,36 @@ const sidebarMenus = [
     exact: false,
     icon: <ProductIcon />,
   },
- /* {
+  {
+    name: 'PaymentOptions',
+    path: PAYMENT_OPTIONS,
+    exact: false,
+    icon: <Accessories />,
+  },
+  {
+    name: 'DeliveryMethods',
+    path: DELIVERY_METHODS,
+    exact: false,
+    icon: <CarretUpIcon />,
+  },
+ {
     name: 'Orders',
     path: ORDERS,
     exact: false,
     icon: <OrderIcon />,
   },
-  {
-    name: 'Customers',
-    path: CUSTOMERS,
-    exact: false,
-    icon: <CustomerIcon />,
-  },
+  /*   {
+      name: 'Customers',
+      path: CUSTOMERS,
+      exact: false,
+      icon: <CustomerIcon />,
+    },*/
   {
     name: 'Coupons',
     path: COUPONS,
     exact: false,
     icon: <CouponIcon />,
-  },*/
+  },
   {
     name: 'Settings',
     path: SETTINGS,

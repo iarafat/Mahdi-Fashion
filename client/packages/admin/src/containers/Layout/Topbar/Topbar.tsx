@@ -45,8 +45,21 @@ const GET_SETTING = gql`
         }
     }
 `;
+const AUTH_CHECK = gql`
+    query AuthCheck {
+        userAuthCheck {
+            status
+            message
+        }
+    }
+`;
+
+function getFaviconEl() {
+    return document.getElementById("favicon") as HTMLAnchorElement;
+}
 
 const Topbar = ({ refs }: any) => {
+    const {data: authData, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
     const {data, error, refetch} = useQuery(GET_SETTING)
     const [siteSettingData, setSiteSettingData] = useState<any | null>(null);
 
@@ -56,6 +69,11 @@ const Topbar = ({ refs }: any) => {
         }
     }, [data])
 
+    let fav = getFaviconEl();
+    if (siteSettingData) {
+        fav.href = ADMIN_IMAGE_HOST+siteSettingData.favicon;
+    }
+
     const dispatch = useDrawerDispatch()
     const {signout} = React.useContext(AuthContext);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -64,11 +82,17 @@ const Topbar = ({ refs }: any) => {
         [dispatch]
     );
 
+    React.useEffect(() => {
+        if (authData && !authData.userAuthCheck.status) {
+            signout();
+        }
+    }, [authData])
+
   return (
     <TopbarWrapper ref={refs}>
       <Logo>
         <Link to='/'>
-          <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt='Mahdi Fashion-admin' />
+          <LogoImage src={siteSettingData ? ADMIN_IMAGE_HOST+siteSettingData.image : ''} alt={siteSettingData ? siteSettingData.site_title : ''} />
         </Link>
       </Logo>
 

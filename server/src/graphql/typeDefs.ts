@@ -188,7 +188,14 @@ export const typeDefs = gql`
         id: ID!
         name: String!
         details: String!
-    }  
+        created_at: String
+        updated_at: String
+    }
+    type DeliveryMethodPaginationType {
+        items: [DeliveryMethod]
+        totalCount: Int
+        hasMore: Boolean
+    }
     
     type PaymentOption {
         id: ID!
@@ -196,6 +203,13 @@ export const typeDefs = gql`
         type: String!
         image: String!
         details: String
+        created_at: String
+        updated_at: String
+    }
+    type PaymentOptionPaginationType {
+        items: [PaymentOption]
+        totalCount: Int
+        hasMore: Boolean
     }
 
     # Orders
@@ -209,8 +223,12 @@ export const typeDefs = gql`
         customer_id: String!
         contact_number: String!
         payment_option_id: String!
+        delivery_method_id: String!
         delivery_address: String!
-        amount: Int!
+        sub_total: Int
+        total: Int
+        coupon_code: String
+        discount_amount: Int
         products: [OrderProductInput!]!
         payment_id:  String
     }
@@ -219,6 +237,7 @@ export const typeDefs = gql`
         status: String!
         ordering: Int!
         is_current: Boolean!
+        step_competed: Boolean
     }
 
     type OrderProducts {
@@ -230,12 +249,17 @@ export const typeDefs = gql`
     
     type Order {
       id: ID!
+      order_code: String
       customer_id: String!
       contact_number: String!
       payment_option_id: String
       datetime: String
+      delivery_method: DeliveryMethod
       delivery_address: String!
-      amount: Int!
+      sub_total: Int
+      total: Int
+      coupon_code: String
+      discount_amount: Int
       payment_id:  String
       payment_method: String!
       payment_status: String!
@@ -244,6 +268,11 @@ export const typeDefs = gql`
       order_products: [OrderProducts]
       created_at: String
       updated_at: String
+    }
+    type OrderPaginationType {
+        items: [Order]
+        totalCount: Int
+        hasMore: Boolean
     }
     
     type DefaultMessageType {
@@ -257,6 +286,39 @@ export const typeDefs = gql`
         value: String
     }
 
+
+    type Coupon {
+        id: ID!
+        title: String
+        code: String
+        percentage: Int
+        maximum_discount_amount: Int
+        expiration_date: String
+        status: String
+        created_at: String
+        updated_at: String
+        valid: Boolean
+    }
+    type CouponPaginationType {
+        items: [Coupon]
+        totalCount: Int
+        hasMore: Boolean
+    }
+
+
+    input CouponInput {
+        title: String!
+        code: String!
+        percentage: Int
+        maximum_discount_amount: Int
+        expiration_date: String!
+        status: String
+    }
+    type CouponValid {
+        valid: Boolean
+    }
+
+
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
@@ -264,12 +326,17 @@ export const typeDefs = gql`
         shopCategories(type: String, limit: Int = 12, offset: Int = 0, searchText: String): CatetgoryPaginationType!
         products(type: String, category: String, limit: Int = 12, offset: Int = 0, searchText: String): ProductPaginationType!
         getProduct(slug: String!): Product!
-        deliveryMethods: [DeliveryMethod!]!
-        paymentOptions: [PaymentOption!]!
-        orders: [Order!]
+        deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
+        paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
+        orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
+        getUserOrders(id: String!): [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!
+        coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
+        getCoupon(code: String!): Coupon!
+        validateCoupon(code: String!): CouponValid!
+        userAuthCheck: DefaultMessageType!
     }
     
     type Mutation {
@@ -286,10 +353,10 @@ export const typeDefs = gql`
         deleteProduct(id: ID!): DefaultMessageType!
         createDeliveryMethod(name: String!, details: String!): DeliveryMethod!
         updateDeliveryMethod(id: ID!, name: String!, details: String!): DeliveryMethod!
-        deleteDeliveryMethod(id: ID!): DeliveryMethod!
-        createPaymentOption(name: String!, type: String!, image: String!, details: String): PaymentOption!
-        updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, details: String): PaymentOption!
-        deletePaymentOption(id: ID!): PaymentOption!
+        deleteDeliveryMethod(id: ID!): DefaultMessageType!
+        createPaymentOption(name: String!, type: String!, image: String!, image_data: String!, details: String): PaymentOption!
+        updatePaymentOption(id: ID!, name: String!, type: String!, image: String!, image_data: String, details: String): PaymentOption!
+        deletePaymentOption(id: ID!): DefaultMessageType!
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
@@ -298,9 +365,14 @@ export const typeDefs = gql`
         setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
         deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
         addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        updateDeliveryAddress(id: ID!, index: Int!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        setDeliveryAddressPrimary(id: ID!, index: Int!): DefaultMessageType!
-        deleteDeliveryAddress(id: ID!, index: Int!): DefaultMessageType!
+        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
+        deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
+        updateOrderStatus(id: ID!, orderingPosition: Int!): Order!
+
+        createCoupon(input: CouponInput): Coupon!
+        updateCoupon(id: ID!, input: CouponInput): Coupon!
+        deleteCoupon(id: ID!): DefaultMessageType!
     }
 `;
