@@ -69,6 +69,16 @@ export interface ICategory {
     created_at?: string;
     updated_at?: string;
 }
+export interface ICoupon {
+    _id?: ObjectId;
+    title: string;
+    code: string;
+    maximum_discount_amount: number;
+    expiration_date?: string;
+    created_at?: string;
+    updated_at?: string;
+    status: string;
+}
 
 export interface IProductCategory {
     id: string;
@@ -135,6 +145,7 @@ export interface IOrderTracker {
     status: string;
     ordering: number;
     is_current: boolean;
+    step_competed: boolean;
 }
 
 export interface OrderProducts {
@@ -146,16 +157,21 @@ export interface OrderProducts {
 
 export interface IOrder {
     _id?: ObjectId;
+    order_code: string;
     customer_id: string;
     contact_number: string;
     payment_option_id: string;
     datetime: string;
+    delivery_method?: string;
     delivery_address: string;
-    amount: number;
+    sub_total: number;
+    total: number;
+    coupon_code?: string;
+    discount_amount?: number;
     payment_id?: string;
     payment_method: string;
     payment_status: string;
-    status: string;
+    status?: string;
     order_tracking: Array<IOrderTracker>;
     order_products: Array<OrderProducts>;
     created_at?: string;
@@ -183,4 +199,5 @@ export interface Database {
     payment_options: Collection<IPaymentOption>;
     orders: Collection<IOrder>;
     settings: Collection<ISetting>;
+    coupons: Collection<ICoupon>;
 }
