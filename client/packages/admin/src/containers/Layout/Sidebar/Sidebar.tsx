@@ -70,18 +70,18 @@ const sidebarMenus = [
     exact: false,
     icon: <CarretUpIcon />,
   },
- /* {
+ {
     name: 'Orders',
     path: ORDERS,
     exact: false,
     icon: <OrderIcon />,
   },
-  {
-    name: 'Customers',
-    path: CUSTOMERS,
-    exact: false,
-    icon: <CustomerIcon />,
-  },*/
+  /*   {
+      name: 'Customers',
+      path: CUSTOMERS,
+      exact: false,
+      icon: <CustomerIcon />,
+    },*/
   {
     name: 'Coupons',
     path: COUPONS,

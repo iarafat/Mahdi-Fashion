@@ -36,6 +36,8 @@ export const StyledCell = withStyle(BaseStyledCell, () => ({
   fontWeight: 400,
   color: '#161F6A !important',
   alignSelf: 'center',
+  // borderBottom: '1px solid #ccc',
+  // height: '60px',
 }));
 
 export const StyledHeadCellCenter = withStyle(BaseStyledHeadCell, () => ({
