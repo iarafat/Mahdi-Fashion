@@ -20,6 +20,29 @@ const accessToken = (id: any) => {
     return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
 };
 
+const authChecker = (token: string) => {
+    const secret = <string>process.env.JWT_SECRET;
+
+    if (!token) {
+        return false;
+    }
+
+    try {
+        jwt.verify(token, secret);
+    } catch(err) {
+        return false;
+    }
+
+    const {UserId, exp} = <any>jwt.verify(token, secret);
+
+    if (exp < Date.now().valueOf() / 1000) {
+        return false;
+    }
+
+
+    return true;
+}
+
 
 export const usersResolvers: IResolvers = {
     Query: {
@@ -39,6 +62,25 @@ export const usersResolvers: IResolvers = {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             return await authorize(req, db);
+        },
+        userAuthCheck: async (
+            _root: undefined,
+            _args: undefined,
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonMessageReturnType> => {
+            const token = <string>req.headers["x-access-token"];
+
+            if (authChecker(token)) {
+                return {
+                    status: true,
+                    message: "Authenticate user is valid."
+                };
+            }
+
+            return {
+                status: false,
+                message: "User dose not valid."
+            }
         },
     },
 
