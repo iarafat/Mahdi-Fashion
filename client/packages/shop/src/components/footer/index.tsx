@@ -4,20 +4,20 @@ import styled from 'styled-components';
 import Logo from 'layouts/logo/logo';
 import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
 
-import DelivaryIcon from 'assets/images/footer/1-hour.webp';
-import CashOnDelivaryIcon from 'assets/images/footer/cash-on-delivery.webp';
-import Bkash from 'assets/images/footer/bkash.webp';
-import Mastercard from 'assets/images/footer/mastercard.webp';
-import VIsa from 'assets/images/footer/VIsa.webp';
-import COD from 'assets/images/footer/COD.webp';
-import Amex from 'assets/images/footer/Amex.webp';
-import AppStore from 'assets/images/footer/app_store.webp';
-import GooglePlayStore from 'assets/images/footer/google_play_store.webp';
-import Facebook from 'assets/images/footer/Facebook.webp';
-import Instagram from 'assets/images/footer/Instagram.webp';
-import Twitter from 'assets/images/footer/twitter.webp';
-import Youtube from 'assets/images/footer/Youtube.webp';
-import PhoneIcon from 'assets/images/footer/phone_icon.webp';
+import DelivaryIcon from 'assets/images/footer/onehour.png';
+import CashOnDelivaryIcon from 'assets/images/footer/cash-on-delivery.png';
+import Bkash from 'assets/images/footer/bkash.png';
+import Mastercard from 'assets/images/footer/mastercard.png';
+import VIsa from 'assets/images/footer/VIsa.png';
+import COD from 'assets/images/footer/COD.png';
+import Amex from 'assets/images/footer/Amex.png';
+import AppStore from 'assets/images/footer/app_store.jpg';
+import GooglePlayStore from 'assets/images/footer/google_play_store.jpg';
+import Facebook from 'assets/images/footer/Facebook.jpg';
+import Instagram from 'assets/images/footer/Instagram.jpg';
+import Twitter from 'assets/images/footer/twitter.jpg';
+import Youtube from 'assets/images/footer/Youtube.jpg';
+import PhoneIcon from 'assets/images/footer/phone_icon.jpg';
 
 const FooterWrapper = styled.footer`
   display: flex;
