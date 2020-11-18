@@ -51,7 +51,7 @@ export const couponsResolvers: IResolvers = {
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<IGetCouponReturnType> => {
-            const coupon = await db.coupons.findOne({code: code});
+            let coupon = await db.coupons.findOne({code: code});
             let message;
 
             if (!coupon) {
@@ -60,7 +60,7 @@ export const couponsResolvers: IResolvers = {
                     message: "Coupon invalid."
                 };
             }
-            
+
             const expireDate = new Date(coupon && coupon.expiration_date ? coupon.expiration_date : new Date);
             const today = new Date();
 
@@ -76,6 +76,10 @@ export const couponsResolvers: IResolvers = {
                     status: false,
                     message: "Coupon invalid."
                 };
+            }
+
+            if (message && !message.status) {
+                coupon = null;
             }
 
             return {
