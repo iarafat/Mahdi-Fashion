@@ -117,12 +117,14 @@ export const ordersResolvers: IResolvers = {
         },
         getUserOrders: async (
             _root: undefined,
-            {id}: { id: string},
+            _args: undefined,
             {db, req}: { db: Database, req: Request }
         ): Promise<IOrder[]> => {
-            await authorize(req, db);
+            const user = await authorize(req, db);
 
-            return await db.orders.find({customer_id: id}).sort({_id: -1}).toArray();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return await db.orders.find({customer_id: user._id}).sort({_id: -1}).toArray();
         }
     },
 
