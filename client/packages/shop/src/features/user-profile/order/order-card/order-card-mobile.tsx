@@ -127,13 +127,6 @@ const OrderCard: React.FC<MobileOrderCardProps> = ({
                       {order.discount}
                     </Price>
                   </PriceRow>
-                  <PriceRow>
-                    Delivery Fee
-                    <Price>
-                      {CURRENCY}
-                      {order.deliveryFee}
-                    </Price>
-                  </PriceRow>
                   <PriceRow className="grandTotal">
                     Total
                     <Price>

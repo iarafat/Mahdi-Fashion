@@ -1,5 +1,7 @@
 import React from 'react';
 import Table from 'rc-table';
+import Link from 'next/link';
+import Router from 'next/router';
 import {
   DeliveryInfo,
   DeliveryAddress,
@@ -11,12 +13,14 @@ import {
   ProgressWrapper,
   OrderTableWrapper,
   OrderTable,
+  StyledLink
 } from './order-details.style';
 import Progress from 'components/progress-box/progress-box';
 import { CURRENCY } from 'utils/constant';
 import { FormattedMessage } from 'react-intl';
 
 type OrderDetailsProps = {
+  id?: any;
   tableData?: any;
   columns?: any;
   progressData?: any;
@@ -25,7 +29,6 @@ type OrderDetailsProps = {
   number?: string;
   subtotal?: number;
   discount?: number;
-  deliveryFee?: number;
   grandTotal?: number;
   ref?: any;
 };
@@ -39,14 +42,23 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   columns,
   address,
   number,
+  id,
   progressStatus,
   progressData,
   subtotal,
   discount,
-  deliveryFee,
   grandTotal,
   ref
 }) => {
+
+  const handleInvocie = () => {
+    Router.push({
+      pathname: '/order-received',
+      query: { itemId: id }
+    })
+    return false
+  }
+
   return (
     <>
       <DeliveryInfo>
@@ -82,17 +94,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             />
             <Price>
               {CURRENCY}
-              {discount}
-            </Price>
-          </PriceRow>
-          <PriceRow>
-            <FormattedMessage
-              id="intlOrderDetailsDelivery"
-              defaultMessage="Delivery Fee"
-            />
-            <Price>
-              {CURRENCY}
-              {deliveryFee}
+              {discount !== null ? discount : 0}
             </Price>
           </PriceRow>
           <PriceRow className="grandTotal">
@@ -104,7 +106,9 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           </PriceRow>
         </CostCalculation>
       </DeliveryInfo>
-      
+      <StyledLink onClick={handleInvocie}>
+        Get Invoice
+      </StyledLink>
      {/* <ProgressWrapper>
         <Progress data={progressData} status={progressStatus} />
       </ProgressWrapper>

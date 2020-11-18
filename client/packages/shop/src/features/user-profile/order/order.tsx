@@ -98,12 +98,7 @@ const OrdersContent: React.FC<{}> = () => {
       );
     };
 
-    
-
-    const myOrder = data.getUserOrders;
-    
-    console.log(data)
-    console.log(active)
+  const myOrder = data.getUserOrders;
 
   const handleClick = (order: any) => {
     setOrder(order);
@@ -165,13 +160,13 @@ const OrdersContent: React.FC<{}> = () => {
           </Title>
           {order &&  (
             <OrderDetails
+              id={order.id}
               progressStatus={order.status}
               progressData={progressData}
               number={order.contact_number}
               address={order.delivery_address}
               subtotal={order.sub_total}
-              discount={order.discount}
-              deliveryFee={order.deliveryFee}
+              discount={order.discount_amount}
               grandTotal={order.total}
               tableData={order.products}
               columns={orderTableColumns}

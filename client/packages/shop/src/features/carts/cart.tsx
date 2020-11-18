@@ -156,41 +156,6 @@ const Cart: React.FC<CartPropsType> = ({
       </Scrollbars>
 
       <CheckoutButtonWrapper>
-        <PromoCode>
-          {!coupon?.discountInPercent ? (
-            <>
-              {!displayCoupon ? (
-                <button onClick={toggleCoupon}>
-                  <FormattedMessage
-                    id='specialCode'
-                    defaultMessage='Have a special code?'
-                  />
-                </button>
-              ) : (
-                <CouponBoxWrapper>
-                  <CouponBox
-                    onChange={handleChange}
-                    value={couponText}
-                    onClick={handleApplyCoupon}
-                    disabled={!couponText.length || !items.length}
-                    style={{
-                      boxShadow: '0 3px 6px rgba(0, 0, 0, 0.06)',
-                    }}
-                  />
-                  {error ? <ErrorMsg>{error}</ErrorMsg> : ''}
-                </CouponBoxWrapper>
-              )}
-            </>
-          ) : (
-            <CouponCode>
-              <FormattedMessage
-                id='couponApplied'
-                defaultMessage='Coupon Applied'
-              />
-              <span>{coupon.code}</span>
-            </CouponCode>
-          )}
-        </PromoCode>
 
         {cartItemsCount !== 0 ? (
           <Link href='/checkout'>
