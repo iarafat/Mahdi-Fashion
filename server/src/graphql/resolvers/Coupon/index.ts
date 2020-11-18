@@ -45,9 +45,7 @@ export const couponsResolvers: IResolvers = {
             coupons = coupons.map( coupon => ({ ...coupon, valid: checkCouponDateNotExpired(coupon)}))
 
             coupons = search(coupons, ['title', 'code'], searchText);
-
             const hasMore = coupons.length > offset + limit;
-
             return {
                 items: limit == 0 ? coupons : coupons.slice(offset, offset + limit),
                 totalCount: coupons.length,
@@ -60,7 +58,7 @@ export const couponsResolvers: IResolvers = {
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
         ): Promise<IGetCouponReturnType> => {
-            const coupon = await db.coupons.findOne({code: code});
+            let coupon = await db.coupons.findOne({code: code});
             let message;
 
             if (!coupon) {
@@ -82,6 +80,10 @@ export const couponsResolvers: IResolvers = {
                     status: false,
                     message: "Coupon invalid."
                 };
+            }
+
+            if (message && !message.status) {
+                coupon = null;
             }
 
             return {
