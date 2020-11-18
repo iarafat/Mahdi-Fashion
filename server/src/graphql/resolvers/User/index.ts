@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonMessageReturnType, IUser, IUserAuth} from "../../../lib/types";
+import {Address, Database, ICommonMessageReturnType, IUser, IUserAuth, Phone} from "../../../lib/types";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {authorize} from "../../../lib/utils";
@@ -19,6 +19,29 @@ const accessToken = (id: any) => {
     const secret = <string>process.env.JWT_SECRET;
     return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
 };
+
+const authChecker = (token: string) => {
+    const secret = <string>process.env.JWT_SECRET;
+
+    if (!token) {
+        return false;
+    }
+
+    try {
+        jwt.verify(token, secret);
+    } catch(err) {
+        return false;
+    }
+
+    const {UserId, exp} = <any>jwt.verify(token, secret);
+
+    if (exp < Date.now().valueOf() / 1000) {
+        return false;
+    }
+
+
+    return true;
+}
 
 
 export const usersResolvers: IResolvers = {
@@ -39,6 +62,25 @@ export const usersResolvers: IResolvers = {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             return await authorize(req, db);
+        },
+        userAuthCheck: async (
+            _root: undefined,
+            _args: undefined,
+            {db, req}: { db: Database, req: Request }
+        ): Promise<ICommonMessageReturnType> => {
+            const token = <string>req.headers["x-access-token"];
+
+            if (authChecker(token)) {
+                return {
+                    status: true,
+                    message: "Authenticate user is valid."
+                };
+            }
+
+            return {
+                status: false,
+                message: "User dose not valid."
+            }
         },
     },
 
@@ -115,7 +157,7 @@ export const usersResolvers: IResolvers = {
             _root: undefined,
             {id, number}: { id: string, number: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonMessageReturnType> => {
+        ): Promise<Phone> => {
             await authorize(req, db);
 
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
@@ -129,22 +171,25 @@ export const usersResolvers: IResolvers = {
                 throw new Error("Already added two phone numbers. You are not allowed to add more than two numbers.");
             }
 
+            const phoneObject = {
+                id: shortid.generate(),
+                number: number,
+                status: false,
+                is_primary: false
+            };
 
             await db.users.updateOne(
                 {_id: new ObjectId(id)},
-                {$push: {phones: {id: shortid.generate(), number: number, status: false, is_primary: false}}}
+                {$push: {phones: phoneObject}}
             );
 
-            return {
-                status: true,
-                message: "Added successfully."
-            };
+            return phoneObject;
         },
         updatePhoneNumber: async (
             _root: undefined,
             {id, phoneId, number}: { id: string, phoneId: string, number: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonMessageReturnType> => {
+        ): Promise<Phone> => {
             await authorize(req, db);
 
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
@@ -157,10 +202,17 @@ export const usersResolvers: IResolvers = {
                 {$set: {"phones.$.number": number}}
             );
 
-            return {
-                status: true,
-                message: "Updated successfully."
-            };
+            const user = await db.users.findOne({_id: new ObjectId(id)});
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const phoneObject = user.phones.filter(phone => {
+                if (phone.id == phoneId) {
+                    return phone
+                }
+            });
+
+            return phoneObject[0];
         },
         setPhoneNumberPrimary: async (
             _root: undefined,
@@ -258,7 +310,7 @@ export const usersResolvers: IResolvers = {
                 region: string
             },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonMessageReturnType> => {
+        ): Promise<Address> => {
             await authorize(req, db);
 
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
@@ -287,10 +339,7 @@ export const usersResolvers: IResolvers = {
                 {$push: {delivery_address: newAddress}}
             );
 
-            return {
-                status: true,
-                message: "Added successfully."
-            };
+            return newAddress;
         },
         updateDeliveryAddress: async (
             _root: undefined,
@@ -304,7 +353,7 @@ export const usersResolvers: IResolvers = {
                 region: string
             },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonMessageReturnType> => {
+        ): Promise<Address> => {
             await authorize(req, db);
 
             const userResult = await db.users.findOne({_id: new ObjectId(id)});
@@ -331,10 +380,13 @@ export const usersResolvers: IResolvers = {
                     }
                 }
             );
-            return {
-                status: true,
-                message: "Updated successfully."
-            };
+
+            const user = await db.users.findOne({_id: new ObjectId(id)});
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const updatedAddress = user.delivery_address.filter(address => {return address.id == addressId});
+
+            return updatedAddress[0];
         },
         setDeliveryAddressPrimary: async (
             _root: undefined,

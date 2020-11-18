@@ -291,6 +291,7 @@ export const typeDefs = gql`
         id: ID!
         title: String
         code: String
+        percentage: Int
         maximum_discount_amount: Int
         expiration_date: String
         status: String
@@ -308,6 +309,7 @@ export const typeDefs = gql`
     input CouponInput {
         title: String!
         code: String!
+        percentage: Int
         maximum_discount_amount: Int
         expiration_date: String!
         status: String
@@ -316,6 +318,10 @@ export const typeDefs = gql`
         valid: Boolean
     }
 
+    type GetCouponRetrunType {
+        coupon: Coupon
+        message: DefaultMessageType
+    }
 
     type Query {
         users: [User!]!
@@ -327,14 +333,14 @@ export const typeDefs = gql`
         deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
         orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
-        getUserOrders(id: String!): [Order!]!
+        getUserOrders: [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
-        getCoupon(code: String!): Coupon!
+        getCoupon(code: String!): GetCouponRetrunType!
         validateCoupon(code: String!): CouponValid!
-
+        userAuthCheck: DefaultMessageType!
     }
     
     type Mutation {
@@ -358,12 +364,12 @@ export const typeDefs = gql`
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
-        addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
-        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): DefaultMessageType!
+        addPhoneNumber(id: ID!, number: String!): Phone!
+        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): Phone!
         setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
         deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
-        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
+        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
         setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!

@@ -6,7 +6,7 @@ import {
     ICoupon,
     ICommonMessageReturnType,
     ICommonPaginationArgs,
-    ICommonPaginationReturnType, IProduct, ICouponValid
+    ICommonPaginationReturnType, IProduct, ICouponValid, IGetCouponReturnType
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
@@ -59,14 +59,35 @@ export const couponsResolvers: IResolvers = {
             _root: undefined,
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICoupon> => {
+        ): Promise<IGetCouponReturnType> => {
             const coupon = await db.coupons.findOne({code: code});
+            let message;
 
-            if (!coupon) throw new Error("Resource not found.");
+            if (!coupon) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
 
-            coupon.valid = checkCouponValidity(coupon);
+            if(coupon && !checkCouponDateNotExpired(coupon)) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
 
-            return coupon;
+            if(coupon && coupon.status !== RUNNING) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
+
+            return {
+                coupon: coupon ? coupon : undefined,
+                message: message ? message : undefined,
+            };
         },
 
         validateCoupon: async (
@@ -107,6 +128,7 @@ export const couponsResolvers: IResolvers = {
                 _id: new ObjectId(),
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status ? input.status : RUNNING,
@@ -132,6 +154,7 @@ export const couponsResolvers: IResolvers = {
             const updateData: ICoupon = {
                 title: input.title,
                 code: input.code,
+                percentage: input.percentage,
                 maximum_discount_amount: input.maximum_discount_amount,
                 expiration_date: input.expiration_date,
                 status: input.status,

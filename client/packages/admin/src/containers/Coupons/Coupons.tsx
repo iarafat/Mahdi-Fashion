@@ -37,6 +37,7 @@ const GET_COUPONS = gql`
         id
         title
         code
+        percentage
         maximum_discount_amount
         expiration_date
         status
@@ -173,10 +174,11 @@ export default function Coupon() {
 
           <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
             <TableWrapper>
-              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(70px, auto) minmax(70px, auto) minmax(90px, auto) minmax(100px, auto)  minmax(100px, auto)  minmax(160px, 160px)'>
+              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(70px, auto) minmax(70px, auto) minmax(70px, auto) minmax(90px, auto) minmax(100px, auto)  minmax(100px, auto)  minmax(160px, 160px)'>
                 <StyledHeadCell>#</StyledHeadCell>
                 <StyledHeadCell>Title</StyledHeadCell>
                 <StyledHeadCell>Code</StyledHeadCell>
+                <StyledHeadCell>Discount Percentage</StyledHeadCell>
                 <StyledHeadCell>Max Discount</StyledHeadCell>
                 <StyledHeadCell>Expiration Date</StyledHeadCell>
                 <StyledHeadCell>Validity</StyledHeadCell>
@@ -190,6 +192,7 @@ export default function Coupon() {
                         <StyledBodyCell>{index + 1}</StyledBodyCell>
                         <StyledBodyCell>{item.title}</StyledBodyCell>
                         <StyledBodyCell>{item.code}</StyledBodyCell>
+                        <StyledBodyCell>{item.percentage}</StyledBodyCell>
                         <StyledBodyCell>{item.maximum_discount_amount}</StyledBodyCell>
                         <StyledBodyCell>
                           {dayjs(item.expiration_date).format('DD MMM YYYY hh:mm:ss A')}
