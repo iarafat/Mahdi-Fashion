@@ -195,6 +195,10 @@ export interface ISetting {
     value: any;
 }
 
+export interface IGetCouponReturnType {
+    coupon?: ICoupon;
+    message?: ICommonMessageReturnType;
+}
 
 export interface Database {
     users: Collection<IUser>;
