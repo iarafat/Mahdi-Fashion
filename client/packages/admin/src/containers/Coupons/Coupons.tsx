@@ -41,6 +41,7 @@ const GET_COUPONS = gql`
         expiration_date
         status
         created_at
+        valid
       } 
       totalCount
       hasMore
@@ -172,12 +173,13 @@ export default function Coupon() {
 
           <Wrapper style={{ boxShadow: '0 0 5px rgba(0, 0 , 0, 0.05)' }}>
             <TableWrapper>
-              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(70px, auto) minmax(90px, auto) minmax(100px, auto)  minmax(100px, auto)  minmax(160px, 160px)'>
+              <StyledTable $gridTemplateColumns='minmax(70px, 70px)  minmax(150px, auto)  minmax(70px, auto) minmax(70px, auto) minmax(90px, auto) minmax(100px, auto)  minmax(100px, auto)  minmax(160px, 160px)'>
                 <StyledHeadCell>#</StyledHeadCell>
                 <StyledHeadCell>Title</StyledHeadCell>
                 <StyledHeadCell>Code</StyledHeadCell>
                 <StyledHeadCell>Max Discount</StyledHeadCell>
                 <StyledHeadCell>Expiration Date</StyledHeadCell>
+                <StyledHeadCell>Validity</StyledHeadCell>
                 <StyledHeadCell>Created At</StyledHeadCell>
                 <StyledHeadCell>Action</StyledHeadCell>
 
@@ -192,6 +194,7 @@ export default function Coupon() {
                         <StyledBodyCell>
                           {dayjs(item.expiration_date).format('DD MMM YYYY hh:mm:ss A')}
                         </StyledBodyCell>
+                        <StyledBodyCell>{item.valid ? 'Valid' : 'Invalid'}</StyledBodyCell>
                         <StyledBodyCell>
                           {dayjs(item.created_at).format('DD MMM YYYY hh:mm:ss A')}
                         </StyledBodyCell>
