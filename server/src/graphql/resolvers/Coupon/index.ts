@@ -58,7 +58,7 @@ export const couponsResolvers: IResolvers = {
                 message = {
                     status: false,
                     message: "Coupon invalid."
-                };
+                }
             }
 
             const expireDate = new Date(coupon && coupon.expiration_date ? coupon.expiration_date : new Date);
@@ -68,14 +68,14 @@ export const couponsResolvers: IResolvers = {
                 message = {
                     status: false,
                     message: "Coupon invalid."
-                };
+                }
             }
 
             if(coupon && coupon.status !== RUNNING) {
                 message = {
                     status: false,
                     message: "Coupon invalid."
-                };
+                }
             }
 
             if (message && !message.status) {
@@ -85,7 +85,7 @@ export const couponsResolvers: IResolvers = {
             return {
                 coupon: coupon ? coupon : undefined,
                 message: message ? message : undefined,
-            };
+            }
         },
 
         validateCoupon: async (
@@ -105,7 +105,7 @@ export const couponsResolvers: IResolvers = {
                 console.log(error.message)
                 throw error
             }
-        }
+        },
     },
 
     Mutation: {
@@ -197,4 +197,4 @@ export const couponsResolvers: IResolvers = {
         id: (coupon: ICoupon): string => coupon._id.toString(),
 
     }
-}
+};
