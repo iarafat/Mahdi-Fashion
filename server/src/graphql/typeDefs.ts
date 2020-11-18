@@ -318,6 +318,10 @@ export const typeDefs = gql`
         valid: Boolean
     }
 
+    type GetCouponRetrunType {
+        coupon: Coupon
+        message: DefaultMessageType
+    }
 
     type Query {
         users: [User!]!
@@ -334,7 +338,7 @@ export const typeDefs = gql`
         getSiteSetting(key: String!): Setting!
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
-        getCoupon(code: String!): Coupon!
+        getCoupon(code: String!): GetCouponRetrunType!
         validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
     }

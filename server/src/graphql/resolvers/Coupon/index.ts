@@ -6,7 +6,7 @@ import {
     ICoupon,
     ICommonMessageReturnType,
     ICommonPaginationArgs,
-    ICommonPaginationReturnType, IProduct, ICouponValid
+    ICommonPaginationReturnType, IProduct, ICouponValid, IGetCouponReturnType
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
@@ -50,14 +50,38 @@ export const couponsResolvers: IResolvers = {
             _root: undefined,
             {code}: { code: string },
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICoupon> => {
+        ): Promise<IGetCouponReturnType> => {
             const coupon = await db.coupons.findOne({code: code});
+            let message;
 
-            if (!coupon) throw new Error("Resource not found.");
+            if (!coupon) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
+            
+            const expireDate = new Date(coupon && coupon.expiration_date ? coupon.expiration_date : new Date);
+            const today = new Date();
 
-            coupon.valid = checkCouponValidity(coupon);
+            if(coupon && expireDate < today) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
 
-            return coupon;
+            if(coupon && coupon.status !== RUNNING) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                };
+            }
+
+            return {
+                coupon: coupon ? coupon : undefined,
+                message: message ? message : undefined,
+            };
         },
 
         validateCoupon: async (
