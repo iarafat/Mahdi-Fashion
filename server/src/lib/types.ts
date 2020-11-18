@@ -1,12 +1,12 @@
 import {Collection, ObjectId} from 'mongodb';
 
-interface Phone {
+export interface Phone {
     id: string
     number: string,
     status?: boolean,
     is_primary?: boolean
 }
-interface Address {
+export interface Address {
     id: string
     title: string,
     address: string,
