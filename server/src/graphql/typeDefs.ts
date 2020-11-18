@@ -360,12 +360,12 @@ export const typeDefs = gql`
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
-        addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
-        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): DefaultMessageType!
+        addPhoneNumber(id: ID!, number: String!): Phone!
+        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): Phone!
         setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
         deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
-        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
+        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
         setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
