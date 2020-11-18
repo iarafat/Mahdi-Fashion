@@ -2,8 +2,8 @@
 import gql from 'graphql-tag';
 
 export const GET_ORDERS = gql`
-  query GetUserOrders($id: String!) {
-    getUserOrders(id: $id) {
+  query GetUserOrders {
+    getUserOrders {
       id
       customer_id
       contact_number
@@ -12,6 +12,7 @@ export const GET_ORDERS = gql`
       payment_method
       payment_status
       status
+      discount_amount
       sub_total
       total
       delivery_method {

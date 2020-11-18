@@ -1,12 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import gql from 'graphql-tag';
+import React, { useState, useEffect } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useQuery } from '@apollo/react-hooks';
-import { GET_LOGGED_IN_USER } from 'graphql/query/customer.query';
 import { GET_ORDERS } from 'graphql/query/order.query';
 import ErrorMessage from 'components/error-message/error-message';
-import ReactToPrint from "react-to-print";
-
 import {
   DesktopView,
   MobileView,
@@ -84,15 +80,9 @@ const OrdersContent: React.FC<{}> = () => {
   const [targetRef, size] = useComponentSize();
   const orderListHeight = size.height - 79;
 
-  const { data, error, loading } = useQuery(GET_ORDERS,
-    {
-      variables: {
-        id: '5faf88594f70ae175c5a44c2'
-      }
-    }
-    );
+  const { data, error, loading } = useQuery(GET_ORDERS);
     useEffect( () => {
-      if (data && data.length !== 0) {
+      if (data && data.getUserOrders.length !== 0) {
         setOrder(data.getUserOrders[0]);
         setActive(data.getUserOrders[0].id);
       }
@@ -112,7 +102,7 @@ const OrdersContent: React.FC<{}> = () => {
 
     const myOrder = data.getUserOrders;
     
-    console.log(order)
+    console.log(data)
     console.log(active)
 
   const handleClick = (order: any) => {

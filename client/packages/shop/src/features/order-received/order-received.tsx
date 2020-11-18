@@ -15,7 +15,9 @@ import OrderReceivedWrapper, {
 } from './order-received.style';
 import { FormattedMessage } from 'react-intl';
 
-type OrderReceivedProps = {};
+type OrderReceivedProps = {
+  data?: any;
+};
 
 const OrderReceived: React.FunctionComponent<OrderReceivedProps> = (props) => {
   return (
