@@ -1,11 +1,5 @@
 import React, { useReducer } from 'react';
-import schedules from 'features/checkouts/data';
 import { ProfileContext } from './profile.context';
-
-import { DELIVERY_METHOD } from 'graphql/query/delivery';
-import { useQuery } from '@apollo/react-hooks';
-
-
 
 type Action =
   | { type: 'HANDLE_ON_INPUT_CHANGE'; payload: any }
@@ -40,7 +34,6 @@ function reducer(state: any, action: Action): any {
       const newContact = {
         ...action.payload.values,
       };
-      console.log(newContact)
       return {
         ...state,
         phones: [...state.phones, newContact],
@@ -63,7 +56,6 @@ function reducer(state: any, action: Action): any {
         delivery_address: [...state.delivery_address, newAdress],
       };
     case 'UPDATE_ADDRESS':
-        console.log(action.payload)
         if (action.payload.id) {
           return {
             ...state,
@@ -117,19 +109,19 @@ function reducer(state: any, action: Action): any {
         ),
       };
     case 'SET_PRIMARY_SCHEDULE':
-      console.log(state)
       return {
         ...state,
-        schedules: state.schedules.map((item: any) =>
-          item.id === action.payload
+        deliveryMethods: state.deliveryMethods.map((item: any) =>{
+         return( item.id === action.payload
           ? { ...item, type: 'primary' }
           : { ...item, type: 'secondary' }
+          )}
         ),
       };
     case 'SET_PRIMARY_CARD':
       return {
         ...state,
-        card: state.card.map((item: any) =>
+        paymentMethods: state.paymentMethods.map((item: any) =>
           item.id === action.payload
             ? { ...item, type: 'primary' }
             : { ...item, type: 'secondary' }
@@ -149,11 +141,7 @@ export const ProfileProvider:  React.FunctionComponent<ProfileProviderProps>  = 
   initData,
 }) =>  {
 
-  const { data, error, loading } =  useQuery(DELIVERY_METHOD)
- 
-  const schedules = data?.deliveryMethods.items;
-
-  const [state, dispatch] = useReducer(reducer, { ...initData, schedules });
+  const [state, dispatch] = useReducer(reducer, { ...initData });
  
   return (
     <ProfileContext.Provider value={{ state, dispatch }}>

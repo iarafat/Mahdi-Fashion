@@ -1,6 +1,7 @@
 import React from 'react';
 import Table from 'rc-table';
 import Collapse, { Panel } from 'rc-collapse';
+import ReactToPrint from "react-to-print";
 import Progress from 'components/progress-box/progress-box';
 
 import {
@@ -14,6 +15,7 @@ import {
   DeliveryInfo,
   DeliveryAddress,
   Address,
+  Contact,
   CostCalculation,
   PriceRow,
   Price,
@@ -103,16 +105,19 @@ const OrderCard: React.FC<MobileOrderCardProps> = ({
             <OrderDetail>
               <DeliveryInfo>
                 <DeliveryAddress>
-                  <h3>Delivery Address</h3>
-                  <Address>{order.deliveryAddress}</Address>
+                  <h3>Contact Number</h3>
+                  <Contact>{order.contact_number}</Contact>
                 </DeliveryAddress>
-
+                <DeliveryAddress>
+                  <h3>Delivery Address</h3>
+                  <Address>{order.delivery_address}</Address>
+                </DeliveryAddress>
                 <CostCalculation>
                   <PriceRow>
                     Subtotal
                     <Price>
                       {CURRENCY}
-                      {order.subtotal}
+                      {order.sub_total}
                     </Price>
                   </PriceRow>
                   <PriceRow>
@@ -133,13 +138,13 @@ const OrderCard: React.FC<MobileOrderCardProps> = ({
                     Total
                     <Price>
                       {CURRENCY}
-                      {order.amount}
+                      {order.total}
                     </Price>
                   </PriceRow>
                 </CostCalculation>
               </DeliveryInfo>
 
-              <ProgressWrapper>
+              {/*<ProgressWrapper>
                 <Progress data={progressData} status={order.status} />
               </ProgressWrapper>
 
@@ -152,7 +157,7 @@ const OrderCard: React.FC<MobileOrderCardProps> = ({
                   scroll={{ x: 450 }}
                   // scroll={{ y: 250 }}
                 />
-              </OrderTableMobile>
+              </OrderTableMobile>*/}
             </OrderDetail>
           </Panel>
         ))}

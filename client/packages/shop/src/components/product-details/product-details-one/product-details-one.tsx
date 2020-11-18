@@ -58,7 +58,6 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
   const { isRtl } = useLocale();
   const { addItem, removeItem, isInCart, getItem } = useCart();
   const data = product;
-  console.log(product)
   const handleAddClick = (e) => {
     e.stopPropagation();
     addItem(data);

@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import gql from 'graphql-tag';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useQuery } from '@apollo/react-hooks';
+import { GET_LOGGED_IN_USER } from 'graphql/query/customer.query';
+import { GET_ORDERS } from 'graphql/query/order.query';
+import ErrorMessage from 'components/error-message/error-message';
+import ReactToPrint from "react-to-print";
+
 import {
   DesktopView,
   MobileView,
@@ -27,30 +32,6 @@ import { FormattedMessage } from 'react-intl';
 
 const progressData = ['Order Received', 'Order On The Way', 'Order Delivered'];
 
-const GET_ORDERS = gql`
-  query getAllOrders($text: String, $user: Int!, $limit: Int) {
-    orders(text: $text, limit: $limit, user: $user) {
-      id
-      status
-      deliveryAddress
-      amount
-      date
-      subtotal
-      deliveryFee
-      discount
-      deliveryTime
-      products {
-        title
-        price
-        total
-        image
-        weight
-        quantity
-        id
-      }
-    }
-  }
-`;
 
 const orderTableColumns = [
   {
@@ -97,30 +78,42 @@ const orderTableColumns = [
 ];
 
 const OrdersContent: React.FC<{}> = () => {
+
   const [order, setOrder] = useState(null);
   const [active, setActive] = useState('');
-
   const [targetRef, size] = useComponentSize();
   const orderListHeight = size.height - 79;
-  const { data, error, loading } = useQuery(GET_ORDERS, {
-    variables: {
-      limit: 7,
-      user: 1,
-    },
-  });
 
-  useEffect(() => {
-    if (data && data.orders && data.orders.length !== 0) {
-      setOrder(data.orders[0]);
-      setActive(data.orders[0].id);
+  const { data, error, loading } = useQuery(GET_ORDERS,
+    {
+      variables: {
+        id: '5faf88594f70ae175c5a44c2'
+      }
     }
-  }, [data && data.orders]);
+    );
+    useEffect( () => {
+      if (data && data.length !== 0) {
+        setOrder(data.getUserOrders[0]);
+        setActive(data.getUserOrders[0].id);
+      }
+    }, [data]);
 
-  if (loading) {
-    return <div>loading...</div>;
-  }
+    if (loading) {
+      return <ErrorMessage message={'Loading...'} />
+    };
 
-  if (error) return <div>{error.message}</div>;
+    if (error) {
+      return (
+        <ErrorMessage message={error.message} />
+      );
+    };
+
+    
+
+    const myOrder = data.getUserOrders;
+    
+    console.log(order)
+    console.log(active)
 
   const handleClick = (order: any) => {
     setOrder(order);
@@ -146,16 +139,16 @@ const OrdersContent: React.FC<{}> = () => {
             autoHeightMax={isNaN(orderListHeight) ? 500 : orderListHeight}
           >
             <OrderList>
-              {data.orders.length !== 0 ? (
-                data.orders.map((current: any) => (
+              {myOrder.length !== 0 ? (
+                myOrder.map((current: any, index: any) => (
                   <OrderCard
-                    key={current.id}
-                    orderId={current.id}
-                    className={current.id === active ? 'active' : ''}
-                    status={progressData[current.status - 1]}
-                    date={current.date}
-                    deliveryTime={current.deliveryTime}
-                    amount={current.amount}
+                    key={index}
+                    orderId={index}
+                    className={index === active ? 'active' : ''}
+                    status={progressData[1 - 1]}
+                    date={current.datetime.split('2020').shift()}
+                    deliveryTime={current.status}
+                    amount={current.total}
                     onClick={() => {
                       handleClick(current);
                     }}
@@ -180,15 +173,16 @@ const OrdersContent: React.FC<{}> = () => {
               defaultMessage="Order Details"
             />
           </Title>
-          {order && order.id && (
+          {order &&  (
             <OrderDetails
               progressStatus={order.status}
               progressData={progressData}
-              address={order.deliveryAddress}
-              subtotal={order.subtotal}
+              number={order.contact_number}
+              address={order.delivery_address}
+              subtotal={order.sub_total}
               discount={order.discount}
               deliveryFee={order.deliveryFee}
-              grandTotal={order.amount}
+              grandTotal={order.total}
               tableData={order.products}
               columns={orderTableColumns}
             />
@@ -199,7 +193,7 @@ const OrdersContent: React.FC<{}> = () => {
       <MobileView>
         <OrderList>
           <OrderCardMobile
-            orders={data.orders}
+            orders={myOrder}
             className={order && order.id === active ? 'active' : ''}
             progressData={progressData}
             columns={orderTableColumns}

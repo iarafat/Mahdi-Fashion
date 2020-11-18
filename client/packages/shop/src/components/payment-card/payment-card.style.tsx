@@ -105,3 +105,20 @@ export const DeleteButton = styled.span`
     height: auto;
   }
 `;
+
+export const CardTitle = styled.span`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.sm', '13')}px;
+  font-weight: ${themeGet('fontWeights.bold', '700')};
+  color: ${themeGet('colors.text.bold', '#0D1136')};
+  line-height: 1.2;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+`;
+
+export const CardContent = styled.span`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.base', '15')}px;
+  font-weight: ${themeGet('fontWeights.regular', '400')};
+  color: ${themeGet('colors.text.medium', '#424561')};
+`;

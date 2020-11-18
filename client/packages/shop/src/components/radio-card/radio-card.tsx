@@ -130,6 +130,7 @@ type RadioCardProps = {
   withActionButtons?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  onClick?: () => void;
   hasEdit?: boolean;
   hasDelete?: boolean;
   disabled?: boolean;
@@ -146,6 +147,7 @@ const RadioCard: React.FC<RadioCardProps> = ({
   withActionButtons,
   onEdit,
   onDelete,
+  onClick,
   hasEdit,
   hasDelete,
   disabled,
@@ -166,6 +168,7 @@ const RadioCard: React.FC<RadioCardProps> = ({
         disabled={disabled}
         checked={checked}
         onChange={onChange}
+        onClick={onClick}
       />
       {title && <CardTitle>{title}</CardTitle>}
       {content && <CardContent>{content}</CardContent>}

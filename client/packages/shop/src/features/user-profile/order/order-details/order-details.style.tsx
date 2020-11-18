@@ -39,6 +39,15 @@ export const Address = styled.span`
   line-height: 1.5;
 `;
 
+export const Contact = styled.span`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.base', '15')}px;
+  font-weight: ${themeGet('fontWeights.regular', '400')};
+  color: ${themeGet('colors.text.regular', '#77798c')};
+  line-height: 1.5;
+  margin-bottom: 15px;
+`;
+
 export const CostCalculation = styled.div`
   width: 235px;
   display: flex;

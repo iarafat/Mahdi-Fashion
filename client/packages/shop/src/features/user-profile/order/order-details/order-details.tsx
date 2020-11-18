@@ -7,6 +7,7 @@ import {
   CostCalculation,
   PriceRow,
   Price,
+  Contact,
   ProgressWrapper,
   OrderTableWrapper,
   OrderTable,
@@ -21,10 +22,12 @@ type OrderDetailsProps = {
   progressData?: any;
   progressStatus?: any;
   address?: string;
+  number?: string;
   subtotal?: number;
   discount?: number;
   deliveryFee?: number;
   grandTotal?: number;
+  ref?: any;
 };
 
 const components = {
@@ -35,17 +38,26 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   tableData,
   columns,
   address,
+  number,
   progressStatus,
   progressData,
   subtotal,
   discount,
   deliveryFee,
   grandTotal,
+  ref
 }) => {
   return (
     <>
       <DeliveryInfo>
         <DeliveryAddress>
+          <h3>
+            <FormattedMessage
+              id="deliveryAddressTitle"
+              defaultMessage="Contact Number"
+            />
+          </h3>
+          <Contact>{number}</Contact>
           <h3>
             <FormattedMessage
               id="deliveryAddressTitle"
@@ -92,8 +104,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           </PriceRow>
         </CostCalculation>
       </DeliveryInfo>
-
-      <ProgressWrapper>
+      
+     {/* <ProgressWrapper>
         <Progress data={progressData} status={progressStatus} />
       </ProgressWrapper>
 
@@ -106,8 +118,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           className="orderDetailsTable"
           // scroll={{ y: 350 }}
         />
-      </OrderTableWrapper>
-    </>
+     </OrderTableWrapper>*/}
+     </>
   );
 };
 

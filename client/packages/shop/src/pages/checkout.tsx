@@ -6,6 +6,8 @@ import { Modal } from '@redq/reuse-modal';
 import { SEO } from 'components/seo';
 import Checkout from 'features/checkouts/checkout-two/checkout-two';
 import { GET_LOGGED_IN_USER } from 'graphql/query/customer.query';
+import { DELIVERY_METHOD } from 'graphql/query/delivery';
+import { PAYMENT_OPTION } from 'graphql/query/paymentoption';
 
 import { ProfileProvider } from 'contexts/profile/profile.provider';
 import { initializeApollo } from 'utils/apollo';
@@ -20,17 +22,25 @@ type Props = {
 };
 const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
   const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
-  console.log(data)
-  if (loading) {
+  const { data: deliverData, error: deliveryError, loading: deliveryLoading } =  useQuery(DELIVERY_METHOD)
+  const { data: paymentData, error: paymentError, loading: paymentLoading } = useQuery(PAYMENT_OPTION);
+
+  if (loading || deliveryLoading || paymentLoading) {
     return <ErrorMessage message={'Loading...'} />
   }
-  if (error) {
+  if (error || deliveryError || paymentError) {
     Router.push('/');
     return (
       <ErrorMessage message={error.message} />
     );
   } 
   const token = 'true';
+
+  data.getUser = {
+    ...data.getUser, 
+    deliveryMethods:[...deliverData.deliveryMethods.items], 
+    paymentMethods:[...paymentData.paymentOptions.items]
+  }
 
   return (
     <>
@@ -43,19 +53,5 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
     </>
   );
 };
-
-/*export const getStaticProps: GetStaticProps = async () => {
-  const apolloClient = initializeApollo();
-
-  await apolloClient.query({
-    query: GET_LOGGED_IN_USER,
-  });
-
-  return {
-    props: {
-      initialApolloState: apolloClient.cache.extract(),
-    },
-  };
-};*/
 
 export default CheckoutPage;

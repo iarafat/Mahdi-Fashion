@@ -58,6 +58,9 @@ const CarouselWithCustomDots = ({
     key={index}
     src={SHOP_IMAGE_HOST+item} 
     className='product-image'
+    mgShape='square'
+    mgWidth={200}
+    mgHeight={200}
     />
 
   ));
@@ -75,7 +78,6 @@ const CarouselWithCustomDots = ({
     active,
     carouselState: { currentSlide, deviceType },
   }: any) => {
-    console.log(images)
     return (
       <SingleItem
         onClick={() => onClick()}

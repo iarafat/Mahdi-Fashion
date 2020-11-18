@@ -67,10 +67,9 @@ const HeaderWrapper = styled.header`
   }
 
   .headerSearch {
-    margin: 0 30px;
 
     @media only screen and (min-width: 991px) and (max-width: 1200px) {
-      margin: 0 15px;
+     
 
       input {
         width: 80%;
@@ -84,9 +83,22 @@ const HeaderWrapper = styled.header`
 
   &.unSticky {
     animation: ${positionAnim} 0.3s ease;
+    .minimal-wrap,
     .headerSearch {
       animation: ${hideSearch} 0.3s ease;
       display: none;
+    }
+    .banner-search{
+        width: 650px;
+    }
+    .modern-wrap{
+      margin-right: 200px;
+    }
+    @media (max-width: 1366px) {
+      .banner-search{
+        margin-right: 50px;
+        margin-left: 50px;
+      }
     }
   }
 
@@ -96,7 +108,16 @@ const HeaderWrapper = styled.header`
     box-shadow: ${themeGet('shadows.header', '0 1px 2px rgba(0, 0, 0, 0.06)')};
     padding-top: 20px;
     padding-bottom: 20px;
-
+    .modern-wrap,
+    .banner-search{
+      animation: ${hideSearch} 0.3s ease;
+      display: none;
+    }
+    .minimal-wrap{
+      animation: ${hideSearch} 0.3s ease;
+      display: flex;
+      width: 75%;
+    }
     @media (max-width: 1400px) {
       padding-top: 20px;
       padding-bottom: 20px;
@@ -104,13 +125,18 @@ const HeaderWrapper = styled.header`
 
     .headerSearch {
       display: flex;
-
+      svg{
+          height: 30px;
+          width: 30px;
+          padding-left: 15px;
+        }
       form {
         background-color: ${themeGet('colors.gray.400', '#F3F3F3')};
 
         input {
           background-color: ${themeGet('colors.gray.400', '#F3F3F3')};
         }
+       
       }
 
       @media only screen and (min-width: 991px) and (max-width: 1200px) {
@@ -671,5 +697,7 @@ export const TypeIcon = styled.div`
   justify-content: center;
   min-width: 16px;
 `;
+
+
 
 export default HeaderWrapper;

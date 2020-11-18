@@ -13,6 +13,7 @@ import UpdateContact from 'components/contact-card/contact-card';
 import StripePaymentForm from 'features/payment/stripe-form';
 import { DELETE_ADDRESS, SETPRIMARY_ADDRESS } from 'graphql/mutation/address';
 import { DELETE_PHONENUMBER, SETPRIMARY_PHONENUMBER } from 'graphql/mutation/phone';
+import { CREAT_ORDER } from 'graphql/mutation/order';
 import { GET_COUPON } from 'graphql/query/coupon';
 import { DELIVERY_METHOD } from 'graphql/query/delivery';
 import { DELETE_CARD } from 'graphql/mutation/card';
@@ -103,9 +104,11 @@ const OrderItem: React.FC<CartItemProps> = ({ product }) => {
 };
 
 const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
+
   const [hasCoupon, setHasCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setError] = useState('');
+  const [checkoutError, setCheckoutError] = useState('');
   const { state, dispatch } = useContext(ProfileContext);
   const { isRtl } = useLocale();
   const {
@@ -121,39 +124,109 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     isRestaurant,
     toggleRestaurant,
   } = useCart();
+
+
+  let cartProduct= null;
+
+  if(items.length>0){
+    cartProduct = items.map((item: any, index:any) =>({
+      product_id: item.id,
+      unit: item.unit,
+      quantity: item.quantity,
+      price: item.sale_price
+    }))
+  }
+
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
+
+  const [submitResult, setSubmitResult] = useState({
+    customer_id: '',
+    contact_number: '',
+    payment_option_id: '',
+    delivery_method_id: '',
+    delivery_address: null,
+    sub_total: null,
+    total: null,
+    coupon_code: '',
+    discount_amount: null,
+    products: null
+ });
+
   const {    
     delivery_address, 
     contact, 
-    card, 
-    schedules,
+    paymentMethods, 
     phones,
     name,
     email,
-    id 
-    } = state;
-    console.log(schedules)
+    id,
+    deliveryMethods
+  } = state;
+
+
+  //setAllValues({...allValues, [e.target.name]: e.target.value})
+ 
+  //set mututions
   const [setprimaryAddressMutation] = useMutation(SETPRIMARY_ADDRESS);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
   const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
+  
+const [setOrderMutation] = useMutation(CREAT_ORDER);
 
   const [deleteContactMutation] = useMutation(DELETE_CONTACT);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
   const size = useWindowSize();
 
-  /*const { data: CouponData  , error: CouponError, refetch: CouponRefetch } = useQuery(GET_COUPON);*/
   const { data , error, refetch } = useQuery(GET_COUPON);
-  const { data: schedulesData, error: scheduleError, loading: scheduleLoading } =  useQuery(DELIVERY_METHOD)
-  const scheduleItems = schedulesData?.deliveryMethods.items;
-
-
+  
   const handleSubmit = async () => {
-    setLoading(true);
+    const {
+      customer_id,
+      contact_number,
+      payment_option_id,
+      delivery_method_id,
+      delivery_address,
+      sub_total,
+      total,
+      coupon_code,
+      discount_amount,
+      products
+    } = submitResult
+
+    if(
+      !customer_id || 
+      !contact_number || 
+      !delivery_address || 
+      !delivery_method_id ||  
+      !payment_option_id ||
+      !products
+    ){
+      setCheckoutError('Please place a valid order!');
+      return null;
+    }
+
+    
+     await setOrderMutation({
+      variables: {input:{ 
+        customer_id,
+        contact_number,
+        payment_option_id,
+        delivery_method_id,
+        delivery_address,
+        sub_total,
+        total,
+        coupon_code,
+        discount_amount,
+        products
+      }}
+    });
+
+   setLoading(true);
     if (isValid) {
       clearCart();
-      Router.push('/order-received');
+      Router.push('/profile');
     }
     setLoading(false);
   };
@@ -163,9 +236,9 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       calculatePrice() > 0 &&
       cartItemsCount > 0 &&
       delivery_address.length &&
-      phones.length //&&
-      //card.length &&
-      //schedules.length
+      phones.length &&
+      paymentMethods.length &&
+      deliveryMethods.length
     ) {
       setIsValid(true);
     }
@@ -198,36 +271,6 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       componentProps: { item: modalProps },
     });
   };
-
-  /*const handleEditDelete = async (item: any, type: string, name: string) => {
-    if (type === 'edit') {
-      const modalComponent = name === 'address' ? UpdateAddress : UpdateContact;
-      handleModal(modalComponent, item);
-    } else {
-      switch (name) {
-        case 'payment':
-          dispatch({ type: 'DELETE_CARD', payload: item.id });
-
-          return await deletePaymentCardMutation({
-            variables: { cardId: JSON.stringify(item.id) },
-          });
-        case 'contact':
-          dispatch({ type: 'DELETE_CONTACT', payload: item.id });
-
-          return await deleteContactMutation({
-            variables: { contactId: JSON.stringify(item.id) },
-          });
-        case 'address':
-          dispatch({ type: 'DELETE_ADDRESS', payload: item.id });
-
-          return await deleteAddressMutation({
-            variables: { addressId: JSON.stringify(item.id) },
-          });
-        default:
-          return false;
-      }
-    }
-  };*/
 
   const handleEditDelete = async (item: any, index: any, type: string, name: string) => {
     if (type === 'edit') {
@@ -298,11 +341,32 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   };
 
   const handleApplyCoupon = async () => {
-    const { data }: any = await refetch({
-      code: couponCode
-    });
+    if(couponCode){
+      refetch({
+        code: couponCode
+      });
+    }else{
+      setError('Invalid Coupon');
+      return null;
+    }
+    console.log(error, 'before')
+    if(error){
+      console.log(error, 'after')
+      setError('Invalid Coupon');
+      return null;
+    }
     if (data.getCoupon && data.getCoupon.maximum_discount_amount) {
       applyCoupon(data.getCoupon);
+      setSubmitResult({
+        ...submitResult,
+        coupon_code: couponCode,
+        discount_amount: data.getCoupon.maximum_discount_amount,
+        customer_id: id, 
+        sub_total: Number(calculateSubTotalPrice()),
+        total: Number(calculatePrice()),
+        products: cartProduct
+      });
+
       setCouponCode('');
     } else {
       setError('Invalid Coupon');
@@ -339,6 +403,15 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                       region = {item.region}
                       name='address'
                       isChecked={item.is_primary === true}
+                      onClick={() => setSubmitResult({
+                        ...submitResult,
+                        delivery_address:  `Title: ${item.title}, 
+                        District: ${item.district},  
+                        Division: ${item.division},  
+                        Region: ${item.region},  
+                        Division: ${item.address}
+                        `
+                      })}
                       onChange={() =>handlePrimary(item, 'address')}
                       onEdit={() => handleEditDelete(item, index, 'edit', 'address')}
                       onDelete={() =>
@@ -380,7 +453,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   />
                 </Heading>
                 <RadioGroupTwo
-                  items={scheduleItems}
+                  items={deliveryMethods}
                   component={(item: any, index: any) => (
                     <RadioCard
                       id={item.id}
@@ -390,11 +463,16 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                       name='schedule'
                       checked={item.type === 'primary'}
                       withActionButtons={false}
-                      onChange={() =>
-                        dispatch({
+                      onClick={() => setSubmitResult({
+                        ...submitResult,
+                        delivery_method_id: item.id, 
+                      })}
+                      onChange={() =>{
+                        return(dispatch({
                           type: 'SET_PRIMARY_SCHEDULE',
                           payload: item.id.toString(),
-                        })
+                        }))
+                        }
                       }
                     />
                   )}
@@ -421,6 +499,10 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                       content={item.number}
                       checked={item.is_primary === true}
                       onChange={() =>handlePrimary(item, 'contact')}
+                      onClick={() => setSubmitResult({
+                        ...submitResult,
+                        contact_number: item.number
+                      })}
                       name='contact'
                       onEdit={() => handleEditDelete(item, index, 'edit', 'contact')}
                       onDelete={() =>
@@ -468,27 +550,32 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   defaultMessage='Select Payment Option'
                 />
               </Heading>
-              {/*<PaymentGroup
+              <PaymentGroup
                 name='payment'
                 deviceType={deviceType}
-                items={card}
-                onEditDeleteField={(item: any, type: string) =>
-                  handleEditDelete(item, type, 'payment')
+                items={paymentMethods}
+                onEditDeleteField={(item: any, type: string) =>  null }
+                onClick={(item: any) => {
+                   setSubmitResult({
+                    ...submitResult,
+                    payment_option_id: item.id,
+                    customer_id: id, 
+                    sub_total: Number(calculateSubTotalPrice()),
+                    total: Number(calculatePrice()),
+                    products: cartProduct
+                  })
+                  return null
+                  }
                 }
-                onChange={(item: any) =>
-                  dispatch({
+                onChange={(item: any) =>{
+                  return(dispatch({
                     type: 'SET_PRIMARY_CARD',
                     payload: item.id.toString(),
-                  })
+                  }))
+                  }
                 }
-                handleAddNewCard={() => {
-                  handleModal(
-                    StripePaymentForm,
-                    { totalPrice: calculatePrice() },
-                    'add-address-modal stripe-modal'
-                  );
-                }}
-              />*/}
+                handleAddNewCard={() => null }
+              />
 
               {/* Coupon start */}
               {coupon ? (
@@ -582,6 +669,14 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   />
                 </Button>
               </CheckoutSubmit>
+              {checkoutError && (
+                <ErrorMsg>
+                  <FormattedMessage
+                    id='checkoutError'
+                    defaultMessage={checkoutError}
+                  />
+                </ErrorMsg>
+              )}
             </InformationBox>
           </CheckoutInformation>
 
@@ -680,14 +775,6 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   <TextWrapper style={{ marginTop: 20 }}>
                     <Bold>
                       <FormattedMessage id='totalText' defaultMessage='Total' />{' '}
-                      <Small>
-                        (
-                        <FormattedMessage
-                          id='vatText'
-                          defaultMessage='Incl. VAT'
-                        />
-                        )
-                      </Small>
                     </Bold>
                     <Bold>
                       {CURRENCY}

@@ -2,12 +2,15 @@ import React from 'react';
 import MasterCard from './image/master-card.png';
 import Paypal from './image/paypal.png';
 import Visa from './image/visa.png';
+import { SHOP_IMAGE_HOST } from 'utils/images-path';
 import {
   PaymentCardWrapper,
   CardLogo,
   CardNumber,
   CardNumTitle,
   Name,
+  CardTitle,
+  CardContent
 } from './payment-card.style';
 
 interface Props {
@@ -16,7 +19,11 @@ interface Props {
   cardType: string;
   lastFourDigit: string;
   color: string;
+  image: any;
+  details: string;
 }
+
+
 
 const Card: React.FC<Props> = ({
   id,
@@ -24,6 +31,8 @@ const Card: React.FC<Props> = ({
   cardType,
   lastFourDigit,
   color,
+  image,
+  details
 }) => {
   const logo =
     (cardType === 'paypal' && Paypal) ||
@@ -33,16 +42,10 @@ const Card: React.FC<Props> = ({
   return (
     <PaymentCardWrapper className="payment-card" color={color}>
       <CardLogo>
-        <img src={logo} alt={`card-${id}`} />
+        <img src={SHOP_IMAGE_HOST+image} alt={`card-${id}`} />
       </CardLogo>
-      <CardNumTitle>Card Number</CardNumTitle>
-      <CardNumber>
-        <span>****</span>
-        <span>****</span>
-        <span>****</span>
-        <span className="card-number">{lastFourDigit}</span>
-      </CardNumber>
-      <Name>{name}</Name>
+      <CardTitle>{name}</CardTitle>
+      <CardContent>{details}</CardContent>
     </PaymentCardWrapper>
   );
 };

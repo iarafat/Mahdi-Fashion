@@ -10,6 +10,7 @@ export const StyledForm = styled.form<any>(
       overflow: 'hidden',
       width: props.minimal ? '100%' : 700,
       color: 'text.regular',
+      position: 'relative',
       backgroundColor: props.minimal ? 'gray.400' : 'white',
     }),
   shadow
@@ -75,3 +76,4 @@ export const StyledSearchButton = styled.button(
     flexShrink: 0,
   }
 );
+

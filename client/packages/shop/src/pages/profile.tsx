@@ -28,6 +28,7 @@ const ProfilePage: NextPage<Props> = ({ deviceType }) => {
     return <div>loading...</div>;
   }
   if (error) return <ErrorMessage message={error.message} />;
+  console.log(data)
   return (
     <>
       <SEO title="Profile - Mahdi Fashion" description="Profile Details" />
@@ -40,7 +41,6 @@ const ProfilePage: NextPage<Props> = ({ deviceType }) => {
             <ContentBox>
               <SettingsContent deviceType={deviceType} />
             </ContentBox>
-
             <Footer />
           </PageWrapper>
         </Modal>

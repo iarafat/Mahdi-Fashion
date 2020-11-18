@@ -52,9 +52,10 @@ const Header: React.FC<Props> = ({ className }) => {
   return (
     <HeaderWrapper className={className} id="layout-header">
       <LeftMenu logo={LogoImage} />
-      <Search
-          className="banner-search"
-      />
+      
+      { type && <Search className="banner-search" />}
+      { type && <Search minimal={true} className="headerSearch" />}
+     
       <RightMenu
         isAuthenticated={isAuthenticated}
         onJoin={handleJoin}
