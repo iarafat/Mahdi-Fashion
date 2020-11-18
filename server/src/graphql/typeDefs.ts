@@ -329,7 +329,7 @@ export const typeDefs = gql`
         deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
         orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
-        getUserOrders(id: String!): [Order!]!
+        getUserOrders: [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!
