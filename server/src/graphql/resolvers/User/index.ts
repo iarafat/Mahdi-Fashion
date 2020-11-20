@@ -20,9 +20,7 @@ const accessToken = (id: any) => {
     return jwt.sign({UserId: id}, secret, {expiresIn: "1d"})
 };
 
-const authChecker = (token: string) => {
-    const secret = <string>process.env.JWT_SECRET;
-
+const authChecker = (token: string, secret: string) => {
     if (!token) {
         return false;
     }
@@ -38,7 +36,6 @@ const authChecker = (token: string) => {
     if (exp < Date.now().valueOf() / 1000) {
         return false;
     }
-
 
     return true;
 }
@@ -69,8 +66,18 @@ export const usersResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonMessageReturnType> => {
             const token = <string>req.headers["x-access-token"];
+            const secret = <string>process.env.JWT_SECRET;
+            const {UserId} = <any>jwt.verify(token, secret);
+            const user = await db.users.findOne({_id:  new ObjectId(UserId)});
 
-            if (authChecker(token)) {
+            if (!user) {
+                return {
+                    status: false,
+                    message: "User dose not valid."
+                };
+            }
+
+            if (authChecker(token, secret)) {
                 return {
                     status: true,
                     message: "Authenticate user is valid."

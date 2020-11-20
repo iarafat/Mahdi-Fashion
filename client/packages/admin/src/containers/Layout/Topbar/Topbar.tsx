@@ -45,21 +45,12 @@ const GET_SETTING = gql`
         }
     }
 `;
-const AUTH_CHECK = gql`
-    query AuthCheck {
-        userAuthCheck {
-            status
-            message
-        }
-    }
-`;
 
 function getFaviconEl() {
     return document.getElementById("favicon") as HTMLAnchorElement;
 }
 
 const Topbar = ({ refs }: any) => {
-    const {data: authData, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
     const {data, error, refetch} = useQuery(GET_SETTING)
     const [siteSettingData, setSiteSettingData] = useState<any | null>(null);
 
@@ -81,12 +72,6 @@ const Topbar = ({ refs }: any) => {
         () => dispatch({type: 'OPEN_DRAWER', drawerComponent: 'PRODUCT_FORM'}),
         [dispatch]
     );
-
-    React.useEffect(() => {
-        if (authData && !authData.userAuthCheck.status) {
-            signout();
-        }
-    }, [authData])
 
   return (
     <TopbarWrapper ref={refs}>
@@ -141,7 +126,7 @@ const Topbar = ({ refs }: any) => {
       </DrawerWrapper>
 
       <TopbarRightSide>
-        <Button startEnhancer={() => <Plus />} style={{ marginRight: "20px" }} onClick={openDrawer}>Add Products</Button>
+        {/*<Button startEnhancer={() => <Plus />} style={{ marginRight: "20px" }} onClick={openDrawer}>Add Products</Button>*/}
 
         {/*<Popover
           content={({ close }) => <Notification data={data} onClear={close} />}
