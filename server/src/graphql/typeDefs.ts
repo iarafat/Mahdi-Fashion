@@ -323,6 +323,22 @@ export const typeDefs = gql`
         message: DefaultMessageType
     }
 
+    type HomeCard {
+        id: ID!
+        name: String!
+        url: String
+        image: String!
+        status: Boolean
+        types: [ProductCategory!]!
+        created_at: String
+        updated_at: String
+    }
+    type HomeCardPaginationType {
+        items: [HomeCard]
+        totalCount: Int
+        hasMore: Boolean
+    }
+    
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
@@ -341,6 +357,8 @@ export const typeDefs = gql`
         getCoupon(code: String!): GetCouponRetrunType!
         validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
+        homeCards(limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
+        getHomeCards(type: String, limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
     }
     
     type Mutation {
@@ -374,9 +392,11 @@ export const typeDefs = gql`
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
         updateOrderStatus(id: ID!, orderingPosition: Int!): Order!
-
         createCoupon(input: CouponInput): Coupon!
         updateCoupon(id: ID!, input: CouponInput): Coupon!
         deleteCoupon(id: ID!): DefaultMessageType!
+        createHomeCard(name: String!, url: String, image: String!, image_data: File!, status: Boolean, types: String!): HomeCard!
+        updateHomeCard(id: String!, name: String!, url: String, image: String!, image_data: File, status: Boolean, types: String!): HomeCard!
+        deleteHomeCard(id: ID!): DefaultMessageType!
     }
 `;

@@ -42,5 +42,6 @@ export const connectDatabase = async (): Promise<Database> => {
         orders: db.collection('orders'),
         settings: db.collection('settings'),
         coupons: db.collection('coupons'),
+        home_cards: db.collection('home_cards'),
     }
 };

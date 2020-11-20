@@ -45,10 +45,12 @@ const GET_PRODUCTS = gql`
         type {
           id
           slug
+          name
         }
         categories {
           id
           slug
+          name
         }
         name
         slug
@@ -113,10 +115,12 @@ const UPDATE_PRODUCT = gql`
       type {
         id
         slug
+        name
       }
       categories {
         id
         slug
+        name
       }
       name
       slug
@@ -163,6 +167,8 @@ const AddProduct: React.FC<Props> = () => {
   React.useEffect(() => {
     setCategory(itemData.categories.map(category => ({
       id: category.id,
+      name: category.name,
+      slug: category.slug
     })))
   }, [itemData]);
 

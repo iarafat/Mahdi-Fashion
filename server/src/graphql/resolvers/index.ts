@@ -8,6 +8,7 @@ import {paymentOptionsResolvers} from "./PaymentOption";
 import {ordersResolvers} from "./Orders";
 import {settingsResolvers} from "./Setting";
 import {couponsResolvers} from "./Coupon";
+import {homeCardsResolvers} from "./HomeCard";
 
 export const resolvers = merge(
     usersResolvers,
@@ -18,5 +19,6 @@ export const resolvers = merge(
     paymentOptionsResolvers,
     ordersResolvers,
     settingsResolvers,
-    couponsResolvers
+    couponsResolvers,
+    homeCardsResolvers
 );
