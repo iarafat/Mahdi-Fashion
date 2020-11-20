@@ -2,6 +2,7 @@ import React from 'react';
 import { Counter } from 'components/counter/counter';
 import { CloseIcon } from 'assets/icons/CloseIcon';
 import { CURRENCY } from 'utils/constant';
+import { SHOP_IMAGE_HOST } from 'utils/images-path';
 import {
   ItemBox,
   Image,
@@ -26,7 +27,7 @@ export const CartItem: React.FC<Props> = ({
   onIncrement,
   onRemove,
 }) => {
-  const { title, image, price, salePrice, unit, quantity } = data;
+  const { name, images, price, salePrice, unit, quantity } = data;
   const displayPrice = salePrice ? salePrice : price;
   return (
     <ItemBox>
@@ -36,9 +37,9 @@ export const CartItem: React.FC<Props> = ({
         onIncrement={onIncrement}
         variant="lightVertical"
       />
-      <Image src={image} />
+      <Image src={SHOP_IMAGE_HOST+images[0]} />
       <Information>
-        <Name>{title}</Name>
+        <Name>{name}</Name>
         <Price>
           {CURRENCY}
           {displayPrice}

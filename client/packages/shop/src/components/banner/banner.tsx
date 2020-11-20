@@ -36,21 +36,25 @@ export const Banner: React.FC<Props> = ({
       setSticky();
     }
   };
+  console.log(intlTitleId)
+  console.log(intlDescriptionId)
+  console.log(imageUrl)
+
   return (
     <Box>
       <Image backgroundImage={`url(${imageUrl})`} />
       <Content>
         <Title>
           <FormattedMessage
-            id={intlTitleId}
-            defaultMessage="Set Your Title Through Language File"
+            id="Set Your Title Through Language File"
+            defaultMessage={intlTitleId}
             values={{ minute: 90 }}
           />
         </Title>
         <Description>
           <FormattedMessage
-            id={intlDescriptionId}
-            defaultMessage="Set Your Description Through Language File"
+            id="Set Your Description Through Language File"
+            defaultMessage={intlDescriptionId}
           />
         </Description>
         {/*<SearchWrapper>

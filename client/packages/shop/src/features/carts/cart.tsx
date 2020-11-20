@@ -38,16 +38,6 @@ type CartPropsType = {
   onCloseBtnClick?: (e: any) => void;
 };
 
-const APPLY_COUPON = gql`
-  mutation applyCoupon($code: String!) {
-    applyCoupon(code: $code) {
-      id
-      code
-      discountInPercent
-    }
-  }
-`;
-
 const Cart: React.FC<CartPropsType> = ({
   style,
   className,
@@ -67,21 +57,7 @@ const Cart: React.FC<CartPropsType> = ({
   const [couponText, setCoupon] = useState('');
   const [displayCoupon, showCoupon] = useState(false);
   const [error, setError] = useState('');
-  const [appliedCoupon] = useMutation(APPLY_COUPON);
   const { isRtl } = useLocale();
-
-  const handleApplyCoupon = async () => {
-    const { data }: any = await appliedCoupon({
-      variables: { code: couponText },
-    });
-    if (data.applyCoupon && data.applyCoupon.discountInPercent) {
-      setError('');
-      applyCoupon(data.applyCoupon);
-      setCoupon('');
-    } else {
-      setError('Invalid Coupon');
-    }
-  };
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setCoupon(e.currentTarget.value);
@@ -130,7 +106,8 @@ const Cart: React.FC<CartPropsType> = ({
       >
         <ItemWrapper className='items-wrapper'>
           {!!cartItemsCount ? (
-            items.map((item) => (
+            items.map((item) => {
+            return (
               <CartItem
                 key={`cartItem-${item.id}`}
                 onIncrement={() => addItem(item)}
@@ -138,7 +115,9 @@ const Cart: React.FC<CartPropsType> = ({
                 onRemove={() => removeItemFromCart(item)}
                 data={item}
               />
-            ))
+            )
+            }
+            )
           ) : (
             <>
               <NoProductImg>
