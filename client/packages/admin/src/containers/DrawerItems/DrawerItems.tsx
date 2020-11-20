@@ -21,6 +21,8 @@ import StaffMemberForm from '../StaffMemberForm/StaffMemberForm';
 import Sidebar from '../Layout/Sidebar/Sidebar';
 import CouponForm from '../CouponForm/CouponForm';
 import CouponUpdateForm from '../CouponForm/CouponUpdateForm';
+import HomeCardForm from '../HomeCardForm/HomeCardForm';
+import HomeCardUpdateForm from '../HomeCardForm/HomeCardUpdateForm';
 
 /** Components Name Constants */
 const DRAWER_COMPONENTS = {
@@ -38,6 +40,8 @@ const DRAWER_COMPONENTS = {
   STAFF_MEMBER_FORM: StaffMemberForm,
   COUPON_FORM: CouponForm,
   COUPON_UPDATE_FORM: CouponUpdateForm,
+  HOMECARD_FORM: HomeCardForm,
+  HOMECARD_UPDATE_FORM: HomeCardUpdateForm,
   SIDEBAR: Sidebar,
 };
 
