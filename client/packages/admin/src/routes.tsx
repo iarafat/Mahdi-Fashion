@@ -15,6 +15,8 @@ import {
 } from './settings/constants';
 import AuthProvider, { AuthContext } from './context/auth';
 import { InLineLoader } from './components/InlineLoader/InlineLoader';
+import {gql} from "apollo-boost";
+import {useQuery} from "@apollo/react-hooks";
 const Types = lazy(() => import('./containers/Types/Types'));
 const Products = lazy(() => import('./containers/Products/Products'));
 const AdminLayout = lazy(() => import('./containers/Layout/Layout'));
@@ -41,9 +43,27 @@ const NotFound = lazy(() => import('./containers/NotFound/NotFound'));
  * screen if you're not yet authenticated.
  *
  */
+const AUTH_CHECK = gql`
+  query AuthCheck {
+    userAuthCheck {
+      status
+      message
+    }
+  }
+`;
 
 function PrivateRoute({ children, ...rest }) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const {data, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
+  const { isAuthenticated, signout } = useContext(AuthContext);
+  const token = localStorage.getItem('admin_access_token');
+
+  if (token) {
+    authRefactch();
+  }
+
+  if (data && !data.userAuthCheck.status) {
+    signout();
+  }
 
   return (
     <Route

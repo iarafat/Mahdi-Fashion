@@ -25,5 +25,11 @@ export const authorize = async (req: Request, db: Database): Promise<IUser | nul
         throw new Error("Token has expired, please login to obtain a new one")
     }
 
-    return await db.users.findOne({_id:  new ObjectId(UserId)});
+    const user = await db.users.findOne({_id:  new ObjectId(UserId)});
+
+    if (!user) {
+        throw new Error("Unauthorized!");
+    }
+
+    return user;
 };
