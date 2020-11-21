@@ -31,6 +31,7 @@ const DRAWER_COMPONENTS = {
   PRODUCT_FORM: ProductForm,
   PRODUCT_UPDATE_FORM: ProductUpdateForm,
   CAMPAING_FORM: CampaingForm,
+  CATEGORY_FORM: CategoryForm,
   CATEGORY_UPDATE_FORM: CategoryUpdateForm,
   PAYMENT_OPTION_FORM: PaymentOptionForm,
   PAYMENT_OPTION_UPDATE_FORM: PaymentOptionUpdateForm,

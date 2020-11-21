@@ -18,3 +18,12 @@ export const SITE_SETTINGS = '/site-settings';
 // **************** ROUTE CONSTANT END **************************
 
 export const CURRENCY = '$';
+
+
+
+// **************** Coupon Status CONSTANT START **************************
+export const CREATED = 'created';
+export const RUNNING = 'running';
+export const EXPIRED = 'expired';
+export const DELETED = 'deleted';
+// **************** Coupon Status CONSTANT End **************************

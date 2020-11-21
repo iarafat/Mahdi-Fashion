@@ -19,12 +19,16 @@ const checkCouponDateNotExpired = function (coupon: ICoupon): boolean {
     const today = new Date();
     return (expireDate > today);
 };
+const checkCouponRunningStatus = function (coupon: ICoupon): boolean {
+
+    return (coupon.status == RUNNING);
+};
 
 const checkCouponValidity = function (coupon: ICoupon): boolean {
 
     if(!checkCouponDateNotExpired(coupon))  throw new Error("Sorry ! This Coupon is Expired.");
 
-    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Coupon is Disabled.");
+    if(!checkCouponRunningStatus)   throw new Error("Sorry ! This Coupon is Disabled.");
 
     return true;
 };
@@ -42,7 +46,7 @@ export const couponsResolvers: IResolvers = {
         ): Promise<ICommonPaginationReturnType> => {
             let coupons = await db.coupons.find({}).sort({_id: -1}).toArray();
 
-            coupons = coupons.map( coupon => ({ ...coupon, valid: checkCouponDateNotExpired(coupon)}))
+            coupons = coupons.map( coupon => ({ ...coupon, valid: (checkCouponDateNotExpired(coupon) && checkCouponRunningStatus(coupon))}))
 
             coupons = search(coupons, ['title', 'code'], searchText);
             const hasMore = coupons.length > offset + limit;
