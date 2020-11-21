@@ -68,10 +68,3 @@ export const Description = styled.p(
     textAlign: 'center',
   }
 );
-
-export const SearchWrapper = styled.div(
-  css({
-    display: ['none', 'flex'],
-    justifyContent: 'center',
-  })
-);

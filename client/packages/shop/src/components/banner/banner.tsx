@@ -5,13 +5,11 @@ import {
   Image,
   Content,
   Title,
-  Description,
-  SearchWrapper,
+  Description
 } from './banner.style';
 
 import { Waypoint } from 'react-waypoint';
 import { useAppDispatch } from 'contexts/app/app.provider';
-import Search from 'features/search/search';
 
 interface Props {
   imageUrl: string;
@@ -36,10 +34,6 @@ export const Banner: React.FC<Props> = ({
       setSticky();
     }
   };
-  console.log(intlTitleId)
-  console.log(intlDescriptionId)
-  console.log(imageUrl)
-
   return (
     <Box>
       <Image backgroundImage={`url(${imageUrl})`} />
@@ -57,12 +51,6 @@ export const Banner: React.FC<Props> = ({
             defaultMessage={intlDescriptionId}
           />
         </Description>
-        {/*<SearchWrapper>
-          <Search
-            className="banner-search"
-            shadow="0 21px 36px rgba(0,0,0,0.05)"
-          />
-        </SearchWrapper>*/}
         <Waypoint
           onEnter={removeSticky}
           onLeave={setSticky}

@@ -95,9 +95,9 @@ const HeaderWrapper = styled.header`
       margin-right: 200px;
     }
     @media (max-width: 1366px) {
+      .headerSearc,
       .banner-search{
-        margin-right: 50px;
-        margin-left: 50px;
+        margin: 0 5%;
       }
     }
   }
@@ -122,7 +122,11 @@ const HeaderWrapper = styled.header`
       padding-top: 20px;
       padding-bottom: 20px;
     }
-
+    @media (max-width: 1366px) {
+      .minimal-wrap{
+        margin: 0 5%;
+      }
+    }
     .headerSearch {
       display: flex;
       svg{

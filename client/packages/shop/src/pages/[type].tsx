@@ -23,7 +23,7 @@ import { initializeApollo } from 'utils/apollo';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
 import { GET_CATEGORIES } from 'graphql/query/category.query';
 import { GET_TYPE } from 'graphql/query/type.query';
-import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
+import { CATEGORY_MENU_ITEMS,CATEGORY_MENU } from 'site-settings/site-navigation';
 import ErrorMessage from 'components/error-message/error-message';
 import { SHOP_IMAGE_HOST } from 'utils/images-path';
 const Sidebar = dynamic(() => import('layouts/sidebar/sidebar'));
@@ -49,13 +49,14 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
   const PAGE_TYPE: any = query.type;
   const page = sitePages[PAGE_TYPE];
 
+  console.log(CATEGORY_MENU)
+
   const { data, loading, error } = useQuery(GET_TYPE, {
     variables: { 
       searchText: PAGE_TYPE
      },
   });
 
- 
 
   if (loading) {
     return <ErrorMessage message={'Loading...'} />
@@ -118,6 +119,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       limit: 20
     },
   });
+
   await apolloClient.query({
     query: GET_CATEGORIES,
     variables: {
@@ -134,13 +136,25 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export async function getStaticPaths() {
+
+  const apolloClient = initializeApollo();
+  const res = await apolloClient.query({
+    query: GET_TYPE,
+    variables: {
+      searchText: ''
+    }
+  });
+
+  const paths = res.data.types.items.map((item) => {
+    return({
+      params: { type: item.slug },
+    })
+  })
+
   return {
-    paths: [
-      { params: { type: 'grocery' } },
-      { params: { type: 'makeup' } },
-      { params: { type: 'bags' } }
-    ],
+    paths,
     fallback: false,
   };
 }
+
 export default CategoryPage;

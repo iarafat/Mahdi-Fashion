@@ -47,11 +47,12 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
 
   const handleOnChange = (e) => {
     const { value } = e.target;
-    //const result = searchData.find(item => item.name.startsWith(value));
     const result = searchData.filter(
       item => item.name.toLowerCase().startsWith(value)
     );
-    setFilteredSearchData(result)
+    setFilteredSearchData(result);
+    console.log(filteredSearchData, 'filtered-data')
+    console.log(value);
     filteredSearchData.length > 0 ? setShow(true) : setShow(false);
     
     dispatch({ type: 'SET_SEARCH_TERM', payload: value });
@@ -88,11 +89,23 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
   };
 
   const handleRoute = (route) =>{
-    console.log(route)
+    alert(12)
     Router.push(`/product`,`${route}`);
     return false;
   }
-  
+
+  const handleClickContent = (e) =>{
+    const serachWrap =  document.getElementsByClassName('searchResultWrap');
+   console.log(e.target)
+   console.log('lol')
+   console.log(serachWrap)
+    
+    if(e.target !== serachWrap){
+      alert('hoho')
+    }
+    return false;
+  }
+  //onBlur={handleBlur}
   return (
     <SearchWrapper className={props.minimal ? 'minimal-wrap' : 'modern-wrap'}>
       <SearchBox
@@ -100,27 +113,31 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
         onChange={handleOnChange}
         value={searchTerm}
         name="search"
-        onBlur={handleBlur}
+        
         placeholder={intl.formatMessage({
           id: 'searchPlaceholder',
           defaultMessage: 'Search your products from here',
         })}
         categoryType={query.type || 'Grocery'}
-        buttonText={intl.formatMessage({
-          id: 'searchButtonText',
-          defaultMessage: 'Search',
-        })}
+        buttonText={
+          intl.formatMessage({
+            id: 'searchButtonText',
+            defaultMessage: 'Search',
+          })
+        }
         {...props}
       />
-      {isShow && <SearchResultWrap>
-          <ul>
-            {filteredSearchData.map((item,index) => (
-                <li onClick={ () => handleRoute(item.slug)} key={index}>
-                  {item.name}
-                </li>
-            ))}
-          </ul>
-      </SearchResultWrap>}
+      {isShow && 
+        <SearchResultWrap className="searchResultWrap" onClick={ (e)=> handleClickContent(e) } >
+            <ul>
+              {filteredSearchData.map((item,index) => (
+                  <li onClick={ () => handleRoute(item.slug)} key={index}>
+                    {item.name}
+                  </li>
+              ))}
+            </ul>
+        </SearchResultWrap>
+      }
     </SearchWrapper>
   );
 
