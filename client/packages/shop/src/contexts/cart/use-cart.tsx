@@ -1,5 +1,5 @@
 import React, { useReducer, useContext, createContext } from 'react';
-import { reducer, cartItemsTotalPrice } from './cart.reducer';
+import { reducer, cartItemsTotalPrice, cartDiscountAmount } from './cart.reducer';
 import { useStorage } from 'utils/use-storage';
 const CartContext = createContext({} as any);
 const INITIAL_STATE = {
@@ -53,13 +53,7 @@ const useCartActions = (initialCart = INITIAL_STATE) => {
   const getCartItemsTotalPrice = () =>
     cartItemsTotalPrice(state.items, state.coupon).toFixed(2);
 
-  const getDiscount = () => {
-    const total = cartItemsTotalPrice(state.items);
-    const discount = state.coupon
-      ? (total * Number(state.coupon?.percentage)) / 100
-      : 0;
-    return discount.toFixed(2);
-  };
+  const getDiscount = () => cartDiscountAmount(state.items, state.coupon).toFixed(2);
 
   const getItemsCount = state.items?.reduce(
     (acc, item) => acc + item.quantity,

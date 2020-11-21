@@ -1,20 +1,40 @@
 // export const cartItemsTotalPrice = (items, { discountInPercent = 0 } = {}) => {
-export const cartItemsTotalPrice = (items, coupon = null) => {
-  if (items === null || items.length === 0) return 0;
-  const itemCost = items.reduce((total, item) => {
+
+
+function getDiscountAmount(totalPrice, coupon) {
+  let discount = (totalPrice * Number(coupon.percentage)) / 100;
+  discount = discount >= coupon?.maximum_discount_amount ? coupon?.maximum_discount_amount : discount;
+  return discount;
+}
+
+function getTotalItemPrice(items) {
+  return items.reduce((total, item) => {
     if (item.salePrice) {
       return total + item.salePrice * item.quantity;
     }
     return total + item.price * item.quantity;
   }, 0);
-  // const discountRate = 1 - discountInPercent;
-  const discount = coupon
-    ? (itemCost * Number(coupon.percentage)) / 100
-    : 0;
-  // itemCost * discountRate * TAX_RATE + shipping;
-  // return itemCost * discountRate;
+}
+
+export const cartItemsTotalPrice = (items, coupon = null) => {
+  if (items === null || items.length === 0) return 0;
+
+  const itemCost = getTotalItemPrice(items);
+
+  let discount = coupon ? getDiscountAmount(itemCost, coupon) : 0;
+
   return itemCost - discount;
 };
+
+export const cartDiscountAmount = (items, coupon = null) => {
+  if (items === null || items.length === 0) return 0;
+
+  const itemCost = getTotalItemPrice(items);
+
+  return coupon ? getDiscountAmount(itemCost, coupon) : 0;
+};
+
+
 // cartItems, cartItemToAdd
 const addItemToCart = (state, action) => {
   const existingCartItemIndex = state.items.findIndex(

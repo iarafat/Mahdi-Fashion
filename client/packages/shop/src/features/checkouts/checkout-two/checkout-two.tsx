@@ -179,8 +179,8 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
   const size = useWindowSize();
 
-  const { data , error, refetch } = useQuery(GET_COUPON);
-  
+  const [appliedCoupon] = useMutation(GET_COUPON);
+
   const handleSubmit = async () => {
     const {
       customer_id,
@@ -341,29 +341,42 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
   };
 
   const handleApplyCoupon = async () => {
-    if(couponCode){
-      refetch({
-        code: couponCode
-      });
-    }else{
+
+    if(!couponCode){
       setError('Invalid Coupon');
       return null;
     }
-    console.log(error, 'before')
-    if(error){
-      console.log(error, 'after')
+
+    const { data, errors }: any = await appliedCoupon({
+      variables: { code: couponCode },
+    });
+
+    if(!data.getCoupon.coupon && data.getCoupon.message && !data.getCoupon.message.status){
       setError('Invalid Coupon');
       return null;
     }
-    if (data.getCoupon && data.getCoupon.maximum_discount_amount) {
-      applyCoupon(data.getCoupon);
+
+    if(errors){
+      setError('Invalid Coupon');
+      return null;
+    }
+
+    if (data.getCoupon.coupon && data.getCoupon.coupon.percentage) {
+      applyCoupon(data.getCoupon.coupon);
+
+      const subTotal = Number(calculateSubTotalPrice());
+      const total = Number(calculatePrice());
+      const discount = Number(calculateDiscount());
+
+      console.dir(discount);
+      console.dir(subTotal);
       setSubmitResult({
         ...submitResult,
         coupon_code: couponCode,
-        discount_amount: data.getCoupon.maximum_discount_amount,
+        discount_amount: discount,
         customer_id: id, 
-        sub_total: Number(calculateSubTotalPrice()),
-        total: Number(calculatePrice()),
+        sub_total: subTotal,
+        total: total,
         products: cartProduct
       });
 
@@ -749,7 +762,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                     </Text>
                   </TextWrapper>
 
-                  <TextWrapper>
+                 {/* <TextWrapper>
                     <Text>
                       <FormattedMessage
                         id='intlOrderDetailsDelivery'
@@ -757,7 +770,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                       />
                     </Text>
                     <Text>{CURRENCY}0.00</Text>
-                  </TextWrapper>
+                  </TextWrapper>*/}
 
                   <TextWrapper>
                     <Text>

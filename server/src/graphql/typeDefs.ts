@@ -354,7 +354,6 @@ export const typeDefs = gql`
         getSiteSetting(key: String!): Setting!
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
-        getCoupon(code: String!): GetCouponRetrunType!
         validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
         homeCards(limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
@@ -395,6 +394,7 @@ export const typeDefs = gql`
         createCoupon(input: CouponInput): Coupon!
         updateCoupon(id: ID!, input: CouponInput): Coupon!
         deleteCoupon(id: ID!): DefaultMessageType!
+        getCoupon(code: String!): GetCouponRetrunType!
         createHomeCard(name: String!, url: String, image: String!, image_data: File!, status: Boolean, types: String!): HomeCard!
         updateHomeCard(id: String!, name: String!, url: String, image: String!, image_data: File, status: Boolean, types: String!): HomeCard!
         deleteHomeCard(id: ID!): DefaultMessageType!
