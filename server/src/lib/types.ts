@@ -200,6 +200,17 @@ export interface IGetCouponReturnType {
     message?: ICommonMessageReturnType;
 }
 
+export interface IHomeCard {
+    _id?: ObjectId;
+    name: string;
+    url?: string;
+    types: Array<IProductCategory>;
+    image: string;
+    status?: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
 export interface Database {
     users: Collection<IUser>;
     types: Collection<IType>;
@@ -210,4 +221,5 @@ export interface Database {
     orders: Collection<IOrder>;
     settings: Collection<ISetting>;
     coupons: Collection<ICoupon>;
+    home_cards: Collection<IHomeCard>;
 }

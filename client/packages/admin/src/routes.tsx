@@ -11,10 +11,12 @@ import {
   CUSTOMERS,
   COUPONS,
   STAFF_MEMBERS,
-  SITE_SETTINGS, PAYMENT_OPTIONS, DELIVERY_METHODS,
+  SITE_SETTINGS, PAYMENT_OPTIONS, DELIVERY_METHODS, HOMECARDS,
 } from './settings/constants';
 import AuthProvider, { AuthContext } from './context/auth';
 import { InLineLoader } from './components/InlineLoader/InlineLoader';
+import {gql} from "apollo-boost";
+import {useQuery} from "@apollo/react-hooks";
 const Types = lazy(() => import('./containers/Types/Types'));
 const Products = lazy(() => import('./containers/Products/Products'));
 const AdminLayout = lazy(() => import('./containers/Layout/Layout'));
@@ -22,6 +24,7 @@ const Dashboard = lazy(() => import('./containers/Dashboard/Dashboard'));
 const Category = lazy(() => import('./containers/Category/Category'));
 const PaymentOptions = lazy(() => import('./containers/PaymentOptions/PaymentOptions'));
 const DeliveryMethods = lazy(() => import('./containers/DeliveryMethods/DeliveryMethods'));
+const HomeCards = lazy(() => import('./containers/HomeCards/HomeCards'));
 const Orders = lazy(() => import('./containers/Orders/Orders'));
 const Settings = lazy(() => import('./containers/Settings/Settings'));
 const SiteSettingForm = lazy(() =>
@@ -41,9 +44,27 @@ const NotFound = lazy(() => import('./containers/NotFound/NotFound'));
  * screen if you're not yet authenticated.
  *
  */
+const AUTH_CHECK = gql`
+  query AuthCheck {
+    userAuthCheck {
+      status
+      message
+    }
+  }
+`;
 
 function PrivateRoute({ children, ...rest }) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const {data, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
+  const { isAuthenticated, signout } = useContext(AuthContext);
+  const token = localStorage.getItem('admin_access_token');
+
+  if (token) {
+    authRefactch();
+  }
+
+  if (data && !data.userAuthCheck.status) {
+    signout();
+  }
 
   return (
     <Route
@@ -129,6 +150,13 @@ const Routes = () => {
             <AdminLayout>
               <Suspense fallback={<InLineLoader />}>
                 <Coupons />
+              </Suspense>
+            </AdminLayout>
+          </PrivateRoute>
+          <PrivateRoute path={HOMECARDS}>
+            <AdminLayout>
+              <Suspense fallback={<InLineLoader />}>
+                <HomeCards />
               </Suspense>
             </AdminLayout>
           </PrivateRoute>

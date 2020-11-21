@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useCallback, useState} from 'react';
 import { styled, withStyle } from 'baseui';
 import Button from '../../components/Button/Button';
 import {
@@ -17,6 +17,8 @@ import NoResult from '../../components/NoResult/NoResult';
 import { CURRENCY } from '../../settings/constants';
 import Placeholder from '../../components/Placeholder/Placeholder';
 import {ADMIN_IMAGE_HOST} from "../../helpers/images-path";
+import {useDrawerDispatch} from "../../context/DrawerContext";
+import {Plus} from "../../components/AllSvgIcon";
 
 export const ProductsRow = styled('div', ({ $theme }) => ({
   display: 'flex',
@@ -157,6 +159,12 @@ export default function Products() {
   const [type, setType] = useState([]);
   const [category, setCategory] = useState([]);
   const [search, setSearch] = useState([]);
+  const dispatch = useDrawerDispatch()
+
+  const openDrawer = useCallback(
+      () => dispatch({type: 'OPEN_DRAWER', drawerComponent: 'PRODUCT_FORM'}),
+      [dispatch]
+  );
 
   if (error) {
     return <div>Error! {error.message}</div>;
@@ -165,6 +173,7 @@ export default function Products() {
 
   function loadMore() {
     toggleLoading(true);
+    setOffset(offset+12);
     fetchMore({
       variables: {
         offset: offset + 12,
@@ -246,13 +255,32 @@ export default function Products() {
                   />
                 </Col>
 
-                <Col md={6} xs={12}>
+                <Col md={4} xs={12}>
                   <Input
                     value={search}
                     placeholder='Ex: Search By Name'
                     onChange={handleSearch}
                     clearable
                   />
+                </Col>
+                <Col md={2}>
+                  <Button
+                      onClick={openDrawer}
+                      startEnhancer={() => <Plus />}
+                      overrides={{
+                        BaseButton: {
+                          style: () => ({
+                            width: '100%',
+                            borderTopLeftRadius: '3px',
+                            borderTopRightRadius: '3px',
+                            borderBottomLeftRadius: '3px',
+                            borderBottomRightRadius: '3px',
+                          }),
+                        },
+                      }}
+                  >
+                    Add Product
+                  </Button>
                 </Col>
               </Row>
             </Col>
