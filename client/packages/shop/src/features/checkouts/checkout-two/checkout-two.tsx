@@ -105,6 +105,7 @@ const OrderItem: React.FC<CartItemProps> = ({ product }) => {
 
 const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
+  const [discountAmmount, setDiscountAmmount] = useState(null);
   const [hasCoupon, setHasCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setError] = useState('');
@@ -206,9 +207,11 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
       setCheckoutError('Please place a valid order!');
       return null;
     }
-
+    console.log(total)
+    console.log(sub_total)
+    console.log(discount_amount)
     
-     await setOrderMutation({
+     /*await setOrderMutation({
       variables: {input:{ 
         customer_id,
         contact_number,
@@ -228,7 +231,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
       clearCart();
       Router.push('/profile');
     }
-    setLoading(false);
+    setLoading(false);*/
   };
 
   useEffect(() => {
@@ -368,15 +371,15 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
       const total = Number(calculatePrice());
       const discount = Number(calculateDiscount());
 
-      console.dir(discount);
-      console.dir(subTotal);
+      console.log(discount);
+      console.log(total);
       setSubmitResult({
         ...submitResult,
         coupon_code: couponCode,
-        discount_amount: discount,
+        discount_amount: Number(calculateDiscount()),
         customer_id: id, 
         sub_total: subTotal,
-        total: total,
+        total: Number(calculatePrice()),
         products: cartProduct
       });
 
@@ -575,6 +578,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                     customer_id: id, 
                     sub_total: Number(calculateSubTotalPrice()),
                     total: Number(calculatePrice()),
+                    discount_amount: Number(calculateDiscount()),
                     products: cartProduct
                   })
                   return null
@@ -704,7 +708,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                 <Title>
                   <FormattedMessage
                     id='cartTitle'
-                    defaultMessage='Your Order'
+                    defaultMessage='Your Orderdfd'
                   />
                 </Title>
 
