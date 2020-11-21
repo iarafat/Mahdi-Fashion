@@ -1,4 +1,5 @@
 import React from 'react';
+import {useDrawerDispatch} from '../../context/DrawerContext';
 import {
     IconWrapper,
     ActionStyle,
@@ -18,44 +19,27 @@ const Icon = ({icon, width = '18px', height = '18px'}) => {
     return <Component width={width} height={height}/>;
 }
 
-const GET_PRODUCTS = gql`
-    query GetProducts(
-        $type: String
-        $category: String
+const GET_HOMECARDS = gql`
+    query GetHomeCards(
         $searchText: String
         $offset: Int
     ) {
-        products(
-            type: $type
-            category: $category
+        homeCards(
             searchText: $searchText
             offset: $offset
         ) {
             items {
                 id
-                type {
-                    id
-                    slug
-                    name
-                }
-                categories {
-                    id
-                    slug
-                    name
-                }
                 name
-                slug
-                description
-                images
-                unit
-                price
-                sale_price
-                discount_in_percent
-                product_quantity
-                is_featured
-                meta_title
-                meta_keyword
-                meta_description
+                url
+                image
+                status
+                types {
+                    id
+                    slug
+                    name
+                }
+                created_at
             }
             totalCount
             hasMore
@@ -63,9 +47,9 @@ const GET_PRODUCTS = gql`
     }
 `;
 
-const DELETE_PRODUCT = gql`
-    mutation DeleteProduct($id: ID!) {
-        deleteProduct(id: $id) {
+const DELETE_HOMECARD = gql`
+    mutation DeleteHomeCard($id: ID!) {
+        deleteHomeCard(id: $id) {
             message
             status
         }
@@ -79,47 +63,65 @@ const ActionWrapper: React.FC<Props> =
         itemsOffset,
          ...props
      }) => {
-
+        const dispatch = useDrawerDispatch();
+        const openDrawer = React.useCallback(
+            () => {
+                dispatch({
+                    type: 'OPEN_DRAWER',
+                    drawerComponent: 'HOMECARD_UPDATE_FORM',
+                    data: itemData,
+                })
+            },
+            [dispatch, itemData]
+        );
+        
         const updateItemsQuery = (cache) => {
-            const {products} = cache.readQuery({
-                query: GET_PRODUCTS,
+            const {homeCards} = cache.readQuery({
+                query: GET_HOMECARDS,
                 variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
             });
 
             cache.writeQuery({
-                query: GET_PRODUCTS,
+                query: GET_HOMECARDS,
                 variables: itemsOffset !== 0 ? {offset: itemsOffset} : {},
                 data: {
-                    products: {
-                        __typename: products.__typename,
-                        items: products.items.filter((item) => {
+                    homeCards: {
+                        __typename: homeCards.__typename,
+                        items: homeCards.items.filter((item) => {
                             return item.id !== itemData.id;
                         }),
-                        hasMore: products.items.length - 1 >= 12,
-                        totalCount: products.items.length - 1,
+                        hasMore: homeCards.items.length - 1 >= 12,
+                        totalCount: homeCards.items.length - 1,
                     },
                 },
             });
         };
 
-        const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+        const [deleteHomeCard] = useMutation(DELETE_HOMECARD, {
             update: updateItemsQuery
         });
         const itemDelete = () => {
             // eslint-disable-next-line no-restricted-globals
             if (confirm('Are you sure? You can not undo this.')) {
-                deleteProduct({
+                deleteHomeCard({
                     variables: {id: itemData.id},
                 });
             }
         }
 
         return (
-            <ActionStyle>
-                <IconWrapper onClick={itemDelete} style={{color: '#c50707', cursor: 'pointer'}}>
-                    <Icon width="15px" height="15px" icon="CloseIcon"/>
-                </IconWrapper>
-            </ActionStyle>
+            <div>
+                <ActionStyle>
+                    <IconWrapper onClick={openDrawer} style={{marginRight: '10px', cursor: 'pointer'}}>
+                        <Icon icon="ArrowNext"/>
+                    </IconWrapper>
+                </ActionStyle>
+                <ActionStyle>
+                    <IconWrapper onClick={itemDelete} style={{color: '#c50707', cursor: 'pointer'}}>
+                        <Icon width="15px" height="15px" icon="CloseIcon"/>
+                    </IconWrapper>
+                </ActionStyle>
+            </div>
         );
     };
 

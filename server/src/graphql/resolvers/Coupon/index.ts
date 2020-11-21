@@ -13,14 +13,18 @@ import {ICouponInputArgs} from "./types";
 import {search} from "../../../lib/utils/search";
 import {RUNNING} from "../../../lib/utils/constant";
 
-const checkCouponValidity = function (coupon: ICoupon): boolean {
+const checkCouponDateNotExpired = function (coupon: ICoupon): boolean {
 
     const expireDate = new Date(coupon.expiration_date ? coupon.expiration_date : new Date);
     const today = new Date();
+    return (expireDate > today);
+};
 
-    if(expireDate < today)  throw new Error("Sorry ! This Token is Expired.");
+const checkCouponValidity = function (coupon: ICoupon): boolean {
 
-    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Token is Disabled.");
+    if(!checkCouponDateNotExpired(coupon))  throw new Error("Sorry ! This Coupon is Expired.");
+
+    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Coupon is Disabled.");
 
     return true;
 };
@@ -37,6 +41,9 @@ export const couponsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
             let coupons = await db.coupons.find({}).sort({_id: -1}).toArray();
+
+            coupons = coupons.map( coupon => ({ ...coupon, valid: checkCouponDateNotExpired(coupon)}))
+
             coupons = search(coupons, ['title', 'code'], searchText);
             const hasMore = coupons.length > offset + limit;
             return {
@@ -61,10 +68,7 @@ export const couponsResolvers: IResolvers = {
                 }
             }
 
-            const expireDate = new Date(coupon && coupon.expiration_date ? coupon.expiration_date : new Date);
-            const today = new Date();
-
-            if(coupon && expireDate < today) {
+            if(coupon && !checkCouponDateNotExpired(coupon)) {
                 message = {
                     status: false,
                     message: "Coupon invalid."

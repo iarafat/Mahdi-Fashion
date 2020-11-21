@@ -15,6 +15,7 @@ import {
   ORDERS,
   CUSTOMERS,
   COUPONS,
+  HOMECARDS,
   SETTINGS,
   PAYMENT_OPTIONS, DELIVERY_METHODS,
 } from '../../../settings/constants';
@@ -30,7 +31,8 @@ import {
   LogoutIcon,
     MenuIcon,
     Accessories,
-    CarretUpIcon
+    CarretUpIcon,
+    InboxIcon
 } from '../../../components/AllSvgIcon';
 
 const sidebarMenus = [
@@ -87,6 +89,12 @@ const sidebarMenus = [
     path: COUPONS,
     exact: false,
     icon: <CouponIcon />,
+  },
+  {
+    name: 'HomeCards',
+    path: HOMECARDS,
+    exact: false,
+    icon: <InboxIcon />,
   },
   {
     name: 'Settings',
