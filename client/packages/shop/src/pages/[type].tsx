@@ -49,7 +49,6 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
   const PAGE_TYPE: any = query.type;
   const page = sitePages[PAGE_TYPE];
 
-  console.log(CATEGORY_MENU)
 
   const { data, loading, error } = useQuery(GET_TYPE, {
     variables: { 

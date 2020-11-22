@@ -142,16 +142,12 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   const [isValid, setIsValid] = useState(false);
 
   const [submitResult, setSubmitResult] = useState({
-    customer_id: '',
     contact_number: '',
     payment_option_id: '',
     delivery_method_id: '',
-    delivery_address: null,
-    sub_total: null,
-    total: null,
     coupon_code: '',
-    discount_amount: null,
-    products: null
+    delivery_address: null,
+
  });
 
   const {    
@@ -166,73 +162,19 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   } = state;
 
 
-  //setAllValues({...allValues, [e.target.name]: e.target.value})
- 
   //set mututions
   const [setprimaryAddressMutation] = useMutation(SETPRIMARY_ADDRESS);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
   const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
   
-const [setOrderMutation] = useMutation(CREAT_ORDER);
+  const [setOrderMutation] = useMutation(CREAT_ORDER);
 
   const [deleteContactMutation] = useMutation(DELETE_CONTACT);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
   const size = useWindowSize();
 
   const [appliedCoupon] = useMutation(GET_COUPON);
-
-  const handleSubmit = async () => {
-    const {
-      customer_id,
-      contact_number,
-      payment_option_id,
-      delivery_method_id,
-      delivery_address,
-      sub_total,
-      total,
-      coupon_code,
-      discount_amount,
-      products
-    } = submitResult
-
-    if(
-      !customer_id || 
-      !contact_number || 
-      !delivery_address || 
-      !delivery_method_id ||  
-      !payment_option_id ||
-      !products
-    ){
-      setCheckoutError('Please place a valid order!');
-      return null;
-    }
-    console.log(total)
-    console.log(sub_total)
-    console.log(discount_amount)
-    
-     /*await setOrderMutation({
-      variables: {input:{ 
-        customer_id,
-        contact_number,
-        payment_option_id,
-        delivery_method_id,
-        delivery_address,
-        sub_total,
-        total,
-        coupon_code,
-        discount_amount,
-        products
-      }}
-    });
-
-   setLoading(true);
-    if (isValid) {
-      clearCart();
-      Router.push('/profile');
-    }
-    setLoading(false);*/
-  };
 
   useEffect(() => {
     if (
@@ -246,14 +188,6 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
       setIsValid(true);
     }
   }, [state]);
-  useEffect(() => {
-    return () => {
-      if (isRestaurant) {
-        toggleRestaurant();
-        clearCart();
-      }
-    };
-  }, []);
   // Add or edit modal
   const handleModal = (
     modalComponent: any,
@@ -366,21 +300,9 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
 
     if (data.getCoupon.coupon && data.getCoupon.coupon.percentage) {
       applyCoupon(data.getCoupon.coupon);
-
-      const subTotal = Number(calculateSubTotalPrice());
-      const total = Number(calculatePrice());
-      const discount = Number(calculateDiscount());
-
-      console.log(discount);
-      console.log(total);
       setSubmitResult({
         ...submitResult,
         coupon_code: couponCode,
-        discount_amount: Number(calculateDiscount()),
-        customer_id: id, 
-        sub_total: subTotal,
-        total: Number(calculatePrice()),
-        products: cartProduct
       });
 
       setCouponCode('');
@@ -390,6 +312,70 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
   };
   const handleOnUpdate: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setCouponCode(e.currentTarget.value);
+  };
+
+  const handleSubmit = async () => {
+
+
+    const otherSubmitResult = {
+      customer_id: id,
+      products: cartProduct,
+      sub_total: Number(calculateSubTotalPrice()),
+      total: Number(calculatePrice()),
+      discount_amount: Number(calculateDiscount()),
+    }
+
+
+    const {
+      contact_number,
+      payment_option_id,
+      delivery_method_id,
+      delivery_address,
+      coupon_code
+    } = submitResult;
+
+    const {
+      customer_id,
+      products,
+      sub_total,
+      total,
+      discount_amount
+    } = otherSubmitResult;
+
+
+    if(
+      !customer_id || 
+      !contact_number || 
+      !delivery_address || 
+      !delivery_method_id ||  
+      !payment_option_id ||
+      !products
+    ){
+      setCheckoutError('Please place a valid order!');
+      return null;
+    }
+    
+    await setOrderMutation({
+      variables: {input:{ 
+        customer_id,
+        contact_number,
+        payment_option_id,
+        delivery_method_id,
+        delivery_address,
+        sub_total,
+        total,
+        coupon_code,
+        discount_amount,
+        products
+      }}
+    });
+
+   setLoading(true);
+    if (isValid) {
+      clearCart();
+      Router.push('/profile');
+    }
+    setLoading(false);
   };
 
   return (
@@ -574,12 +560,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                 onClick={(item: any) => {
                    setSubmitResult({
                     ...submitResult,
-                    payment_option_id: item.id,
-                    customer_id: id, 
-                    sub_total: Number(calculateSubTotalPrice()),
-                    total: Number(calculatePrice()),
-                    discount_amount: Number(calculateDiscount()),
-                    products: cartProduct
+                    payment_option_id: item.id
                   })
                   return null
                   }
