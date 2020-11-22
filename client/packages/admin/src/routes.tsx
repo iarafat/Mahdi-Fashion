@@ -53,33 +53,47 @@ const AUTH_CHECK = gql`
   }
 `;
 
+const authCheck = (cp) => {
+  const token = localStorage.getItem('admin_access_token');
+  if (token) {
+    return cp(token);
+  }
+  return false;
+}
+
+
 function PrivateRoute({ children, ...rest }) {
   const {data, error: authError, refetch: authRefactch} = useQuery(AUTH_CHECK)
   const { isAuthenticated, signout } = useContext(AuthContext);
-  const token = localStorage.getItem('admin_access_token');
 
-  if (token) {
-    authRefactch();
-  }
 
-  if (data && !data.userAuthCheck.status) {
-    signout();
-  }
+  authCheck(function (token) {
+      if (token) {
+        authRefactch().then(res => {
+          if (res.data && !res.data.userAuthCheck.status) {
+            signout();
+          }
+        });
+      }
+  })
+
 
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        isAuthenticated ? (
-          children
+      {
+        return isAuthenticated ? (
+            children
         ) : (
-          <Redirect
-            to={{
-              pathname: '/login',
-              state: { from: location },
-            }}
-          />
+            <Redirect
+                to={{
+                  pathname: '/login',
+                  state: { from: location },
+                }}
+            />
         )
+      }
       }
     />
   );
@@ -181,6 +195,7 @@ const Routes = () => {
               </Suspense>
             </AdminLayout>
           </PrivateRoute>
+
           <Route path={LOGIN}>
             <Login />
           </Route>
