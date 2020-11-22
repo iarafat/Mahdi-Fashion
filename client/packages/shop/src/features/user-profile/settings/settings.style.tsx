@@ -118,6 +118,28 @@ const ButtonGroup = styled.div`
     }
   }
 `;
+
+const SuccessMsg = styled('span')`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.xs', '12')}px;
+  font-weight: ${themeGet('fontWeights.regular', '400')};
+  color: #51b96b;
+  padding-top: 10px;
+  display: flex;
+  margin-left: 20px;
+`;
+
+
+const ErrorMsg = styled('span')`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.xs', '12')}px;
+  font-weight: ${themeGet('fontWeights.regular', '400')};
+  color: ${themeGet('colors.secondary.hover', '#FF282F')};
+  padding-top: 10px;
+  display: flex;
+  margin-left: 20px;
+`;
+
 export {
   SettingsForm,
   HeadingSection,
@@ -126,4 +148,6 @@ export {
   // Input,
   Row,
   ButtonGroup,
+  SuccessMsg,
+  ErrorMsg
 };

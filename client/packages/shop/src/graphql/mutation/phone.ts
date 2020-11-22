@@ -6,8 +6,10 @@ export const ADD_PHONENUMBER = gql`
       id: $id,
       number: $number,
     ) {
-     status
-      message
+      id
+      number
+      status
+      is_primary
     }
   }
 `;
@@ -19,8 +21,10 @@ export const UPDATE_PHONENUMBER = gql`
       phoneId: $phoneId,
       number: $number,
     ) {
-     status
-      message
+      id
+      number
+      status
+      is_primary
     }
   }
 `;

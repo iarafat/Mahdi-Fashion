@@ -15,9 +15,6 @@ import {
   LeftMenuBox,
 } from './left-menu.style';
 
-
-
-
 const CategoryIcon = ({ name }) => {
   const TagName = categoryMenuIcons[name];
   return !!TagName ? <TagName /> : <p> </p>;
@@ -75,11 +72,9 @@ export const LeftMenu: React.FC<Props> = ({ logo }) => {
   const initialMenu = typeMenu.find(
     (item) => item.href == router.asPath
   );
-  console.log(router.asPath)
   const [activeMenu, setActiveMenu] = React.useState(
     initialMenu ?? CATEGORY_MENU_ITEMS[0]
   );
-
 
   return (
     <LeftMenuBox>

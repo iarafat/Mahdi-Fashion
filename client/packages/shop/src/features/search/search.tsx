@@ -96,13 +96,6 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
 
   const handleClickContent = (e) =>{
     const serachWrap =  document.getElementsByClassName('searchResultWrap');
-   console.log(e.target)
-   console.log('lol')
-   console.log(serachWrap)
-    
-    if(e.target !== serachWrap){
-      alert('hoho')
-    }
     return false;
   }
   //onBlur={handleBlur}

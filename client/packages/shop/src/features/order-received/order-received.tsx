@@ -47,7 +47,7 @@ const OrderReceived: React.FunctionComponent<OrderReceivedProps> = (props) => {
       window.print()
     }
   }
-
+  
   return (
     <OrderReceivedWrapper>
       <OrderReceivedContainer>
@@ -64,17 +64,9 @@ const OrderReceived: React.FunctionComponent<OrderReceivedProps> = (props) => {
           <BlockTitle>
             <FormattedMessage
               id="orderReceivedText"
-              defaultMessage="Order Received"
+              defaultMessage="Order"
             />
           </BlockTitle>
-
-          <Text>
-            <FormattedMessage
-              id="orderReceivedSuccess"
-              defaultMessage="Thank you. Your order has been received"
-            />
-          </Text>
-
           <InfoBlockWrapper>
             <InfoBlock>
               <Text bold className="title">
@@ -83,7 +75,7 @@ const OrderReceived: React.FunctionComponent<OrderReceivedProps> = (props) => {
                   defaultMessage="Order Number"
                 />
               </Text>
-              <Text>01</Text>
+              <Text>{myOrder.order_code}</Text>
             </InfoBlock>
 
             <InfoBlock>

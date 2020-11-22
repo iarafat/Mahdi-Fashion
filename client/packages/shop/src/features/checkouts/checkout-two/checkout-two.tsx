@@ -105,6 +105,7 @@ const OrderItem: React.FC<CartItemProps> = ({ product }) => {
 
 const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
+  const [discountAmmount, setDiscountAmmount] = useState(null);
   const [hasCoupon, setHasCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setError] = useState('');
@@ -141,16 +142,12 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   const [isValid, setIsValid] = useState(false);
 
   const [submitResult, setSubmitResult] = useState({
-    customer_id: '',
     contact_number: '',
     payment_option_id: '',
     delivery_method_id: '',
-    delivery_address: null,
-    sub_total: null,
-    total: null,
     coupon_code: '',
-    discount_amount: null,
-    products: null
+    delivery_address: null,
+
  });
 
   const {    
@@ -165,71 +162,19 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   } = state;
 
 
-  //setAllValues({...allValues, [e.target.name]: e.target.value})
- 
   //set mututions
   const [setprimaryAddressMutation] = useMutation(SETPRIMARY_ADDRESS);
   const [deleteAddressMutation] = useMutation(DELETE_ADDRESS);
   const [setprimaryPhoneNumberMutation] = useMutation(SETPRIMARY_PHONENUMBER);
   const [deletePhoneNumberMutation] = useMutation(DELETE_PHONENUMBER);
   
-const [setOrderMutation] = useMutation(CREAT_ORDER);
+  const [setOrderMutation] = useMutation(CREAT_ORDER);
 
   const [deleteContactMutation] = useMutation(DELETE_CONTACT);
   const [deletePaymentCardMutation] = useMutation(DELETE_CARD);
   const size = useWindowSize();
 
-  const { data , error, refetch } = useQuery(GET_COUPON);
-  
-  const handleSubmit = async () => {
-    const {
-      customer_id,
-      contact_number,
-      payment_option_id,
-      delivery_method_id,
-      delivery_address,
-      sub_total,
-      total,
-      coupon_code,
-      discount_amount,
-      products
-    } = submitResult
-
-    if(
-      !customer_id || 
-      !contact_number || 
-      !delivery_address || 
-      !delivery_method_id ||  
-      !payment_option_id ||
-      !products
-    ){
-      setCheckoutError('Please place a valid order!');
-      return null;
-    }
-
-    
-     await setOrderMutation({
-      variables: {input:{ 
-        customer_id,
-        contact_number,
-        payment_option_id,
-        delivery_method_id,
-        delivery_address,
-        sub_total,
-        total,
-        coupon_code,
-        discount_amount,
-        products
-      }}
-    });
-
-   setLoading(true);
-    if (isValid) {
-      clearCart();
-      Router.push('/profile');
-    }
-    setLoading(false);
-  };
+  const [appliedCoupon] = useMutation(GET_COUPON);
 
   useEffect(() => {
     if (
@@ -243,14 +188,6 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
       setIsValid(true);
     }
   }, [state]);
-  useEffect(() => {
-    return () => {
-      if (isRestaurant) {
-        toggleRestaurant();
-        clearCart();
-      }
-    };
-  }, []);
   // Add or edit modal
   const handleModal = (
     modalComponent: any,
@@ -341,30 +278,31 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
   };
 
   const handleApplyCoupon = async () => {
-    if(couponCode){
-      refetch({
-        code: couponCode
-      });
-    }else{
+
+    if(!couponCode){
       setError('Invalid Coupon');
       return null;
     }
-    console.log(error, 'before')
-    if(error){
-      console.log(error, 'after')
+
+    const { data, errors }: any = await appliedCoupon({
+      variables: { code: couponCode },
+    });
+
+    if(!data.getCoupon.coupon && data.getCoupon.message && !data.getCoupon.message.status){
       setError('Invalid Coupon');
       return null;
     }
-    if (data.getCoupon && data.getCoupon.maximum_discount_amount) {
-      applyCoupon(data.getCoupon);
+
+    if(errors){
+      setError('Invalid Coupon');
+      return null;
+    }
+
+    if (data.getCoupon.coupon && data.getCoupon.coupon.percentage) {
+      applyCoupon(data.getCoupon.coupon);
       setSubmitResult({
         ...submitResult,
         coupon_code: couponCode,
-        discount_amount: data.getCoupon.maximum_discount_amount,
-        customer_id: id, 
-        sub_total: Number(calculateSubTotalPrice()),
-        total: Number(calculatePrice()),
-        products: cartProduct
       });
 
       setCouponCode('');
@@ -374,6 +312,70 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
   };
   const handleOnUpdate: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setCouponCode(e.currentTarget.value);
+  };
+
+  const handleSubmit = async () => {
+
+
+    const otherSubmitResult = {
+      customer_id: id,
+      products: cartProduct,
+      sub_total: Number(calculateSubTotalPrice()),
+      total: Number(calculatePrice()),
+      discount_amount: Number(calculateDiscount()),
+    }
+
+
+    const {
+      contact_number,
+      payment_option_id,
+      delivery_method_id,
+      delivery_address,
+      coupon_code
+    } = submitResult;
+
+    const {
+      customer_id,
+      products,
+      sub_total,
+      total,
+      discount_amount
+    } = otherSubmitResult;
+
+
+    if(
+      !customer_id || 
+      !contact_number || 
+      !delivery_address || 
+      !delivery_method_id ||  
+      !payment_option_id ||
+      !products
+    ){
+      setCheckoutError('Please place a valid order!');
+      return null;
+    }
+    
+    await setOrderMutation({
+      variables: {input:{ 
+        customer_id,
+        contact_number,
+        payment_option_id,
+        delivery_method_id,
+        delivery_address,
+        sub_total,
+        total,
+        coupon_code,
+        discount_amount,
+        products
+      }}
+    });
+
+   setLoading(true);
+    if (isValid) {
+      clearCart();
+      Router.push('/profile');
+    }
+    setLoading(false);
   };
 
   return (
@@ -558,11 +560,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                 onClick={(item: any) => {
                    setSubmitResult({
                     ...submitResult,
-                    payment_option_id: item.id,
-                    customer_id: id, 
-                    sub_total: Number(calculateSubTotalPrice()),
-                    total: Number(calculatePrice()),
-                    products: cartProduct
+                    payment_option_id: item.id
                   })
                   return null
                   }
@@ -691,7 +689,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                 <Title>
                   <FormattedMessage
                     id='cartTitle'
-                    defaultMessage='Your Order'
+                    defaultMessage='Your Orderdfd'
                   />
                 </Title>
 
@@ -749,7 +747,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                     </Text>
                   </TextWrapper>
 
-                  <TextWrapper>
+                 {/* <TextWrapper>
                     <Text>
                       <FormattedMessage
                         id='intlOrderDetailsDelivery'
@@ -757,7 +755,7 @@ const [setOrderMutation] = useMutation(CREAT_ORDER);
                       />
                     </Text>
                     <Text>{CURRENCY}0.00</Text>
-                  </TextWrapper>
+                  </TextWrapper>*/}
 
                   <TextWrapper>
                     <Text>

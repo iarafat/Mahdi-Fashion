@@ -10,6 +10,21 @@ const OrderReceivedWrapper = styled.div`
   position: relative;
   padding: 100px 0 60px 0;
   min-height: 100vh;
+
+  /* ISO Paper Size */
+  @page {
+    size: A4 landscape;
+  }
+
+  /* Size in mm */    
+  @page {
+    size: 100mm 200mm landscape;
+  }
+
+  /* Size in inches */    
+  @page {
+    size: 4in 6in landscape;
+  }
 `;
 
 export const OrderReceivedContainer = styled.div`

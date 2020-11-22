@@ -42,17 +42,15 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
   const { state, dispatch } = useContext(ProfileContext);
   const handleSubmit = async (values: FormValues) => {
     if(Object.keys(ContactItem).length === 0){
-      const addPhone = await addPhoneMutation({
+      const {data} = await addPhoneMutation({
         variables: { 
           id: ID,
           number: values.number
-        },
+        }
       });
-      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: null }});
+      console.log(data)
+      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: data.addPhoneNumber.id }});
       closeModal();
-      if (typeof window !== 'undefined') {
-        window.location.reload(false);
-      }
     }else{
       const updatePhone =  await updatePhoneMutation({
         variables: { 
