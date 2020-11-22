@@ -67,15 +67,6 @@ export const usersResolvers: IResolvers = {
         ): Promise<ICommonMessageReturnType> => {
             const token = <string>req.headers["x-access-token"];
             const secret = <string>process.env.JWT_SECRET;
-            const {UserId} = <any>jwt.verify(token, secret);
-            const user = await db.users.findOne({_id:  new ObjectId(UserId)});
-
-            if (!user) {
-                return {
-                    status: false,
-                    message: "User dose not valid."
-                };
-            }
 
             if (authChecker(token, secret)) {
                 return {
