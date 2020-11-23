@@ -1,11 +1,15 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import { useQuery } from '@apollo/react-hooks';
 import Sticky from 'react-stickynode';
 import { useAppState } from 'contexts/app/app.provider';
 import Header from './header/header';
 import { LayoutWrapper } from './layout.style';
 import { isCategoryPage } from './is-home-page';
+import { GET_TYPE } from 'graphql/query/type.query';
+import { array } from 'yup';
+import ErrorMessage from 'components/error-message/error-message';
 const MobileHeader = dynamic(() => import('./header/mobile-header'), {
   ssr: false,
 });
@@ -21,11 +25,54 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
   // deviceType: { mobile, tablet, desktop },
   token,
 }) => {
+  const [typeMenu, setTypeMenu] = useState([]);
+  const [isHome, setHome] = useState(true);
+
   const isSticky = useAppState('isSticky');
   const { pathname, query } = useRouter();
   const type = pathname === '/restaurant' ? 'restaurant' : query.type;
-
   const isHomePage = isCategoryPage(type);
+  /*const newTypeArry = [];
+  const { data, error, loading } = useQuery(
+    GET_TYPE,
+    {
+      variables: {
+        searchText: ''
+      }
+    }
+  );
+
+
+
+
+ useEffect(() => {
+   
+    return;
+  }, []);
+ 
+
+  if (loading) {
+    return <ErrorMessage message={'Loading...'} />
+  };
+
+  if (error) {
+    return (
+      <ErrorMessage message={error.message} />
+    );
+  };
+
+  if(data){
+    data.types.items.map((item: any, index: any) => {
+      newTypeArry.push(item.href)
+    })
+    if(newTypeArry.includes(`/${type}`)){
+      setHome(true)
+    }else{
+      setHome(false)
+    }  
+  }  */
+
+ 
   return (
     <LayoutWrapper className={`layoutWrapper ${className}`}>
       <Sticky enabled={isSticky} innerZ={1001}>

@@ -76,7 +76,7 @@ export const LeftMenu: React.FC<Props> = ({ logo }) => {
     initialMenu ?? CATEGORY_MENU_ITEMS[0]
   );
 
-  return (
+  return(
     <LeftMenuBox>
       <Logo
         imageUrl={logo}

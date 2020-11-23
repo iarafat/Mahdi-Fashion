@@ -1,3 +1,5 @@
+import { CATEGORY_MENU_ITEMS,CATEGORY_MENU } from 'site-settings/site-navigation';
+
 import {
   HOME_PAGE,
   GROCERY_PAGE,

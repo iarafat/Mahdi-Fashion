@@ -105,7 +105,6 @@ const OrderItem: React.FC<CartItemProps> = ({ product }) => {
 
 const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
-  const [discountAmmount, setDiscountAmmount] = useState(null);
   const [hasCoupon, setHasCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setError] = useState('');
@@ -137,7 +136,6 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       price: item.sale_price
     }))
   }
-
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
@@ -147,7 +145,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     delivery_method_id: '',
     coupon_code: '',
     delivery_address: null,
-
+    products: null
  });
 
   const {    
@@ -303,6 +301,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       setSubmitResult({
         ...submitResult,
         coupon_code: couponCode,
+        products: cartProduct
       });
 
       setCouponCode('');
@@ -319,24 +318,22 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
     const otherSubmitResult = {
       customer_id: id,
-      products: cartProduct,
       sub_total: Number(calculateSubTotalPrice()),
       total: Number(calculatePrice()),
       discount_amount: Number(calculateDiscount()),
     }
-
 
     const {
       contact_number,
       payment_option_id,
       delivery_method_id,
       delivery_address,
-      coupon_code
+      coupon_code,
+      products
     } = submitResult;
 
     const {
       customer_id,
-      products,
       sub_total,
       total,
       discount_amount
@@ -373,9 +370,12 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
    setLoading(true);
     if (isValid) {
       clearCart();
+      removeCoupon();
+      setHasCoupon(false);
       Router.push('/profile');
     }
     setLoading(false);
+    setIsValid(false);
   };
 
   return (
@@ -412,7 +412,8 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                         Division: ${item.division},  
                         Region: ${item.region},  
                         Division: ${item.address}
-                        `
+                        `,
+                        products: cartProduct
                       })}
                       onChange={() =>handlePrimary(item, 'address')}
                       onEdit={() => handleEditDelete(item, index, 'edit', 'address')}
@@ -468,6 +469,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                       onClick={() => setSubmitResult({
                         ...submitResult,
                         delivery_method_id: item.id, 
+                        products: cartProduct
                       })}
                       onChange={() =>{
                         return(dispatch({
@@ -497,13 +499,14 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                     <RadioCard
                       id={index}
                       key={index}
-                      title={item.type}
+                      title={item.is_primary?'Primary' : 'Secondary'}
                       content={item.number}
                       checked={item.is_primary === true}
                       onChange={() =>handlePrimary(item, 'contact')}
                       onClick={() => setSubmitResult({
                         ...submitResult,
-                        contact_number: item.number
+                        contact_number: item.number,
+                        products: cartProduct
                       })}
                       name='contact'
                       onEdit={() => handleEditDelete(item, index, 'edit', 'contact')}
@@ -560,7 +563,8 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                 onClick={(item: any) => {
                    setSubmitResult({
                     ...submitResult,
-                    payment_option_id: item.id
+                    payment_option_id: item.id,
+                    products: cartProduct
                   })
                   return null
                   }

@@ -31,7 +31,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
 
   const ContactItem = item.item;
   const ID = item.id;
-  
+  let newContactid = null;
   const initialValues = {
     id: ContactItem.id || null,
     type: ContactItem.type || 'secondary',
@@ -48,18 +48,22 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
           number: values.number
         }
       });
-      console.log(data)
-      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: data.addPhoneNumber.id }});
+      newContactid = data.addPhoneNumber.id
+      values.id = newContactid;
+      dispatch({ type: 'ADD_CONTACT', payload: {values: values }});
       closeModal();
+      /*if (typeof window !== 'undefined') {
+        window.location.reload(false);
+      }*/
     }else{
       const updatePhone =  await updatePhoneMutation({
         variables: { 
           id: ID,
-          phoneId: ContactItem.id,
+          phoneId: ContactItem.id ? ContactItem.id : newContactid,
           number: values.number
         },
       });
-      dispatch({ type: 'ADD_OR_UPDATE_CONTACT', payload: {values: values, id: ContactItem.id }});
+      dispatch({ type: 'UPDATE_CONTACT', payload: {values: values, id: ContactItem.id ? ContactItem.id : newContactid }});
       closeModal();
     }
    
@@ -78,7 +82,7 @@ const CreateOrUpdateContact: React.FC<Props> = ({ item }) => {
       }: FormikProps<FormValues>) => (
         <Form>
           <Heading>
-            {ContactItem && ContactItem.id ? 'Edit Contact' : 'Add New Contact'}
+            {ContactItem ? 'Edit Contact' : 'Add New Contact'}
           </Heading>
           <FieldWrapper>
             <MaskedInput

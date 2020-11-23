@@ -99,7 +99,6 @@ export const CartProvider = ({ children }) => {
     toggleRestaurant,
   } = useCartActions();
   const { rehydrated, error } = useStorage(state, rehydrateLocalState);
-
   return (
     <CartContext.Provider
       value={{

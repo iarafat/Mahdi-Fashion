@@ -62,7 +62,6 @@ const StripePaymentForm = ({ item: { price, buttonText } }: Item) => {
     const payment_info = await getPayment({
       variables: { paymentInput: JSON.stringify({ token, amount: price }) },
     });
-    console.log(payment_info, 'payment_info');
   };
 
   return (

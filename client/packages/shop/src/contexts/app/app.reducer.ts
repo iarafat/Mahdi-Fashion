@@ -21,7 +21,6 @@ export function appReducer(state: StateType, action: ActionType): StateType {
 
   switch (action.type) {
     case 'SET_SEARCH_TERM':
-    
       return {
         ...state,
         searchTerm: action.payload,

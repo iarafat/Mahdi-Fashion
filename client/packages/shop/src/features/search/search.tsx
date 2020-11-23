@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { SearchBox } from 'components/search-box/search-box';
 import { useAppState, useAppDispatch } from 'contexts/app/app.provider';
@@ -14,14 +14,20 @@ interface Props {
   onSubmit?: () => void;
   [key: string]: unknown;
   className: string;
+  ref?: any;
+  contains?: any;
+  container?: any;
+  current?: any;
+  MutableRefObject?: any;
 }
 
 const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
   const router = useRouter();
+  const container = useRef(null);
   const { pathname, query } = router;
   const [filteredSearchData, setFilteredSearchData] = useState([]);
   const [isShow, setShow] = useState(false);
-
+  
   const { data, error, loading } = useQuery(GET_PRODUCTS_SEARCH,
       {
         variables: { 
@@ -51,8 +57,6 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
       item => item.name.toLowerCase().startsWith(value)
     );
     setFilteredSearchData(result);
-    console.log(filteredSearchData, 'filtered-data')
-    console.log(value);
     filteredSearchData.length > 0 ? setShow(true) : setShow(false);
     
     dispatch({ type: 'SET_SEARCH_TERM', payload: value });
@@ -83,24 +87,23 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
       onSubmit();
     }
   };
-
-  const handleBlur = () => {
-    return setShow(false)
+  const myhandleClick = e => {
+    if (container.current.contains(e.target)) {
+      return;
+    }
+    setShow(false);
   };
 
-  const handleRoute = (route) =>{
-    alert(12)
-    Router.push(`/product`,`${route}`);
-    return false;
-  }
+  useEffect(() => {
+    document.addEventListener("mousedown", myhandleClick);
+    return () => {
+      document.removeEventListener("mousedown", myhandleClick);
+    };
+  }, []);
 
-  const handleClickContent = (e) =>{
-    const serachWrap =  document.getElementsByClassName('searchResultWrap');
-    return false;
-  }
-  //onBlur={handleBlur}
   return (
-    <SearchWrapper className={props.minimal ? 'minimal-wrap' : 'modern-wrap'}>
+    <SearchWrapper className={props.minimal ? 'minimal-wrap' : 'modern-wrap'} 
+      ref={ container } >
       <SearchBox
         onEnter={onSearch}
         onChange={handleOnChange}
@@ -120,17 +123,20 @@ const Search: React.FC<Props> = ({ onSubmit, ...props  }) => {
         }
         {...props}
       />
-      {isShow && 
-        <SearchResultWrap className="searchResultWrap" onClick={ (e)=> handleClickContent(e) } >
+        {isShow && <SearchResultWrap className="searchResultWrap">
             <ul>
               {filteredSearchData.map((item,index) => (
-                  <li onClick={ () => handleRoute(item.slug)} key={index}>
+                  <li 
+                  onClick={() =>
+                    router.push('/product/[slug]', `/product/${item.slug}`)
+                  }
+                  key={index}>
                     {item.name}
                   </li>
               ))}
             </ul>
         </SearchResultWrap>
-      }
+        }
     </SearchWrapper>
   );
 

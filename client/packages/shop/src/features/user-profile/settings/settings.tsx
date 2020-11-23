@@ -284,7 +284,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                     <RadioCard
                       id={index}
                       key={index}
-                      title={item.type}
+                      title={item.is_primary?'Primary' : 'Secondary'}
                       content={item.number}
                       checked={item.is_primary === true}
                       onChange={() =>handlePrimary(item, 'contact')}
@@ -440,7 +440,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
             }
             {passwordChangeMsg &&
               <Button size='big' style={{ width: '100%' }} onClick={handleSavePassord}>
-                <FormattedMessage id='profileSaveBtn' defaultMessage='Loadding...' />
+                <FormattedMessage id='profileSaveBtn' defaultMessage='Loading..' />
               </Button>
             }
           </Col>
