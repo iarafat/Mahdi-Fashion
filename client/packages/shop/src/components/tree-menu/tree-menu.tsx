@@ -5,8 +5,6 @@ import { Frame, Title, Content, Header, IconWrapper } from './tree-menu.style';
 
 import * as Icons from 'assets/icons/category-icons';
 
-console.log(Icons)
-
 const Tree = React.memo(
   ({
     children,
@@ -28,7 +26,6 @@ const Tree = React.memo(
       },
     });
     const Icon = icon ? Icons[icon] : depth === 'child' ? Icons['Minus'] : null;
-    console.log(depth)
     return (
       <Frame depth={depth}>
         <Header open={isOpen} depth={depth} className={depth}>

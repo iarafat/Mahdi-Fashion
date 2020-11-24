@@ -6,21 +6,29 @@ import {
     ICoupon,
     ICommonMessageReturnType,
     ICommonPaginationArgs,
-    ICommonPaginationReturnType, IProduct, ICouponValid
+    ICommonPaginationReturnType, IProduct, ICouponValid, IGetCouponReturnType
 } from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {ICouponInputArgs} from "./types";
 import {search} from "../../../lib/utils/search";
 import {RUNNING} from "../../../lib/utils/constant";
 
-const checkCouponValidity = function (coupon: ICoupon): boolean {
+const checkCouponDateNotExpired = function (coupon: ICoupon): boolean {
 
     const expireDate = new Date(coupon.expiration_date ? coupon.expiration_date : new Date);
     const today = new Date();
+    return (expireDate > today);
+};
+const checkCouponRunningStatus = function (coupon: ICoupon): boolean {
 
-    if(expireDate < today)  throw new Error("Sorry ! This Token is Expired.");
+    return (coupon.status == RUNNING);
+};
 
-    if(coupon.status !== RUNNING)   throw new Error("Sorry ! This Token is Disabled.");
+const checkCouponValidity = function (coupon: ICoupon): boolean {
+
+    if(!checkCouponDateNotExpired(coupon))  throw new Error("Sorry ! This Coupon is Expired.");
+
+    if(!checkCouponRunningStatus)   throw new Error("Sorry ! This Coupon is Disabled.");
 
     return true;
 };
@@ -37,6 +45,9 @@ export const couponsResolvers: IResolvers = {
             {db, req}: { db: Database, req: Request }
         ): Promise<ICommonPaginationReturnType> => {
             let coupons = await db.coupons.find({}).sort({_id: -1}).toArray();
+
+            coupons = coupons.map( coupon => ({ ...coupon, valid: (checkCouponDateNotExpired(coupon) && checkCouponRunningStatus(coupon))}))
+
             coupons = search(coupons, ['title', 'code'], searchText);
             const hasMore = coupons.length > offset + limit;
             return {
@@ -44,20 +55,6 @@ export const couponsResolvers: IResolvers = {
                 totalCount: coupons.length,
                 hasMore,
             }
-        },
-
-        getCoupon: async (
-            _root: undefined,
-            {code}: { code: string },
-            {db, req}: { db: Database, req: Request }
-        ): Promise<ICoupon> => {
-            const coupon = await db.coupons.findOne({code: code});
-
-            if (!coupon) throw new Error("Resource not found.");
-
-            coupon.valid = checkCouponValidity(coupon);
-
-            return coupon;
         },
 
         validateCoupon: async (
@@ -77,7 +74,7 @@ export const couponsResolvers: IResolvers = {
                 console.log(error.message)
                 throw error
             }
-        }
+        },
     },
 
     Mutation: {
@@ -161,6 +158,45 @@ export const couponsResolvers: IResolvers = {
                 status: true
             };
         },
+
+        getCoupon: async (
+            _root: undefined,
+            {code}: { code: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<IGetCouponReturnType> => {
+            let coupon = await db.coupons.findOne({code: code});
+            let message;
+
+            if (!coupon) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if(coupon && !checkCouponDateNotExpired(coupon)) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if(coupon && coupon.status !== RUNNING) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if (message && !message.status) {
+                coupon = null;
+            }
+
+            return {
+                coupon: coupon ? coupon : undefined,
+                message: message ? message : undefined,
+            }
+        },
     },
 
     Coupon: {
@@ -169,4 +205,4 @@ export const couponsResolvers: IResolvers = {
         id: (coupon: ICoupon): string => coupon._id.toString(),
 
     }
-}
+};

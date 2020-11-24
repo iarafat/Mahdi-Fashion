@@ -6,11 +6,18 @@ import { HttpLink } from 'apollo-link-http';
 let apolloClient;
 console.log(process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT);
 function createApolloClient() {
+  let token = null;
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('access_token');
+  }
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
       uri: process.env.NEXT_PUBLIC_GRAPHQL_API_ENDPOINT, // Server URL (must be absolute)
-      credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
+      credentials: 'same-origin', // Additional fetch() options like `credentials`
+      headers: {
+        'x-access-token': token ? token : '',
+      }, // Additional fetch() options like `headers`
       onError: ({ networkError, graphQLErrors }) => {
         console.log('graphQLErrors', graphQLErrors);
         console.log('networkError', networkError);

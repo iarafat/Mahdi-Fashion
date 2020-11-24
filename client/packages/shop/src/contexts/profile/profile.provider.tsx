@@ -1,13 +1,14 @@
 import React, { useReducer } from 'react';
-import { v4 as uuidV4 } from 'uuid';
-import schedules from 'features/checkouts/data';
 import { ProfileContext } from './profile.context';
 
 type Action =
   | { type: 'HANDLE_ON_INPUT_CHANGE'; payload: any }
-  | { type: 'ADD_OR_UPDATE_CONTACT'; payload: any }
+  | { type: 'HANDLE_PASSWORD_CLEAR'; payload: any }
+  | { type: 'ADD_CONTACT'; payload: any }
+  | { type: 'UPDATE_CONTACT'; payload: any }
   | { type: 'DELETE_CONTACT'; payload: any }
-  | { type: 'ADD_OR_UPDATE_ADDRESS'; payload: any }
+  | { type: 'ADD_ADDRESS'; payload: any }
+  | { type: 'UPDATE_ADDRESS'; payload: any }
   | { type: 'DELETE_ADDRESS'; payload: any }
   | { type: 'ADD_CARD'; payload: any }
   | { type: 'DELETE_CARD'; payload: any }
@@ -19,59 +20,67 @@ function reducer(state: any, action: Action): any {
   switch (action.type) {
     case 'HANDLE_ON_INPUT_CHANGE':
       return { ...state, [action.payload.field]: action.payload.value };
-    case 'ADD_OR_UPDATE_CONTACT':
-      if (action.payload.id) {
+    
+    case 'ADD_CONTACT':
+      const newContact = {
+        ...action.payload.values,
+      };
+      return {
+        ...state,
+        phones: [...state.phones, newContact],
+      };
+    
+    case 'UPDATE_CONTACT':
+      if (action.payload.id !== null ) {
         return {
           ...state,
-          contact: state.contact.map((item: any) =>
-            item.id === action.payload.id
-              ? { ...item, ...action.payload }
+          phones: state.phones.map((item: any) =>
+            item.id == action.payload.id
+              ? { ...item, ...action.payload.values }
               : item
           ),
         };
       }
-      const newContact = {
-        ...action.payload,
-        id: uuidV4(),
-        type: state.contact.length === '0' ? 'primary' : 'secondary',
-      };
-      return {
-        ...state,
-        contact: [...state.contact, newContact],
-      };
-
+        
     case 'DELETE_CONTACT':
       return {
         ...state,
-        contact: state.contact.filter(
+        phones: state.phones.filter(
           (item: any) => item.id !== action.payload
         ),
       };
-    case 'ADD_OR_UPDATE_ADDRESS':
-      if (action.payload.id) {
+    
+    case 'ADD_ADDRESS':
+      const newAdress = {
+        ...action.payload
+      };
+      if(state.delivery_address == null){
         return {
           ...state,
-          address: state.address.map((item: any) =>
-            item.id === action.payload.id
-              ? { ...item, ...action.payload }
-              : item
-          ),
+          delivery_address: [newAdress],
+        };
+      }else{
+        return {
+          ...state,
+          delivery_address: [...state.delivery_address, newAdress],
         };
       }
-      const newAdress = {
-        ...action.payload,
-        id: uuidV4(),
-        type: state.address.length === '0' ? 'primary' : 'secondary',
-      };
-      return {
-        ...state,
-        address: [...state.address, newAdress],
-      };
+    case 'UPDATE_ADDRESS':
+        if (action.payload.id) {
+          return {
+            ...state,
+            delivery_address: state.delivery_address.map((item: any, index: any) =>
+              item.id === action.payload.id
+                ? { ...item, ...action.payload.value }
+                : item
+            ),
+          };
+        }
     case 'DELETE_ADDRESS':
       return {
         ...state,
-        address: state.address.filter(
-          (item: any) => item.id !== action.payload
+        delivery_address: state.delivery_address.filter(
+          (item: any, index: any) => item.id !== action.payload
         ),
       };
     case 'ADD_CARD':
@@ -94,34 +103,35 @@ function reducer(state: any, action: Action): any {
     case 'SET_PRIMARY_CONTACT':
       return {
         ...state,
-        contact: state.contact.map((item: any) =>
+        phones: state.phones.map((item: any) =>
           item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+            ? { ...item, is_primary: true, type: 'primary' }
+            : { ...item, is_primary: false, type: 'secondary' }
         ),
       };
     case 'SET_PRIMARY_ADDRESS':
       return {
         ...state,
-        address: state.address.map((item: any) =>
-          item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+        delivery_address: state.delivery_address.map((item: any, index: any) =>
+          item.id == action.payload
+            ? { ...item, is_primary: true }
+            : { ...item, is_primary: false }
         ),
       };
     case 'SET_PRIMARY_SCHEDULE':
       return {
         ...state,
-        schedules: state.schedules.map((item: any) =>
-          item.id === action.payload
-            ? { ...item, type: 'primary' }
-            : { ...item, type: 'secondary' }
+        deliveryMethods: state.deliveryMethods.map((item: any) =>{
+         return( item.id === action.payload
+          ? { ...item, type: 'primary' }
+          : { ...item, type: 'secondary' }
+          )}
         ),
       };
     case 'SET_PRIMARY_CARD':
       return {
         ...state,
-        card: state.card.map((item: any) =>
+        paymentMethods: state.paymentMethods.map((item: any) =>
           item.id === action.payload
             ? { ...item, type: 'primary' }
             : { ...item, type: 'secondary' }
@@ -136,13 +146,13 @@ type ProfileProviderProps = {
   initData: any;
 };
 
-export const ProfileProvider: React.FunctionComponent<ProfileProviderProps> = ({
+export const ProfileProvider:  React.FunctionComponent<ProfileProviderProps>  =  ({
   children,
   initData,
-}) => {
-  const [state, dispatch] = useReducer(reducer, { ...initData, schedules });
-  // console.log(state, 'profile provider state');
+}) =>  {
 
+  const [state, dispatch] = useReducer(reducer, { ...initData });
+ 
   return (
     <ProfileContext.Provider value={{ state, dispatch }}>
       {children}

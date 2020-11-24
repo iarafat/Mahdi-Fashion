@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { Modal } from '@redq/reuse-modal';
+import { useQuery } from '@apollo/react-hooks';
 import StoreNav from 'components/store-nav/store-nav';
 import Carousel from 'components/carousel/carousel';
 import { Banner } from 'components/banner/banner';
@@ -21,7 +22,10 @@ import { useRefScroll } from 'utils/use-ref-scroll';
 import { initializeApollo } from 'utils/apollo';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
 import { GET_CATEGORIES } from 'graphql/query/category.query';
+import { GET_TYPE } from 'graphql/query/type.query';
 import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
+import ErrorMessage from 'components/error-message/error-message';
+import { SHOP_IMAGE_HOST } from 'utils/images-path';
 const Sidebar = dynamic(() => import('layouts/sidebar/sidebar'));
 const Products = dynamic(() =>
   import('components/product-grid/product-list/product-list')
@@ -44,15 +48,37 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
   }, [query.text, query.category]);
   const PAGE_TYPE: any = query.type;
   const page = sitePages[PAGE_TYPE];
+
+
+
+  const { data, loading, error } = useQuery(GET_TYPE, {
+    variables: { 
+      searchText: PAGE_TYPE
+     },
+  });
+
+
+  if (loading) {
+    return <ErrorMessage message={'Loading...'} />
+  };
+
+  if (error) {
+    return (
+      <ErrorMessage message={error.message} />
+    );
+  };
+
+  const{ home_title, home_subtitle, image  } = data.types.items[0];
+
   return (
     <>
-      <SEO title={page?.page_title} description={page?.page_description} />
+      <SEO title={home_title} description={home_subtitle} />
 
       <Modal>
         <Banner
-          intlTitleId={page?.banner_title_id}
-          intlDescriptionId={page?.banner_description_id}
-          imageUrl={page?.banner_image_url}
+          intlTitleId={home_title}
+          intlDescriptionId={home_subtitle}
+          imageUrl={SHOP_IMAGE_HOST+image}
         />
         <MobileCarouselDropdown>
           <StoreNav items={CATEGORY_MENU_ITEMS} />
@@ -90,9 +116,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     variables: {
       type: params.type,
       offset: 0,
-      limit: 20,
+      limit: 20
     },
   });
+
   await apolloClient.query({
     query: GET_CATEGORIES,
     variables: {
@@ -109,13 +136,25 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export async function getStaticPaths() {
+
+  const apolloClient = initializeApollo();
+  const res = await apolloClient.query({
+    query: GET_TYPE,
+    variables: {
+      searchText: ''
+    }
+  });
+
+  const paths = res.data.types.items.map((item) => {
+    return({
+      params: { type: item.slug },
+    })
+  })
+
   return {
-    paths: [
-      { params: { type: 'grocery' } },
-      { params: { type: 'makeup' } },
-      { params: { type: 'bags' } }
-    ],
+    paths,
     fallback: false,
   };
 }
+
 export default CategoryPage;

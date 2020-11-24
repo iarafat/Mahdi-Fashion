@@ -46,11 +46,13 @@ export default function SignOutModal() {
     }
   ] = useMutation(SIGNUP_MUTATION,{
     onCompleted: (data) => {
-      console.log(data)
-      const { access_token } = data.signUp;
+      const { access_token, user } = data.signUp;
       if (typeof window !== 'undefined') {
         localStorage.setItem('access_token', `${access_token}`);
-        authDispatch({ type: 'SIGNIN_SUCCESS' });
+        authDispatch({ 
+          type: 'SIGNIN_SUCCESS',
+          user
+      });
         closeModal();
       }
     },

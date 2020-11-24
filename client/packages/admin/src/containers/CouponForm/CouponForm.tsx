@@ -25,6 +25,7 @@ import { displayErrorMessage, displaySuccessNotification } from '../../helpers/c
 import { AllIconArray } from '../../assets/icons/all-icons';
 import { TYPE } from 'baseui/select';
 import { Textarea } from '../../components/Textarea/Textarea';
+import { CREATED, EXPIRED, RUNNING } from '../../settings/constants';
 
 const GET_COUPONS = gql`
   query GetCoupons( $searchText: String, $offset: Int) {
@@ -73,7 +74,12 @@ const AddCoupon: React.FC<Props> = props => {
   const [code, setCode] = useState('');
   const [percentage, setPercentage] = useState('');
   const [maximumDiscountAmount, setMaximumDiscountAmount] = useState('');
-  const [status, setStatus] = useState('running');
+  const [status, setStatus] = useState([]);
+
+  const statusOptions = [
+    { label: 'Running', value: RUNNING },
+    { label: 'Expired', value: EXPIRED },
+  ];
 
   const [createCoupon] = useMutation(CREATE_COUPON, {
 
@@ -114,7 +120,7 @@ const AddCoupon: React.FC<Props> = props => {
       percentage: parseFloat(percentage),
       maximum_discount_amount: parseFloat(maximumDiscountAmount),
       expiration_date: dateExpired,
-      status: status
+      status: status[0] && status[0].value
     };
 
     createCoupon({
@@ -186,15 +192,45 @@ const AddCoupon: React.FC<Props> = props => {
                     name="maximum_discount_amount"
                   />
                 </FormFields>
+
+                <div data-baseweb="block" className="ai ae bk gs gt gu gv">
+                  <label className="bs dt bu bv gw b9">Expiration Date</label>
+                  <div data-baseweb="input" className="bs bt cq cr cs ae ai">
+                    <div data-baseweb="base-input" className="ct ae ai cu cv cw cx cy cz d0 d1 d2 d3 d4 d5 d6 d7 d8 bs bt cq cr cs d9 da db dc dd">
+                      <DatePicker
+                      className="ct c5 de df dg dh di dj dk dl dm ai dn do cp dp dq dr ds bs dt bu bv b9 du dv"
+                      selected={dateExpired}
+                      onChange={(date) => setDateExpired(date)}
+                      timeInputLabel="Time:"
+                      dateFormat="MM/dd/yyyy h:mm aa"
+                      showTimeInput
+                    />
+                    </div>
+                  </div>
+                </div>
+
                 <FormFields>
-                  <FormLabel>Expiration Date</FormLabel>
-                  <DatePicker
-                    className="form-control"
-                    selected={dateExpired}
-                    onChange={(date) => setDateExpired(date)}
-                    timeInputLabel="Time:"
-                    dateFormat="MM/dd/yyyy h:mm aa"
-                    showTimeInput
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    options={statusOptions}
+                    labelKey="label"
+                    valueKey="value"
+                    placeholder="Select Status"
+                    value={status}
+                    required={true}
+                    searchable={true}
+                    onChange={(e) => setStatus(e.value)}
+                    overrides={{
+                      Popover: {
+                        props: {
+                          overrides: {
+                            Body: {
+                              style: { zIndex: 5 },
+                            },
+                          },
+                        },
+                      },
+                    }}
                   />
                 </FormFields>
               </DrawerBox>

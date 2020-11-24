@@ -7,27 +7,35 @@ interface PaymentCardProps {
   className?: string;
   logo: string;
   alt: string;
-  cardNumber: string;
   name: string;
   color?: string;
+  image?: any;
+  details?: string;
 }
 
 const PaymentCard: React.FunctionComponent<any> = ({
   className,
   onChange,
   onDelete,
+  onClick,
   name,
   id,
   cardType,
   lastFourDigit,
-  type,
   color,
+  type,
+  image,
+  details
+
 }) => {
   function handleChange() {
     onChange();
   }
   function handleDelete() {
     onDelete();
+  }
+  function handleClick(){
+    onClick()
   }
   return (
     <Wrapper
@@ -40,6 +48,7 @@ const PaymentCard: React.FunctionComponent<any> = ({
         name={name}
         value={`payment-card-${id}`}
         onChange={handleChange}
+        onClick={handleClick}
         checked={type === 'primary'}
       />
 
@@ -49,15 +58,9 @@ const PaymentCard: React.FunctionComponent<any> = ({
         lastFourDigit={lastFourDigit}
         color={color}
         name={name}
+        image={image}
+        details={details}
       />
-
-      <DeleteButton
-        // type="submit"
-        onClick={handleDelete}
-        className='card-remove-btn'
-      >
-        <CloseIcon />
-      </DeleteButton>
     </Wrapper>
   );
 };

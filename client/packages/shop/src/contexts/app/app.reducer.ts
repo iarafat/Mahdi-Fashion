@@ -1,3 +1,4 @@
+
 export const initialState = {
   searchTerm: '',
   isSticky: false,
@@ -16,6 +17,8 @@ type ActionType =
 type StateType = typeof initialState;
 
 export function appReducer(state: StateType, action: ActionType): StateType {
+  
+
   switch (action.type) {
     case 'SET_SEARCH_TERM':
       return {

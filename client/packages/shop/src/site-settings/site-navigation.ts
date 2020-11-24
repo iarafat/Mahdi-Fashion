@@ -1,3 +1,7 @@
+
+import { initializeApollo } from 'utils/apollo';
+import { GET_TYPE } from 'graphql/query/type.query';
+
 export const HOME_PAGE = '/';
 export const GROCERY_PAGE = '/grocery';
 export const MAKEUP_PAGE = '/makeup';
@@ -51,8 +55,8 @@ export const PROFILE_MENU_ITEM = {
   href: PROFILE_PAGE,
 };
 export const AUTHORIZED_MENU_ITEMS = [
-  /*PROFILE_MENU_ITEM,
-  {
+  PROFILE_MENU_ITEM,
+  /*{
     id: 'nav.checkout',
     defaultMessage: 'Checkout',
     href: CHECKOUT_PAGE,
@@ -79,6 +83,29 @@ export const AUTHORIZED_MENU_ITEMS = [
     href: PRIVACY_POLICY_PAGE,
   },*/
 ];
+
+export async function CATEGORY_MENU() {
+
+  const apolloClient = initializeApollo();
+  const res = await apolloClient.query({
+    query: GET_TYPE,
+    variables: {
+      searchText: ''
+    }
+  });
+
+ const paths = await res.data.types.items.map((item) => {
+    return({
+      id: item.id,
+      href: `/${item.slug}`,
+      defaultMessage: item.name,
+      icon: item.icon,
+      dynamic: true,
+    })
+  })
+  return paths;
+}
+
 // category menu items for header navigation
 export const CATEGORY_MENU_ITEMS = [
   {

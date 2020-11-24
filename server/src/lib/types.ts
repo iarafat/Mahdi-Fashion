@@ -1,12 +1,12 @@
 import {Collection, ObjectId} from 'mongodb';
 
-interface Phone {
+export interface Phone {
     id: string
     number: string,
     status?: boolean,
     is_primary?: boolean
 }
-interface Address {
+export interface Address {
     id: string
     title: string,
     address: string,
@@ -195,6 +195,21 @@ export interface ISetting {
     value: any;
 }
 
+export interface IGetCouponReturnType {
+    coupon?: ICoupon;
+    message?: ICommonMessageReturnType;
+}
+
+export interface IHomeCard {
+    _id?: ObjectId;
+    name: string;
+    url?: string;
+    types: Array<IProductCategory>;
+    image: string;
+    status?: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
 
 export interface Database {
     users: Collection<IUser>;
@@ -206,4 +221,5 @@ export interface Database {
     orders: Collection<IOrder>;
     settings: Collection<ISetting>;
     coupons: Collection<ICoupon>;
+    home_cards: Collection<IHomeCard>;
 }

@@ -9,7 +9,7 @@ const StyledAside = styled.aside({
   alignItems: 'center',
   height: '100vh',
   padding: '1.5rem',
-  fontSize: 'xl',
-  color: 'white',
-  backgroundColor: 'red',
+  fontSize: '22px',
+  color: '000',
+  backgroundColor: '#fff',
 });

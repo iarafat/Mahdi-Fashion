@@ -318,7 +318,27 @@ export const typeDefs = gql`
         valid: Boolean
     }
 
+    type GetCouponRetrunType {
+        coupon: Coupon
+        message: DefaultMessageType
+    }
 
+    type HomeCard {
+        id: ID!
+        name: String!
+        url: String
+        image: String!
+        status: Boolean
+        types: [ProductCategory!]!
+        created_at: String
+        updated_at: String
+    }
+    type HomeCardPaginationType {
+        items: [HomeCard]
+        totalCount: Int
+        hasMore: Boolean
+    }
+    
     type Query {
         users: [User!]!
         types(limit: Int = 12, offset: Int = 0, searchText: String): MainTypePaginationType!
@@ -329,14 +349,15 @@ export const typeDefs = gql`
         deliveryMethods(limit: Int = 12, offset: Int = 0, searchText: String): DeliveryMethodPaginationType!
         paymentOptions(limit: Int = 12, offset: Int = 0, searchText: String): PaymentOptionPaginationType!
         orders(status: String, limit: Int = 12, offset: Int = 0, searchText: String): OrderPaginationType!
-        getUserOrders(id: String!): [Order!]!
+        getUserOrders: [Order!]!
         getSetting(key: String!): Setting!
         getSiteSetting(key: String!): Setting!
         getUser: User!
         coupons(limit: Int = 12, offset: Int = 0, searchText: String): CouponPaginationType!
-        getCoupon(code: String!): Coupon!
         validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
+        homeCards(limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
+        getHomeCards(type: String, limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
     }
     
     type Mutation {
@@ -360,19 +381,22 @@ export const typeDefs = gql`
         createOrder(input: OrderInput): Order!
         updateSiteSetting(key: String!, value: String!): Setting!
         updateUserNameAndEmail(id: ID!, name: String!, email: String!): DefaultMessageType!
-        addPhoneNumber(id: ID!, number: String!): DefaultMessageType!
-        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): DefaultMessageType!
+        addPhoneNumber(id: ID!, number: String!): Phone!
+        updatePhoneNumber(id: ID!, phoneId: String!, number: String!): Phone!
         setPhoneNumberPrimary(id: ID!, phoneId: String!): DefaultMessageType!
         deletePhoneNumber(id: ID!, phoneId: String!): DefaultMessageType!
-        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
-        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DefaultMessageType!
+        addDeliveryAddress(id: ID!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
+        updateDeliveryAddress(id: ID!, addressId: String!, title: String!, address: String!, division: String, district: String, region: String): DeliveryAddress!
         setDeliveryAddressPrimary(id: ID!, addressId: String!): DefaultMessageType!
         deleteDeliveryAddress(id: ID!, addressId: String!): DefaultMessageType!
         changePassword(id: ID!, old_password: String!, new_password: String!, confirm_password: String!): DefaultMessageType!
         updateOrderStatus(id: ID!, orderingPosition: Int!): Order!
-
         createCoupon(input: CouponInput): Coupon!
         updateCoupon(id: ID!, input: CouponInput): Coupon!
         deleteCoupon(id: ID!): DefaultMessageType!
+        getCoupon(code: String!): GetCouponRetrunType!
+        createHomeCard(name: String!, url: String, image: String!, image_data: File!, status: Boolean, types: String!): HomeCard!
+        updateHomeCard(id: String!, name: String!, url: String, image: String!, image_data: File, status: Boolean, types: String!): HomeCard!
+        deleteHomeCard(id: ID!): DefaultMessageType!
     }
 `;

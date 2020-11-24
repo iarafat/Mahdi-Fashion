@@ -4,6 +4,7 @@ import {
   DeliveryInfo as DeliveryInfos,
   DeliveryAddress as DeliveryAddresses,
   Address as Addresses,
+  Contact as Contacts,
   CostCalculation as CostCalculations,
   PriceRow as PriceRows,
   Price as Prices,
@@ -12,6 +13,7 @@ import {
 } from '../order-details/order-details.style';
 
 export const Address = styled(Addresses)``;
+export const Contact = styled(Contacts)``;
 export const PriceRow = styled(PriceRows)``;
 export const Price = styled(Prices)``;
 export const OrderTable = styled(OrderTables)``;

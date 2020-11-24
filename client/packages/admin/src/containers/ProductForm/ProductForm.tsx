@@ -42,10 +42,12 @@ const GET_PRODUCTS = gql`
         type {
           id
           slug
+          name
         }
         categories {
           id
           slug
+          name
         }
         name
         slug
@@ -111,10 +113,12 @@ const CREATE_PRODUCT = gql`
       type {
         id
         slug
+        name
       }
       categories {
         id
         slug
+        name
       }
       name
       slug
