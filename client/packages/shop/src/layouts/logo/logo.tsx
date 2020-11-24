@@ -23,10 +23,8 @@ const Logo: React.FC<LogoProps> = ({ refs, imageUrl, alt, onClick }: any) => {
   }, [data])
 
   function onLogoClick() {
-    Router.push('/');
-    if (onClick) {
-      onClick();
-    }
+    Router.push('/[type]', `${onClick.href}`);
+    return;
   }
   return (
     <LogoBox onClick={onLogoClick} ref={refs}>

@@ -4,8 +4,12 @@ import Router from 'next/router';
 
 // the redirect will only happen on the client-side. This is by design,
 const IndexPage: React.FC<{}> = () => {
+  let defaultMenu = null;
+  if(localStorage.getItem('myMenu')){
+    defaultMenu = JSON.parse(localStorage.getItem('myMenu'));
+  }
   useEffect(() => {
-    Router.replace('/[type]', '/grocery');
+    Router.replace('/[type]', `${defaultMenu.href}`);
   });
   return (
     <Head>

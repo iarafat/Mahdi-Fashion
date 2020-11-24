@@ -181,7 +181,6 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
     setTimeout(function () {
       setUserinfoMsg('');
     }, 8000)
-    
   };
 
   const handleSavePassord = async () => {
