@@ -86,10 +86,12 @@ const GET_PRODUCTS = gql`
         type {
           id
           slug
+          name
         }
         categories {
           id
           slug
+          name
         }
         name
         slug
@@ -151,9 +153,9 @@ const GET_CATEGORIES = gql`
 
 export default function Products() {
   const [offset, setOffset] = useState(0);
-  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
-  const { data: categoryData, error: categoryError, refetch: categoryRefetch } = useQuery(GET_CATEGORIES);
-  const { data, error, refetch, fetchMore } = useQuery(GET_PRODUCTS);
+  const { data: typeData, error: typeError, refetch: typeRefetch, loading: typeLoading } = useQuery(GET_TYPES);
+  const { data: categoryData, error: categoryError, refetch: categoryRefetch, loading: categoryLoading } = useQuery(GET_CATEGORIES);
+  const { data, error, refetch, fetchMore, loading } = useQuery(GET_PRODUCTS);
 
   const [loadingMore, toggleLoading] = useState(false);
   const [type, setType] = useState([]);
@@ -165,6 +167,18 @@ export default function Products() {
       () => dispatch({type: 'OPEN_DRAWER', drawerComponent: 'PRODUCT_FORM'}),
       [dispatch]
   );
+
+  if(!loading) {
+    refetch();
+  }
+
+  if(!categoryLoading) {
+    categoryRefetch();
+  }
+
+  if(!typeLoading) {
+    typeRefetch();
+  }
 
   if (error) {
     return <div>Error! {error.message}</div>;
