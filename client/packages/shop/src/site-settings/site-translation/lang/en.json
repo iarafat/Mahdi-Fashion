@@ -106,7 +106,7 @@
   "paymentMethodName": "Cash on delivery",
   "orderDetailsText": "Order Details",
   "totalItemText": "Total Item",
-  "orderTimeText": "Order Time",
+  "orderTimeText": "Order Method",
   "deliveryTimeText": "Delivery Time",
   "deliveryLocationText": "Delivery Location",
   "totalAmountText": "Total Amount",

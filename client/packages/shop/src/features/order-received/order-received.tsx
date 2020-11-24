@@ -136,7 +136,7 @@ const OrderReceived: React.FunctionComponent<OrderReceivedProps> = (props) => {
               <Text bold>
                 <FormattedMessage
                   id="orderTimeText"
-                  defaultMessage="Order Time"
+                  defaultMessage="Order Method"
                 />
               </Text>
             </ListTitle>
