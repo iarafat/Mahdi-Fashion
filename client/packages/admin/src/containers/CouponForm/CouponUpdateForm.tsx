@@ -193,7 +193,7 @@ const UpdateCoupon: React.FC<Props> = props => {
                     value={status}
                     required={true}
                     searchable={true}
-                    onChange={(e) => setStatus(e.value)}
+                    onChange={(e) => setStatus(e[0].value)}
                     overrides={{
                       Popover: {
                         props: {
