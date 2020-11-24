@@ -52,13 +52,6 @@ const OrderCard: React.FC<OrderCardProps> = ({
             />
             : <span>{date}</span>
           </Meta>
-          <Meta>
-            <FormattedMessage
-              id="deliveryTimeText"
-              defaultMessage="Delivery Time"
-            />
-            : <span>{deliveryTime}</span>
-          </Meta>
           <Meta className="price">
             <FormattedMessage
               id="intlOrderCardTotalText"

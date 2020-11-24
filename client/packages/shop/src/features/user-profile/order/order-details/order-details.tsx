@@ -31,6 +31,7 @@ type OrderDetailsProps = {
   discount?: number;
   grandTotal?: number;
   ref?: any;
+  deliveryMethod?: any;
 };
 
 const components = {
@@ -48,6 +49,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   subtotal,
   discount,
   grandTotal,
+  deliveryMethod,
   ref
 }) => {
 
@@ -63,6 +65,13 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
     <>
       <DeliveryInfo>
         <DeliveryAddress>
+          <h3>
+            <FormattedMessage
+              id="deliveryAddressTitle"
+              defaultMessage="Delivery Method"
+            />
+          </h3>
+          <Contact>{deliveryMethod.name}</Contact>
           <h3>
             <FormattedMessage
               id="deliveryAddressTitle"

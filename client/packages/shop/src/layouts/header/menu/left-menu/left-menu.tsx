@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Router, { useRouter } from 'next/router';
 import { FormattedMessage } from 'react-intl';
 import Popover from 'components/popover/popover';
 import Logo from 'layouts/logo/logo';
 import { MenuDown } from 'assets/icons/MenuDown';
-import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
+import { CATEGORY_MENU_ITEMS,CATEGORY_MENU } from 'site-settings/site-navigation';
 import * as categoryMenuIcons from 'assets/icons/category-menu-icons';
 import {
   MainMenu,
@@ -15,13 +15,15 @@ import {
   LeftMenuBox,
 } from './left-menu.style';
 
-
 const CategoryIcon = ({ name }) => {
   const TagName = categoryMenuIcons[name];
-  return !!TagName ? <TagName /> : <p>Invalid icon {name}</p>;
+  return !!TagName ? <TagName /> : <p> </p>;
 };
 
 const CategoryMenu = (props: any) => {
+
+  const [typeMenu, setTypeMenu] = useState([]);
+
   const handleOnClick = (item) => {
     if (item.dynamic) {
       Router.push('/[type]', `${item.href}`);
@@ -32,14 +34,22 @@ const CategoryMenu = (props: any) => {
     props.onClick(item);
   };
 
+  useEffect(() => {
+    CATEGORY_MENU().then((res) => {
+      setTypeMenu(res);
+    })
+    return;
+  }, []);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {CATEGORY_MENU_ITEMS.map((item) => (
+      {typeMenu.map((item) => {
+        return(
         <MenuItem key={item.id} {...props} onClick={() => handleOnClick(item)}>
           <CategoryIcon name={item.icon} />
           <FormattedMessage id={item.id} defaultMessage={item.defaultMessage} />
         </MenuItem>
-      ))}
+      )})}
     </div>
   );
 };
@@ -49,15 +59,24 @@ type Props = {
 };
 
 export const LeftMenu: React.FC<Props> = ({ logo }) => {
+  const [typeMenu, setTypeMenu] = useState([]);
+  
+  useEffect(() => {
+    CATEGORY_MENU().then((res) => {
+      setTypeMenu(res);
+    })
+    return;
+  }, []);
+
   const router = useRouter();
-  const initialMenu = CATEGORY_MENU_ITEMS.find(
-    (item) => item.href === router.asPath
+  const initialMenu = typeMenu.find(
+    (item) => item.href == router.asPath
   );
   const [activeMenu, setActiveMenu] = React.useState(
     initialMenu ?? CATEGORY_MENU_ITEMS[0]
   );
 
-  return (
+  return(
     <LeftMenuBox>
       <Logo
         imageUrl={logo}

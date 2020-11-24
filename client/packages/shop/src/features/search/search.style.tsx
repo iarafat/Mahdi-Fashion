@@ -22,7 +22,6 @@ export const SearchResultWrap = styled.div`
   justify-content: flex-start;
   min-width: 450px;
   min-height: 100px;
-  background: red;
   position: absolute;
   left: 0;
   right: 0;

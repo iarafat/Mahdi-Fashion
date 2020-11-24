@@ -94,15 +94,15 @@ export async function CATEGORY_MENU() {
     }
   });
 
-  const paths = res.data.types.items.map((item) => {
+ const paths = await res.data.types.items.map((item) => {
     return({
       id: item.id,
       href: `/${item.slug}`,
       defaultMessage: item.name,
-      dynamic: true
+      icon: item.icon,
+      dynamic: true,
     })
   })
-
   return paths;
 }
 

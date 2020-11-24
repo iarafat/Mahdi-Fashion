@@ -67,6 +67,7 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
     isSubmitting,
   } = props;
   const ID = item.id;
+  let newAddressid = null;
   const addressItem = item.item;
   const addressValue = {
     id: ID,
@@ -86,7 +87,7 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
     if (isValid) {
       const {id, addressId, title, address, division, district, region} = addressValue;
       if(Object.keys(addressItem).length === 0){
-        const addressData = await addAddressMutation({
+        const {data}  = await addAddressMutation({
           variables: { 
             id,
             title,
@@ -96,6 +97,8 @@ const UpdateAddressTwo = (props: FormikProps<FormValues> & MyFormProps) => {
             region
            },
         });
+        newAddressid = data.addDeliveryAddress.id;
+        addressValue.id = data.addDeliveryAddress.id;
         dispatch({
           type: 'ADD_ADDRESS',
           payload: addressValue 

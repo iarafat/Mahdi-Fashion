@@ -17,8 +17,13 @@ mutation AddDeliveryAddress(
     district: $district,
     region: $region
   ) {
-   status
-    message
+    id
+    title
+    address
+    division
+    district
+    region
+    is_primary
   }
 }
 `;
@@ -43,8 +48,13 @@ export const UPDATE_ADDRESS = gql`
         district: $district,
         region: $region
     ){
-      message
-      status
+      id
+      title
+      address
+      division
+      district
+      region
+      is_primary
     }
   }
 `;

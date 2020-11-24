@@ -23,7 +23,7 @@ import { initializeApollo } from 'utils/apollo';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
 import { GET_CATEGORIES } from 'graphql/query/category.query';
 import { GET_TYPE } from 'graphql/query/type.query';
-import { CATEGORY_MENU_ITEMS,CATEGORY_MENU } from 'site-settings/site-navigation';
+import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
 import ErrorMessage from 'components/error-message/error-message';
 import { SHOP_IMAGE_HOST } from 'utils/images-path';
 const Sidebar = dynamic(() => import('layouts/sidebar/sidebar'));
@@ -48,6 +48,7 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
   }, [query.text, query.category]);
   const PAGE_TYPE: any = query.type;
   const page = sitePages[PAGE_TYPE];
+
 
 
   const { data, loading, error } = useQuery(GET_TYPE, {

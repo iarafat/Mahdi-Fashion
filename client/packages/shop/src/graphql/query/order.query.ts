@@ -5,6 +5,7 @@ export const GET_ORDERS = gql`
   query GetUserOrders {
     getUserOrders {
       id
+      order_code
       customer_id
       contact_number
       datetime

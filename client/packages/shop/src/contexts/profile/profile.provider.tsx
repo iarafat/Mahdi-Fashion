@@ -4,7 +4,8 @@ import { ProfileContext } from './profile.context';
 type Action =
   | { type: 'HANDLE_ON_INPUT_CHANGE'; payload: any }
   | { type: 'HANDLE_PASSWORD_CLEAR'; payload: any }
-  | { type: 'ADD_OR_UPDATE_CONTACT'; payload: any }
+  | { type: 'ADD_CONTACT'; payload: any }
+  | { type: 'UPDATE_CONTACT'; payload: any }
   | { type: 'DELETE_CONTACT'; payload: any }
   | { type: 'ADD_ADDRESS'; payload: any }
   | { type: 'UPDATE_ADDRESS'; payload: any }
@@ -20,7 +21,16 @@ function reducer(state: any, action: Action): any {
     case 'HANDLE_ON_INPUT_CHANGE':
       return { ...state, [action.payload.field]: action.payload.value };
     
-    case 'ADD_OR_UPDATE_CONTACT':
+    case 'ADD_CONTACT':
+      const newContact = {
+        ...action.payload.values,
+      };
+      return {
+        ...state,
+        phones: [...state.phones, newContact],
+      };
+    
+    case 'UPDATE_CONTACT':
       if (action.payload.id !== null ) {
         return {
           ...state,
@@ -31,14 +41,7 @@ function reducer(state: any, action: Action): any {
           ),
         };
       }
-      const newContact = {
-        ...action.payload.values,
-      };
-      return {
-        ...state,
-        phones: [...state.phones, newContact],
-      };
-
+        
     case 'DELETE_CONTACT':
       return {
         ...state,
@@ -46,15 +49,22 @@ function reducer(state: any, action: Action): any {
           (item: any) => item.id !== action.payload
         ),
       };
+    
     case 'ADD_ADDRESS':
       const newAdress = {
-
         ...action.payload
       };
-      return {
-        ...state,
-        delivery_address: [...state.delivery_address, newAdress],
-      };
+      if(state.delivery_address == null){
+        return {
+          ...state,
+          delivery_address: [newAdress],
+        };
+      }else{
+        return {
+          ...state,
+          delivery_address: [...state.delivery_address, newAdress],
+        };
+      }
     case 'UPDATE_ADDRESS':
         if (action.payload.id) {
           return {

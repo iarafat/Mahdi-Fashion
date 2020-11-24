@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { Col } from 'react-styled-flexboxgrid';
 import { openModal } from '@redq/reuse-modal';
@@ -20,6 +20,8 @@ import {
   Title,
   Row,
   ButtonGroup,
+  SuccessMsg,
+  ErrorMsg
 } from './settings.style';
 import RadioGroupTwo from 'components/radio-group/radio-group-two';
 import RadioGroupThree from 'components/radio-group/radio-group-three';
@@ -44,6 +46,8 @@ type SettingsContentProps = {
 
 const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
   const { state, dispatch } = useContext(ProfileContext);
+  const [userinfoMsg, setUserinfoMsg] = useState('');
+  const [passwordChangeMsg, setPasswordChangeMsg] = useState('');
   const {
     authState: { isAuthenticated },
     authDispatch,
@@ -173,6 +177,11 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
          email
         }
     });
+    setUserinfoMsg('Update user info successfully');
+    setTimeout(function () {
+      setUserinfoMsg('');
+    }, 8000)
+    
   };
 
   const handleSavePassord = async () => {
@@ -190,6 +199,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
         authDispatch({ type: 'SIGN_OUT' });
         Router.push('/');
       }
+      setPasswordChangeMsg('Loadding...')
   };
 
 
@@ -247,6 +257,14 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
               <FormattedMessage id='profileSaveBtn' defaultMessage='Save' />
             </Button>
           </Col>
+          {userinfoMsg && (
+              <SuccessMsg>
+                <FormattedMessage
+                  id='userInfoSuccess'
+                  defaultMessage={userinfoMsg}
+                />
+              </SuccessMsg>
+          )}
         </Row>
         <Row>
           <Col xs={12} sm={12} md={12} lg={12}>
@@ -266,7 +284,7 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
                     <RadioCard
                       id={index}
                       key={index}
-                      title={item.type}
+                      title={item.is_primary?'Primary' : 'Secondary'}
                       content={item.number}
                       checked={item.is_primary === true}
                       onChange={() =>handlePrimary(item, 'contact')}
@@ -415,9 +433,16 @@ const SettingsContent: React.FC<SettingsContentProps> = ({ deviceType }) => {
             />
           </Col>
           <Col xs={12} sm={2} md={2} lg={3}>
-            <Button size='big' style={{ width: '100%' }} onClick={handleSavePassord}>
-              <FormattedMessage id='profileSaveBtn' defaultMessage='Save' />
-            </Button>
+            {!passwordChangeMsg &&
+              <Button size='big' style={{ width: '100%' }} onClick={handleSavePassord}>
+                <FormattedMessage id='profileSaveBtn' defaultMessage='Save' />
+              </Button>
+            }
+            {passwordChangeMsg &&
+              <Button size='big' style={{ width: '100%' }} onClick={handleSavePassord}>
+                <FormattedMessage id='profileSaveBtn' defaultMessage='Loading..' />
+              </Button>
+            }
           </Col>
         </Row>
 

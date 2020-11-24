@@ -104,7 +104,6 @@ const OrdersContent: React.FC<{}> = () => {
     setOrder(order);
     setActive(order.id);
   };
-
   return (
     <OrderBox>
       <DesktopView>
@@ -128,11 +127,10 @@ const OrdersContent: React.FC<{}> = () => {
                 myOrder.map((current: any, index: any) => (
                   <OrderCard
                     key={index}
-                    orderId={index}
+                    orderId={current.order_code}
                     className={index === active ? 'active' : ''}
-                    status={progressData[1 - 1]}
+                    status={current.status}
                     date={current.datetime.split('2020').shift()}
-                    deliveryTime={current.status}
                     amount={current.total}
                     onClick={() => {
                       handleClick(current);
@@ -170,6 +168,7 @@ const OrdersContent: React.FC<{}> = () => {
               grandTotal={order.total}
               tableData={order.products}
               columns={orderTableColumns}
+              deliveryMethod={order.delivery_method}
             />
           )}
         </OrderDetailsWrapper>
