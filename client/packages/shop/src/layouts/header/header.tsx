@@ -38,7 +38,7 @@ const Header: React.FC<Props> = ({ className }) => {
       closeOnClickOutside: true,
       component: AuthenticationForm,
       closeComponent: '',
-      config: {
+      config:{
         enableResizing: false,
         disableDragging: true,
         className: 'quick-view-modal',

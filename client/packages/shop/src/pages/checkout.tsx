@@ -8,9 +8,7 @@ import Checkout from 'features/checkouts/checkout-two/checkout-two';
 import { GET_LOGGED_IN_USER } from 'graphql/query/customer.query';
 import { DELIVERY_METHOD } from 'graphql/query/delivery';
 import { PAYMENT_OPTION } from 'graphql/query/paymentoption';
-
 import { ProfileProvider } from 'contexts/profile/profile.provider';
-import { initializeApollo } from 'utils/apollo';
 import ErrorMessage from 'components/error-message/error-message';
 
 type Props = {
@@ -29,9 +27,11 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
     return <ErrorMessage message={'Loading...'} />
   }
   if (error || deliveryError || paymentError) {
-    Router.push('/');
+    setTimeout(function () {
+      Router.push('/');
+    }, 2000)
     return (
-      <ErrorMessage message={error.message} />
+      <ErrorMessage message={'Please login for checkout'} />
     );
   } 
   const token = 'true';
