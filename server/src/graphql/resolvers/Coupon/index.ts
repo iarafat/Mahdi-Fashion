@@ -57,45 +57,6 @@ export const couponsResolvers: IResolvers = {
             }
         },
 
-        getCoupon: async (
-            _root: undefined,
-            {code}: { code: string },
-            {db, req}: { db: Database, req: Request }
-        ): Promise<IGetCouponReturnType> => {
-            let coupon = await db.coupons.findOne({code: code});
-            let message;
-
-            if (!coupon) {
-                message = {
-                    status: false,
-                    message: "Coupon invalid."
-                }
-            }
-
-            if(coupon && !checkCouponDateNotExpired(coupon)) {
-                message = {
-                    status: false,
-                    message: "Coupon invalid."
-                }
-            }
-
-            if(coupon && coupon.status !== RUNNING) {
-                message = {
-                    status: false,
-                    message: "Coupon invalid."
-                }
-            }
-
-            if (message && !message.status) {
-                coupon = null;
-            }
-
-            return {
-                coupon: coupon ? coupon : undefined,
-                message: message ? message : undefined,
-            }
-        },
-
         validateCoupon: async (
             _root: undefined,
             {code}: { code: string },
@@ -196,6 +157,45 @@ export const couponsResolvers: IResolvers = {
                 message: 'Resource successfully deleted.',
                 status: true
             };
+        },
+
+        getCoupon: async (
+            _root: undefined,
+            {code}: { code: string },
+            {db, req}: { db: Database, req: Request }
+        ): Promise<IGetCouponReturnType> => {
+            let coupon = await db.coupons.findOne({code: code});
+            let message;
+
+            if (!coupon) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if(coupon && !checkCouponDateNotExpired(coupon)) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if(coupon && coupon.status !== RUNNING) {
+                message = {
+                    status: false,
+                    message: "Coupon invalid."
+                }
+            }
+
+            if (message && !message.status) {
+                coupon = null;
+            }
+
+            return {
+                coupon: coupon ? coupon : undefined,
+                message: message ? message : undefined,
+            }
         },
     },
 

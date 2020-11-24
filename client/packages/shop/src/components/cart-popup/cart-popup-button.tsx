@@ -5,6 +5,7 @@ import {
   ItemCount,
   PriceBox,
   CartPopupBoxButton,
+  CartPopupBoxButtonV2,
   PriceBoxAlt,
   TotalItems,
 } from './cart-popup.style';
@@ -63,6 +64,20 @@ export const BoxedCartButton: React.FC<CartButtonProps> = ({
       {parseFloat(`${price}`).toFixed(2)}
     </PriceBoxAlt>
   </CartPopupBoxButton>
+);
+
+export const BoxedCartButtonV2: React.FC<CartButtonProps> = ({
+  itemCount,
+  itemPostfix = 'items',
+  price,
+  pricePrefix = '$',
+  style,
+  onClick,
+  className,
+}) => (
+  <CartPopupBoxButtonV2 style={style} onClick={onClick} className={className}>
+      Buy Now
+  </CartPopupBoxButtonV2>
 );
 
 export default CartPopupButton;

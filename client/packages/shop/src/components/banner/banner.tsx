@@ -5,13 +5,11 @@ import {
   Image,
   Content,
   Title,
-  Description,
-  SearchWrapper,
+  Description
 } from './banner.style';
 
 import { Waypoint } from 'react-waypoint';
 import { useAppDispatch } from 'contexts/app/app.provider';
-import Search from 'features/search/search';
 
 interface Props {
   imageUrl: string;
@@ -42,23 +40,17 @@ export const Banner: React.FC<Props> = ({
       <Content>
         <Title>
           <FormattedMessage
-            id={intlTitleId}
-            defaultMessage="Set Your Title Through Language File"
+            id="Set Your Title Through Language File"
+            defaultMessage={intlTitleId}
             values={{ minute: 90 }}
           />
         </Title>
         <Description>
           <FormattedMessage
-            id={intlDescriptionId}
-            defaultMessage="Set Your Description Through Language File"
+            id="Set Your Description Through Language File"
+            defaultMessage={intlDescriptionId}
           />
         </Description>
-        <SearchWrapper>
-          <Search
-            className="banner-search"
-            shadow="0 21px 36px rgba(0,0,0,0.05)"
-          />
-        </SearchWrapper>
         <Waypoint
           onEnter={removeSticky}
           onLeave={setSticky}

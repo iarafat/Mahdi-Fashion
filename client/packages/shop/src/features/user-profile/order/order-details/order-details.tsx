@@ -1,5 +1,7 @@
 import React from 'react';
 import Table from 'rc-table';
+import Link from 'next/link';
+import Router from 'next/router';
 import {
   DeliveryInfo,
   DeliveryAddress,
@@ -7,24 +9,28 @@ import {
   CostCalculation,
   PriceRow,
   Price,
+  Contact,
   ProgressWrapper,
   OrderTableWrapper,
   OrderTable,
+  StyledLink
 } from './order-details.style';
 import Progress from 'components/progress-box/progress-box';
 import { CURRENCY } from 'utils/constant';
 import { FormattedMessage } from 'react-intl';
 
 type OrderDetailsProps = {
+  id?: any;
   tableData?: any;
   columns?: any;
   progressData?: any;
   progressStatus?: any;
   address?: string;
+  number?: string;
   subtotal?: number;
   discount?: number;
-  deliveryFee?: number;
   grandTotal?: number;
+  ref?: any;
 };
 
 const components = {
@@ -35,17 +41,35 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   tableData,
   columns,
   address,
+  number,
+  id,
   progressStatus,
   progressData,
   subtotal,
   discount,
-  deliveryFee,
   grandTotal,
+  ref
 }) => {
+
+  const handleInvocie = () => {
+    Router.push({
+      pathname: '/order-received',
+      query: { itemId: id }
+    })
+    return false
+  }
+
   return (
     <>
       <DeliveryInfo>
         <DeliveryAddress>
+          <h3>
+            <FormattedMessage
+              id="deliveryAddressTitle"
+              defaultMessage="Contact Number"
+            />
+          </h3>
+          <Contact>{number}</Contact>
           <h3>
             <FormattedMessage
               id="deliveryAddressTitle"
@@ -70,17 +94,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             />
             <Price>
               {CURRENCY}
-              {discount}
-            </Price>
-          </PriceRow>
-          <PriceRow>
-            <FormattedMessage
-              id="intlOrderDetailsDelivery"
-              defaultMessage="Delivery Fee"
-            />
-            <Price>
-              {CURRENCY}
-              {deliveryFee}
+              {discount !== null ? discount : 0}
             </Price>
           </PriceRow>
           <PriceRow className="grandTotal">
@@ -92,8 +106,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           </PriceRow>
         </CostCalculation>
       </DeliveryInfo>
-
-      <ProgressWrapper>
+      <StyledLink onClick={handleInvocie}>
+        Get Invoice
+      </StyledLink>
+     {/* <ProgressWrapper>
         <Progress data={progressData} status={progressStatus} />
       </ProgressWrapper>
 
@@ -106,8 +122,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           className="orderDetailsTable"
           // scroll={{ y: 350 }}
         />
-      </OrderTableWrapper>
-    </>
+     </OrderTableWrapper>*/}
+     </>
   );
 };
 

@@ -14,8 +14,6 @@ import {
   Divider,
 } from './authentication-form.style';
 import { useMutation } from '@apollo/react-hooks';
-import { Facebook } from 'assets/icons/Facebook';
-import { Google } from 'assets/icons/Google';
 import { AuthContext } from 'contexts/auth/auth.context';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { closeModal } from '@redq/reuse-modal';
@@ -40,14 +38,6 @@ export default function SignInModal() {
     });
   };
 
-  /*const loginCallback = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('access_token', `${email}.${password}`);
-      authDispatch({ type: 'SIGNIN_SUCCESS' });
-      closeModal();
-    }
-  };*/
-
   const [
     signinMeMutation,
     { 
@@ -57,21 +47,22 @@ export default function SignInModal() {
     }
   ] = useMutation(SIGNIN_MUTATION,{
     onCompleted: (data) => {
-      console.log(data)
-      const { access_token } = data.login;
+      const { access_token, user } = data.login;
       if (typeof window !== 'undefined') {
         localStorage.setItem('access_token', `${access_token}`);
-        authDispatch({ type: 'SIGNIN_SUCCESS' });
+        authDispatch({ 
+          type: 'SIGNIN_SUCCESS',
+          user
+        });
         closeModal();
       }
     },
     onError: (error) => {
       setPhone('');
       setPassword('');
-      console.log(error);
     }
   });
-
+  
   return (
     <Wrapper>
       <Container>

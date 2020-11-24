@@ -1,29 +1,27 @@
 import gql from 'graphql-tag';
 
-export const GET_LOGGED_IN_CUSTOMER = gql`
-  query getUser($id: String = "1") {
-    me(id: $id) {
+export const GET_LOGGED_IN_USER = gql`
+query GetUser{
+  getUser{
+    id
+    name
+    email
+    created_at
+    delivery_address{
       id
-      name
-      email
-      address {
-        id
-        type
-        name
-        info
-      }
-      contact {
-        id
-        type
-        number
-      }
-      card {
-        id
-        type
-        cardType
-        name
-        lastFourDigit
-      }
+      title
+      address
+      division
+      district
+      region
+      is_primary
+    }
+    phones{
+      number
+      id
+      is_primary
     }
   }
+}
 `;
+

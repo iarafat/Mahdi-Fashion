@@ -97,6 +97,31 @@ const CartPopupBoxButton = styled('button')`
   }
 `;
 
+const CartPopupBoxButtonV2 = styled('button')`
+  height: auto;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: ${themeGet('colors.primary.regular', '#009E7F')};
+  padding: 0;
+  border-radius: 45px;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+  position: relative;
+  width: 130px;
+  z-index: 99;
+  color: #fff;
+  font-size: 18px;
+  margin: 0 15px;
+  padding: 8px 0px;
+  @media (max-width: 580px) {
+    display: none;
+  }
+`;
+
 const TotalItems = styled('span')`
   font-family: ${themeGet('fonts.body', 'sans-serif')};
   font-size: ${themeGet('fontSizes.sm', '13')}px;
@@ -137,6 +162,7 @@ export {
   ItemCount,
   PriceBox,
   CartPopupBoxButton,
+  CartPopupBoxButtonV2,
   PriceBoxAlt,
   TotalItems,
 };

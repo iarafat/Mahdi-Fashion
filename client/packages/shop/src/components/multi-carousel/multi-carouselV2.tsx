@@ -2,6 +2,7 @@ import React from 'react';
 import { themeGet } from '@styled-system/theme-get';
 import Carousel from 'react-multi-carousel';
 import styled from 'styled-components';
+import Magnifier from "react-magnifier";
 import { SHOP_IMAGE_HOST } from 'utils/images-path';
 
 const SingleItem = styled.li`
@@ -53,27 +54,24 @@ const CarouselWithCustomDots = ({
   ...rest
 }: any) => {
   const children = items.slice(0, 6).map((item: any, index: number) => (
-    <img
-      src={SHOP_IMAGE_HOST+item}
-      key={index}
-      alt={title}
-      style={{
-        minWidth: 'auto',
-        height: 'auto',
-        position: 'relative',
-        margin: 'auto',
-      }}
-      className='product-image'
+    <Magnifier 
+    key={index}
+    src={SHOP_IMAGE_HOST+item} 
+    className='product-image'
+    mgShape='square'
+    mgWidth={200}
+    mgHeight={200}
     />
+
   ));
-  const images = items.map((item: any, index: number) => {
+  const images = items.map((item: any, index: number) => (
     <img
       src={SHOP_IMAGE_HOST+item}
       key={index}
-      alt={title}
+      alt='Product image'
       style={{ width: '100%', height: '100%', position: 'relative' }}
     />
-  });
+  ));
   const CustomDot = ({
     index,
     onClick,
@@ -82,8 +80,6 @@ const CarouselWithCustomDots = ({
   }: any) => {
     return (
       <SingleItem
-        data-index={index}
-        key={index}
         onClick={() => onClick()}
         className={`custom-dot ${active && 'custom-dot--active'}`}
       >

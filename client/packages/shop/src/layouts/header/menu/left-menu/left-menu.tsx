@@ -15,6 +15,7 @@ import {
   LeftMenuBox,
 } from './left-menu.style';
 
+
 const CategoryIcon = ({ name }) => {
   const TagName = categoryMenuIcons[name];
   return !!TagName ? <TagName /> : <p>Invalid icon {name}</p>;

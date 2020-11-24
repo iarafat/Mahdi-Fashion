@@ -60,6 +60,41 @@ export const OrderReceivedContainer = styled.div`
       color: ${themeGet('colors.white', '#ffffff')};
     }
   }
+  .print-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: ${themeGet('fonts.body', 'Lato')};
+    font-size: ${themeGet('fontSizes.base', '15')}px;
+    font-weight: ${themeGet('fontWeights.regular', '400')};
+    color: ${themeGet('colors.text.regular', '#77798c')};
+    padding: 5px 15px;
+    height: 36px;
+    border: 1px solid ${themeGet('colors.gray.700', '#e6e6e6')};
+    border-radius: ${themeGet('radii.base', '6px')};
+    position: absolute;
+    top: 15px;
+    right: 165px;
+    cursor: pointer;
+    transition: 0.15s ease-in-out;
+    @media (max-width: 767px) {
+      font-size: ${themeGet('fontSizes.sm', '13')}px;
+      height: 34px;
+      padding: 5px 12px;
+    }
+
+    &:hover {
+      background-color: ${themeGet('colors.primary.regular', '#009e7f')};
+      border-color: ${themeGet('colors.primary.regular', '#009e7f')};
+      color: ${themeGet('colors.white', '#ffffff')};
+    }
+  }
+  @media print{    
+    .print-btn,
+    .home-btn{
+      display: none;
+    }
+  }
 `;
 
 export const OrderInfo = styled.div`
