@@ -3,10 +3,10 @@
   "version": "3.0.3",
   "private": true,
   "scripts": {
-    "dev": "next -p 9001",
+    "dev": "next -p 9000",
     "build": "next build",
-    "start": "next start -p 9003",
-    "shop-dev": "next -p 9003"
+    "start": "next start -p 9000",
+    "shop-dev": "next -p 9000"
   },
   "dependencies": {
     "@apollo/react-hooks": "3.1.5",
