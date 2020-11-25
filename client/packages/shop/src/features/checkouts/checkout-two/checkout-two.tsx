@@ -132,7 +132,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     cartProduct = items.map((item: any, index:any) =>({
       product_id: item.id,
       unit: item.unit,
-      quantity: item.quantity,
+      quantity: Number(item.quantity),
       price: item.sale_price
     }))
   }
@@ -360,6 +360,10 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       discount_amount
     } = otherSubmitResult;
 
+    console.log('total = ',typeof(total))
+    console.log('sub_total = ', typeof(sub_total))
+    console.log('discount_amount = ', typeof(discount_amount))
+    console.log('product-price = ', products)
 
     if(
       !customer_id || 

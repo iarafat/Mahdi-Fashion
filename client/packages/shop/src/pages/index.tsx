@@ -23,7 +23,7 @@ const IndexPage: React.FC<{}> = () => {
 
   if (error) {
     return (
-      <ErrorMessage message={error.message} />
+      <ErrorMessage message={'Error occured for only domain routing'} />
     );
   };
 
@@ -38,8 +38,6 @@ const IndexPage: React.FC<{}> = () => {
     selectedMenu = JSON.parse(localStorage.getItem('myMenu'));
     selectedMenu = selectedMenu.href;
   }
-
-
 
   useEffect(() => {
     Router.replace('/[type]', selectedMenu !== null ? selectedMenu : defaultMenu);
