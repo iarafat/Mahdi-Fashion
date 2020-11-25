@@ -373,18 +373,8 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       return null;
     }
     
-    console.log('customer_id', customer_id)
-    console.log('contact_number', contact_number)
-    console.log('delivery_address', delivery_address)
-    console.log('delivery_method_id', delivery_method_id)
-    console.log('payment_option_id', payment_option_id)
-    console.log('products', products)
-    console.log('total', total)
-    console.log('sub_total', sub_total)
-    console.log('discount_amount', discount_amount)
 
-
-    /*await setOrderMutation({
+    await setOrderMutation({
       variables: {input:{ 
         customer_id,
         contact_number,
@@ -407,7 +397,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       Router.push('/profile');
     }
     setLoading(false);
-    setIsValid(false);*/
+    setIsValid(false);
 
   };
 

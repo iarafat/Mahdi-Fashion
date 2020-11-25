@@ -90,7 +90,6 @@ export const LeftMenu: React.FC<Props> = ({ logo }) => {
     })
   })
   const initialMenu = router.asPath == '/' ? typeMenu[0] : typeMenu.find((item) => item.href == router.asPath);
-    console.log(router.asPath)
   if(initialMenu){
     if(localStorage.getItem('myMenu')){
       localStorage.removeItem('myMenu');
