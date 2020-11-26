@@ -159,6 +159,7 @@ export interface OrderProducts {
     quantity: number;
     unit?: string;
     price: number;
+    sale_price?: number;
 }
 
 export interface IOrder {
