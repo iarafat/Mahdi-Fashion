@@ -19,8 +19,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { closeModal } from '@redq/reuse-modal';
 import { Input } from 'components/forms/input';
 import { SIGNIN_MUTATION } from 'graphql/mutation/signin';
-
+import Router, { useRouter } from 'next/router';
 export default function SignInModal() {
+  const router = useRouter();
   const intl = useIntl();
   const { authDispatch } = useContext<any>(AuthContext);
   const [phone, setPhone] = React.useState('');
@@ -55,6 +56,7 @@ export default function SignInModal() {
           user
         });
         closeModal();
+        Router.push('/[type]', router.asPath);
       }
     },
     onError: (error) => {

@@ -29,7 +29,7 @@ export default function ExtendedApp({ Component, pageProps }) {
   const desktop = useMedia('(min-width: 992px)');
   const apolloClient = useApollo(pageProps.initialApolloState);
   return (
-    <ApolloProvider client={apolloClient}>
+    <ApolloProvider client={apolloClient as any}>
       <ThemeProvider theme={defaultTheme}>
         <LanguageProvider messages={messages}>
           <CartProvider>

@@ -1,6 +1,26 @@
 import { useEffect } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
+
+// the redirect will only happen on the client-side. This is by design,
+const IndexPage: React.FC<{}> = () => {
+  useEffect(() => {
+    Router.replace('/[type]', '/grocery');
+  });
+  return (
+    <Head>
+      <meta name="robots" content="noindex, nofollow" />
+    </Head>
+  );
+};
+
+export default IndexPage;
+
+
+
+/*import { useEffect } from 'react';
+import Head from 'next/head';
+import Router from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_TYPE } from 'graphql/query/type.query';
 import ErrorMessage from 'components/error-message/error-message';
@@ -50,3 +70,4 @@ const IndexPage: React.FC<{}> = () => {
 };
 
 export default IndexPage;
+*/
