@@ -19,8 +19,8 @@ type Props = {
   };
 };
 const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
-  const { data: deliverData, error: deliveryError, loading: deliveryLoading } =  useQuery(DELIVERY_METHOD)
-  const { data: paymentData, error: paymentError, loading: paymentLoading } = useQuery(PAYMENT_OPTION);
+  const { data: deliverData, error: deliveryError, loading: deliveryLoading, refetch: deliveryRefetch } =  useQuery(DELIVERY_METHOD)
+  const { data: paymentData, error: paymentError, loading: paymentLoading, refetch: paymentRefetch } = useQuery(PAYMENT_OPTION);
   const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
 
   if (loading || deliveryLoading || paymentLoading) {
@@ -37,9 +37,24 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
   const token = 'true';
   const checkoutData = {
     ...data.getUser, 
-    deliveryMethods:[...deliverData.deliveryMethods.items], 
-    paymentMethods:[...paymentData.paymentOptions.items]
+    deliveryMethods: deliverData && deliverData.deliveryMethods ? [...deliverData.deliveryMethods.items] : [],
+    paymentMethods: paymentData && paymentData.paymentOptions ? [...paymentData.paymentOptions.items] : [],
   }
+
+  if(checkoutData.deliveryMethods.length == 0) {
+    deliveryRefetch();
+    checkoutData.deliveryMethods = [...deliverData.deliveryMethods.items];
+  }
+
+
+  if(checkoutData.paymentMethods.length == 0) {
+    paymentRefetch();
+    checkoutData.paymentMethods = [...deliverData.paymentOptions.items];
+  }
+
+  console.dir(deliverData.deliveryMethods)
+  console.dir(paymentData.paymentOptions)
+
 
   return (
     <>
