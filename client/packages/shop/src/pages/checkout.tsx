@@ -37,8 +37,8 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
   const token = 'true';
   const checkoutData = {
     ...data.getUser, 
-    deliveryMethods: deliverData && deliverData.deliveryMethods ? [...deliverData.deliveryMethods.items] : [],
-    paymentMethods: paymentData && paymentData.paymentOptions ? [...paymentData.paymentOptions.items] : [],
+    deliveryMethods: [],
+    paymentMethods: [],
   }
 
   if(checkoutData.deliveryMethods.length == 0) {
