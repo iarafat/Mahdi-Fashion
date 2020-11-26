@@ -19,9 +19,9 @@ type Props = {
   };
 };
 const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
   const { data: deliverData, error: deliveryError, loading: deliveryLoading } =  useQuery(DELIVERY_METHOD)
   const { data: paymentData, error: paymentError, loading: paymentLoading } = useQuery(PAYMENT_OPTION);
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
 
   if (loading || deliveryLoading || paymentLoading) {
     return <ErrorMessage message={'Loading...'} />
