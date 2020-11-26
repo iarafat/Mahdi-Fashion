@@ -35,8 +35,7 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
     );
   } 
   const token = 'true';
-
-  data.getUser = {
+  const checkoutData = {
     ...data.getUser, 
     deliveryMethods:[...deliverData.deliveryMethods.items], 
     paymentMethods:[...paymentData.paymentOptions.items]
@@ -45,7 +44,7 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
   return (
     <>
       <SEO title="Checkout - Mahdi Fashion" description="Checkout Details" />
-      <ProfileProvider initData={data.getUser}>
+      <ProfileProvider initData={checkoutData}>
         <Modal>
           <Checkout token={token} deviceType={deviceType} />
         </Modal>
