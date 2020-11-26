@@ -35,25 +35,32 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
     );
   } 
   const token = 'true';
+
+  deliveryRefetch();
+  paymentRefetch();
+
+  console.dir(deliverData.deliveryMethods)
+  console.dir(paymentData.paymentOptions)
+
   const checkoutData = {
     ...data.getUser, 
     deliveryMethods: [],
     paymentMethods: [],
   }
 
-  if(checkoutData.deliveryMethods.length == 0) {
-    deliveryRefetch();
+
+ console.dir(deliverData)
+  console.dir(paymentData)
+console.log(checkoutData, checkoutData.deliveryMethods.length, checkoutData.paymentMethods.length)
+
+  if(checkoutData.deliveryMethods.length == 0 && (deliverData || deliverData.deliveryMethods)) {
     checkoutData.deliveryMethods = [...deliverData.deliveryMethods.items];
   }
 
-
-  if(checkoutData.paymentMethods.length == 0) {
-    paymentRefetch();
-    checkoutData.paymentMethods = [...deliverData.paymentOptions.items];
+  if(checkoutData.paymentMethods.length == 0 && (paymentData || paymentData.paymentOptions)) {
+    checkoutData.paymentMethods = [...paymentData.paymentOptions.items];
   }
 
-  console.dir(deliverData.deliveryMethods)
-  console.dir(paymentData.paymentOptions)
 
 
   return (
