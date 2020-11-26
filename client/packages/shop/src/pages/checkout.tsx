@@ -19,9 +19,9 @@ type Props = {
   };
 };
 const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
-  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
   const { data: deliverData, error: deliveryError, loading: deliveryLoading } =  useQuery(DELIVERY_METHOD)
   const { data: paymentData, error: paymentError, loading: paymentLoading } = useQuery(PAYMENT_OPTION);
+  const { data, error, loading } = useQuery(GET_LOGGED_IN_USER);
 
   if (loading || deliveryLoading || paymentLoading) {
     return <ErrorMessage message={'Loading...'} />
@@ -35,8 +35,7 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
     );
   } 
   const token = 'true';
-
-  data.getUser = {
+  const checkoutData = {
     ...data.getUser, 
     deliveryMethods:[...deliverData.deliveryMethods.items], 
     paymentMethods:[...paymentData.paymentOptions.items]
@@ -45,7 +44,7 @@ const CheckoutPage: NextPage<Props> = ({ deviceType }) => {
   return (
     <>
       <SEO title="Checkout - Mahdi Fashion" description="Checkout Details" />
-      <ProfileProvider initData={data.getUser}>
+      <ProfileProvider initData={checkoutData}>
         <Modal>
           <Checkout token={token} deviceType={deviceType} />
         </Modal>
