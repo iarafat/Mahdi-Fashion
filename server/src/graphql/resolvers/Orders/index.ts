@@ -130,6 +130,9 @@ export const ordersResolvers: IResolvers = {
             await authorize(req, db);
 
             const paymentOption = await db.payment_options.findOne({_id: new ObjectId(input.payment_option_id)});
+
+            // Products quantity substation
+
             //const products = await db.products.find({ _id: {$in: makeObjectIds(input.products)}})
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
