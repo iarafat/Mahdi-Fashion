@@ -111,11 +111,16 @@ export default function Category() {
     [dispatch]
   );
 
-  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
+  const { data: typeData, error: typeError, refetch: typeRefetch, loading: typeLoading } = useQuery(GET_TYPES);
   const { data, error, refetch } = useQuery(GET_CATEGORIES);
 
   if (error) {
     return <div>Error! {error.message}</div>;
+  }
+
+
+  if (!typeLoading) {
+    typeRefetch()
   }
 
   function handleSearch(event) {

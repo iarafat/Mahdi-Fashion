@@ -29,7 +29,7 @@ export const LanguageProvider = ({ children, messages }) => {
     <LanguageContext.Provider value={{ locale, changeLanguage, isRtl }}>
       <IntlProvider locale={locale} messages={messages[locale]}>
         <InjectRTL lang={locale} dir={isRtl ? 'rtl' : 'ltr'}>
-          <StyleSheetManager stylisPlugins={isRtl ? [RTLPlugin] : []}>
+          <StyleSheetManager stylisPlugins={[]}>
             {children}
           </StyleSheetManager>
         </InjectRTL>

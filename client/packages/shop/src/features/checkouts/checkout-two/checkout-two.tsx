@@ -132,8 +132,9 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     cartProduct = items.map((item: any, index:any) =>({
       product_id: item.id,
       unit: item.unit,
-      quantity: item.quantity,
-      price: item.sale_price
+      quantity: Number(item.quantity),
+      sale_price: item.sale_price,
+      price: item.price
     }))
   }
   const [loading, setLoading] = useState(false);
@@ -174,7 +175,28 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
   const [appliedCoupon] = useMutation(GET_COUPON);
 
+  const selectedAddress = delivery_address.find(
+    (item) => item.is_primary === true
+  );
+  const selectedContact= phones.find(
+    (item) => item.is_primary === true
+  );
+  
+
   useEffect(() => {
+    removeCoupon();
+    setHasCoupon(false);
+    setSubmitResult({
+      ...submitResult,
+      delivery_address:  `Title: ${selectedAddress.title}, 
+      District: ${selectedAddress.district},  
+      Division: ${selectedAddress.division},  
+      Region: ${selectedAddress.region},  
+      Division: ${selectedAddress.address}
+      `,
+      products: cartProduct,
+      contact_number: selectedContact.number
+    })
     if (
       calculatePrice() > 0 &&
       cartItemsCount > 0 &&
@@ -339,6 +361,10 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       discount_amount
     } = otherSubmitResult;
 
+    console.log('total = ',typeof(total))
+    console.log('sub_total = ', typeof(sub_total))
+    console.log('discount_amount = ', typeof(discount_amount))
+    console.log('product-price = ', products)
 
     if(
       !customer_id || 
@@ -352,6 +378,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       return null;
     }
     
+
     await setOrderMutation({
       variables: {input:{ 
         customer_id,
@@ -376,6 +403,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     }
     setLoading(false);
     setIsValid(false);
+
   };
 
   return (

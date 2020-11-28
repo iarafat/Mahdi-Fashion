@@ -104,6 +104,10 @@ const UpdateCoupon: React.FC<Props> = props => {
     closeDrawer();
   };
 
+  function handleStatus({ value }) {
+    setStatus(value);
+  }
+
   return (
     <>
       <DrawerTitleWrapper>
@@ -167,7 +171,7 @@ const UpdateCoupon: React.FC<Props> = props => {
                   />
                 </FormFields>
                 
-                <div data-baseweb="block" className="ai ae bk gs gt gu gv">
+                <div data-baseweb="block" className="ai ae bk gs gu gv">
                   <label className="bs dt bu bv gw b9">Expiration Date</label>
                   <div data-baseweb="input" className="bs bt cq cr cs ae ai">
                     <div data-baseweb="base-input" className="ct ae ai cu cv cw cx cy cz d0 d1 d2 d3 d4 d5 d6 d7 d8 bs bt cq cr cs d9 da db dc dd">
@@ -193,7 +197,7 @@ const UpdateCoupon: React.FC<Props> = props => {
                     value={status}
                     required={true}
                     searchable={true}
-                    onChange={(e) => setStatus(e.value)}
+                    onChange={handleStatus}
                     overrides={{
                       Popover: {
                         props: {

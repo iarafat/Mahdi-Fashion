@@ -217,7 +217,8 @@ export const typeDefs = gql`
         product_id: String!
         quantity: Int!
         unit: String
-        price: Int!
+        price: Float!
+        sale_price: Float
     }
     input OrderInput {
         customer_id: String!
@@ -225,10 +226,10 @@ export const typeDefs = gql`
         payment_option_id: String!
         delivery_method_id: String!
         delivery_address: String!
-        sub_total: Int
-        total: Int
+        sub_total: Float
+        total: Float
         coupon_code: String
-        discount_amount: Int
+        discount_amount: Float
         products: [OrderProductInput!]!
         payment_id:  String
     }
@@ -244,7 +245,8 @@ export const typeDefs = gql`
         product_id: String!
         quantity: Int!
         unit: String
-        price: Int!
+        price: Float
+        sale_price: Float
     }
     
     type Order {
@@ -256,10 +258,10 @@ export const typeDefs = gql`
       datetime: String
       delivery_method: DeliveryMethod
       delivery_address: String!
-      sub_total: Int
-      total: Int
+      sub_total: Float
+      total: Float
       coupon_code: String
-      discount_amount: Int
+      discount_amount: Float
       payment_id:  String
       payment_method: String!
       payment_status: String!

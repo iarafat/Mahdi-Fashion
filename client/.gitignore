@@ -31,7 +31,6 @@ yarn-error.log*
 .idea/
 .vscode/
 node_modules/
-#build
 .DS_Store
 *.tgz
 my-app*
@@ -48,7 +47,6 @@ packages/server/debug.log
 packages/web/.env
 packages/reusecore
 packages/cloud
-dist/
 
 .docz
 .now

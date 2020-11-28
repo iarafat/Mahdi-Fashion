@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useQuery } from '@apollo/react-hooks';
@@ -8,7 +8,6 @@ import Header from './header/header';
 import { LayoutWrapper } from './layout.style';
 import { isCategoryPage } from './is-home-page';
 import { GET_TYPE } from 'graphql/query/type.query';
-import { array } from 'yup';
 import ErrorMessage from 'components/error-message/error-message';
 const MobileHeader = dynamic(() => import('./header/mobile-header'), {
   ssr: false,
@@ -25,14 +24,12 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
   // deviceType: { mobile, tablet, desktop },
   token,
 }) => {
-  const [typeMenu, setTypeMenu] = useState([]);
-  const [isHome, setHome] = useState(true);
 
   const isSticky = useAppState('isSticky');
   const { pathname, query } = useRouter();
   const type = pathname === '/restaurant' ? 'restaurant' : query.type;
-  const isHomePage = isCategoryPage(type);
-  /*const newTypeArry = [];
+
+  const newTypeArry = [];
   const { data, error, loading } = useQuery(
     GET_TYPE,
     {
@@ -42,14 +39,6 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
     }
   );
 
-
-
-
- useEffect(() => {
-   
-    return;
-  }, []);
- 
 
   if (loading) {
     return <ErrorMessage message={'Loading...'} />
@@ -61,16 +50,21 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
     );
   };
 
-  if(data){
-    data.types.items.map((item: any, index: any) => {
-      newTypeArry.push(item.href)
-    })
-    if(newTypeArry.includes(`/${type}`)){
-      setHome(true)
-    }else{
-      setHome(false)
-    }  
-  }  */
+
+  const isHomeHandler = (typedata: any, type: any) =>{
+    if(typedata){
+      typedata.types.items.map((item: any, index: any) => {
+        newTypeArry.push(item.slug)
+      })
+      if(newTypeArry.includes(`${type}`)){
+        return true;
+      }else{
+        return false;
+      }  
+    } else{
+      return;
+    }
+  }
 
  
   return (
@@ -78,13 +72,13 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
       <Sticky enabled={isSticky} innerZ={1001}>
         <MobileHeader
           className={`${isSticky ? 'sticky' : 'unSticky'} ${
-            isHomePage ? 'home' : ''
+            isHomeHandler(data,type) ? 'home' : ''
           } desktop`}
         />
 
         <Header
-          className={`${isSticky && isHomePage ? 'sticky' : 'unSticky'} ${
-            isHomePage ? 'home' : ''
+          className={`${isSticky && isHomeHandler(data,type) ? 'sticky' : 'unSticky'} ${
+            isHomeHandler(data,type) ? 'home' : ''
           }`}
         />
       </Sticky>
