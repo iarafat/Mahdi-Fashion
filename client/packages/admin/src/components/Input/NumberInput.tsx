@@ -1,6 +1,5 @@
 import React from 'react';
 import { Input as BaseInput, SIZE } from 'baseui/input';
-import {Step} from "baseui/progress-steps";
 
 const getInputFontStyle = ({ $theme }) => {
   return {
@@ -13,7 +12,7 @@ const NumberInput = ({ ...props }) => {
   return (
     <BaseInput
         inputMode="decimal"
-        step={0.01}
+        //step={0.01}
       overrides={{
         Input: {
           style: ({ $theme }) => {

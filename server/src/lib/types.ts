@@ -23,6 +23,8 @@ export interface IUser {
     password: string;
     phones?: Array<Phone>;
     delivery_address?: Array<Address>;
+    otp?: string;
+    role?: string;
     created_at: string;
 }
 

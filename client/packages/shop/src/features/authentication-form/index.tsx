@@ -2,6 +2,8 @@ import React, { useContext } from 'react';
 import SignInForm from './login';
 import SignOutForm from './register';
 import ForgotPassForm from './forgot-password';
+import OtpModal from './otpForm';
+import PhoneVerificationModal from './phone-verification';
 import { AuthContext } from 'contexts/auth/auth.context';
 
 export default function AuthenticationForm() {
@@ -18,6 +20,14 @@ export default function AuthenticationForm() {
 
   if (authState.currentForm === 'forgotPass') {
     RenderForm = ForgotPassForm;
+  }
+
+  if (authState.currentForm === 'otpVerification') {
+    RenderForm = OtpModal;
+  }
+
+  if (authState.currentForm === 'phoneVerification') {
+    RenderForm = PhoneVerificationModal;
   }
 
   return <RenderForm />;

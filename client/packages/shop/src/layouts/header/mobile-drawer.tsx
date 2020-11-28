@@ -24,6 +24,7 @@ import {
 } from './header.style';
 import UserImage from 'assets/images/user.jpg';
 import {
+  AUTHORIZED_MENU_ITEMS,
   MOBILE_DRAWER_MENU,
   PROFILE_PAGE,
 } from 'site-settings/site-navigation';
@@ -120,6 +121,17 @@ const MobileDrawer: React.FunctionComponent = () => {
           </DrawerProfile>
 
           <DrawerMenu>
+            {isAuthenticated && AUTHORIZED_MENU_ITEMS.map((item, idx) => (
+              <DrawerMenuItem key={item.id}>
+              <NavLink
+              onClick={toggleHandler}
+              href={item.href}
+              label={item.defaultMessage}
+              intlId={item.id}
+              className="drawer_menu_item"
+              />
+              </DrawerMenuItem>
+            ))}
             {MOBILE_DRAWER_MENU.map((item) => (
               <DrawerMenuItem key={item.id}>
                 <NavLink
@@ -135,14 +147,6 @@ const MobileDrawer: React.FunctionComponent = () => {
 
           {isAuthenticated && (
             <UserOptionMenu>
-              <DrawerMenuItem>
-                <NavLink
-                  href={PROFILE_PAGE}
-                  label="Your Account Settings"
-                  className="drawer_menu_item"
-                  intlId="navlinkAccountSettings"
-                />
-              </DrawerMenuItem>
               <DrawerMenuItem>
                 <div onClick={handleLogout} className="drawer_menu_item">
                   <span className="logoutBtn">

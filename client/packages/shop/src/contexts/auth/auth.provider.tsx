@@ -21,7 +21,6 @@ function reducer(state: any, action: any) {
           ...state,
           isAuthenticated: true,
           user: action.user,
-          currentForm: 'signIn',
         };
       case 'CURRENT_USER':
         return{
@@ -39,6 +38,18 @@ function reducer(state: any, action: any) {
           ...state,
           currentForm: 'signUp',
           
+        };
+      case 'OTP_VERIFICATION':
+        return {
+          ...state,
+          currentForm: 'otpVerification',
+
+        };
+        case 'PHONE_VERIFICATION':
+        return {
+          ...state,
+          currentForm: 'phoneVerification',
+
         };
       case 'FORGOTPASS':
         return {

@@ -28,6 +28,7 @@ export const typeDefs = gql`
         email: String
         phones: [Phone]
         delivery_address: [DeliveryAddress]
+        role: String
         created_at: String
     }
     
@@ -364,7 +365,9 @@ export const typeDefs = gql`
     
     type Mutation {
         login(phone: String!, password: String!): UserAuthPayload!
-        signUp(phone: String!, password: String!): UserAuthPayload!
+        signUp(phone: String!, password: String!): DefaultMessageType!
+        phoneVerification(phone: String!): DefaultMessageType!
+        phoneVerificationCheck(phone: String!, verification_code: String!): UserAuthPayload!
         createType(input: MainTypeInput): MainType!
         updateType(id: ID!, input: MainTypeInput): MainType!
         deleteType(id: ID!): DefaultMessageType!
