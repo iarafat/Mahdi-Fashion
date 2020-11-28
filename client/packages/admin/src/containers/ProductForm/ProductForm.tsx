@@ -23,6 +23,7 @@ import {getBase64Value} from "../../helpers/convert-image-base64";
 import MultiUploader from "../../components/Uploader/Multi-Uploader";
 import Checkbox, {LABEL_PLACEMENT} from "../../components/CheckBox/CheckBox";
 import {TYPE} from "baseui/select";
+import NumberInput from "../../components/Input/NumberInput";
 
 const GET_PRODUCTS = gql`
   query GetProducts(
@@ -358,7 +359,7 @@ const AddProduct: React.FC<Props> = props => {
 
                 <FormFields>
                   <FormLabel>Price</FormLabel>
-                  <Input
+                  <NumberInput
                     type="number"
                     inputRef={register({ required: true })}
                     name="price"
@@ -367,12 +368,16 @@ const AddProduct: React.FC<Props> = props => {
 
                 <FormFields>
                   <FormLabel>Sale Price</FormLabel>
-                  <Input type="number" inputRef={register} name="salePrice" />
+                  <NumberInput
+                      type="number"
+                      inputRef={register}
+                      name="salePrice" />
                 </FormFields>
 
                 <FormFields>
                   <FormLabel>Discount In Percent</FormLabel>
                   <Input
+                      step="any"
                     type="number"
                     inputRef={register}
                     name="discountInPercent"
