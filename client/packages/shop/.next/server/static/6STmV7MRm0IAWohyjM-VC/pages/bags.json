@@ -1,1 +1,0 @@
-{"pageProps":{"initialApolloState":{"ROOT_QUERY":{"__typename":"Query","products({\"offset\":0,\"type\":\"bags\"})":{"__typename":"ProductPaginationType","items":[],"totalCount":0,"hasMore":false},"shopCategories({\"type\":\"bags\"})":{"__typename":"CatetgoryPaginationType","items":[],"totalCount":0,"hasMore":false}}}},"__N_SSG":true}
