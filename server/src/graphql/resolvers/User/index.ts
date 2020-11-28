@@ -6,6 +6,7 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {authorize} from "../../../lib/utils";
 import shortid from "shortid";
+import {sendOtp} from "../../../lib/utils/number-verification-otp";
 
 const hashPassword = async (password: string) => {
     return await bcrypt.hash(password, 10)
@@ -40,6 +41,17 @@ const authChecker = (token: string, secret: string) => {
     return true;
 }
 
+const generateOTPCode = () => {
+    const digits = '0123456789';
+    const otpLength = 6;
+    let otp = '';
+    for(let i=1; i<=otpLength; i++)
+    {
+        const index = Math.floor(Math.random()*(digits.length));
+        otp = otp + digits[index];
+    }
+    return otp;
+}
 
 export const usersResolvers: IResolvers = {
     Query: {
@@ -87,27 +99,40 @@ export const usersResolvers: IResolvers = {
             _root: undefined,
             {phone, password}: { phone: string, password: string },
             {db}: { db: Database }
-        ): Promise<IUserAuth> => {
+        ): Promise<ICommonMessageReturnType> => {
             const userResult = await db.users.findOne({"phones.number": phone});
+
             if (userResult) {
                 throw new Error("User already registered.");
             }
 
+            if (!phone ||!password || password.length < 6) {
+                throw new Error("Every field is required");
+            }
+
+            const otp = generateOTPCode();
             const user: IUser = {
                 _id: new ObjectId(),
                 name: "",
                 email: "",
                 password: await hashPassword(password),
                 phones: [{id: shortid.generate(), number: phone, status: false, is_primary: true}],
+                otp: otp,
+                role: 'user',
                 created_at: new Date().toString(),
             };
 
-            const insertResult = await db.users.insertOne(user);
-            const insertedUser = insertResult.ops[0];
-            return {
-                user: insertedUser,
-                access_token: accessToken(insertedUser._id),
+            await db.users.insertOne(user);
+
+            const {data, status} = await sendOtp(phone, otp);
+            if (status != 201) {
+                throw new Error("Something went wrong! Please try again.");
             }
+
+            return {
+                status: true,
+                message: "Successfully send otp to your number."
+            };
         },
         login: async (
             _root: undefined,
@@ -123,6 +148,83 @@ export const usersResolvers: IResolvers = {
             if (!validatePass) {
                 throw new Error("Password dose not match.")
             }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const phoneObject = userResult.phones.filter(userPhone => {
+                if (userPhone.number == phone) {
+                    return userPhone
+                }
+            });
+            if (!phoneObject[0].status) {
+                throw new Error("Phone number dose not verified. Please verify your phone number.")
+            }
+
+            return {
+                user: userResult,
+                access_token: accessToken(userResult._id),
+            }
+        },
+        phoneVerification: async (
+            _root: undefined,
+            {phone}: { phone: string },
+            {db}: { db: Database }
+        ): Promise<ICommonMessageReturnType> => {
+            const userResult = await db.users.findOne({"phones.number": phone});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const phoneObject = userResult.phones.filter(userPhone => {
+                if (userPhone.number == phone) {
+                    return userPhone
+                }
+            });
+
+            const otp = generateOTPCode();
+            await db.users.updateOne(
+                {_id: userResult._id, "phones.id": phoneObject[0].id},
+                {$set: {otp: otp}}
+            );
+
+            const {data, status} = await sendOtp(phone, otp);
+            if (status != 201) {
+                throw new Error("Something went wrong! Please try again.");
+            }
+
+            return {
+                status: true,
+                message: "Successfully send otp to your number."
+            };
+        },
+        phoneVerificationCheck: async (
+            _root: undefined,
+            {phone, verification_code}: { phone: string, verification_code: string },
+            {db}: { db: Database }
+        ): Promise<IUserAuth> => {
+            const userResult = await db.users.findOne({"phones.number": phone});
+            if (!userResult) {
+                throw new Error("User dose not exits.");
+            }
+
+            if (userResult.otp != verification_code) {
+                throw new Error("Verification code dose not match.");
+            }
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const phoneObject = userResult.phones.filter(userPhone => {
+                if (userPhone.number == phone) {
+                    return userPhone
+                }
+            });
+
+            await db.users.updateOne(
+                {_id: userResult._id, "phones.id": phoneObject[0].id},
+                {$set: {"phones.$.status": true, otp: ""}}
+            );
 
             return {
                 user: userResult,

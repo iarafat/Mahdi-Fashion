@@ -17,6 +17,7 @@ import 'react-multi-carousel/lib/styles.css';
 import 'components/multi-carousel/multi-carousel.style.css';
 import '@redq/reuse-modal/lib/index.css';
 import { GlobalStyle } from 'assets/styles/global.style';
+import 'react-phone-input-2/lib/material.css'
 
 // Language translation messages
 import { messages } from 'site-settings/site-translation/messages';

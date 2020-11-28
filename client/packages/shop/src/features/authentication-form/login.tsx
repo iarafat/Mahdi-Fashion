@@ -20,6 +20,10 @@ import { closeModal } from '@redq/reuse-modal';
 import { Input } from 'components/forms/input';
 import { SIGNIN_MUTATION } from 'graphql/mutation/signin';
 import Router, { useRouter } from 'next/router';
+import PhoneInput from 'react-phone-input-2'
+import startsWith from 'lodash.startswith';
+
+
 export default function SignInModal() {
   const router = useRouter();
   const intl = useIntl();
@@ -36,6 +40,12 @@ export default function SignInModal() {
   const toggleForgotPassForm = () => {
     authDispatch({
       type: 'FORGOTPASS',
+    });
+  };
+
+  const togglePhoneVerificationForm = () => {
+    authDispatch({
+      type: 'PHONE_VERIFICATION',
     });
   };
 
@@ -64,7 +74,11 @@ export default function SignInModal() {
       setPassword('');
     }
   });
-  
+
+  const handlePhoneChange = (value, data, event, formattedValue) => {
+    setPhone(value)
+  }
+
   return (
     <Wrapper>
       <Container>
@@ -75,7 +89,7 @@ export default function SignInModal() {
         <SubHeading>
           <FormattedMessage
             id='loginText'
-            defaultMessage='Login with your email &amp; password'
+            defaultMessage='Login with your phone number &amp; password'
           />
         </SubHeading>
         <form onSubmit={
@@ -87,18 +101,17 @@ export default function SignInModal() {
               }
           }
         >
-          <Input
-            type='text'
-            placeholder={intl.formatMessage({
-              id: 'emailAddressPlaceholder',
-              defaultMessage: 'Email Address.',
-            })}
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-            height='48px'
-            backgroundColor='#F7F7F7'
-            mb='10px'
+          <PhoneInput
+              inputProps={{
+                name: 'phone',
+                required: true,
+                autoFocus: true
+              }}
+              containerStyle={{textAlign: "left"}}
+              inputStyle={{backgroundColor: "#F7F7F7", height: "48px", marginBottom: "10px", width: "100%"}}
+              country={'bd'}
+              value={phone}
+              onChange={handlePhoneChange}
           />
 
           <Input
@@ -145,6 +158,18 @@ export default function SignInModal() {
       <OfferSection>
         <Offer>
           <FormattedMessage
+            id='phoneVerifyText'
+            defaultMessage='Phone number not verified?'
+          />{' '}
+          <LinkButton onClick={togglePhoneVerificationForm}>
+            <FormattedMessage id='verifyNowText' defaultMessage='Verify Now' />
+          </LinkButton>
+        </Offer>
+      </OfferSection>
+
+      {/*<OfferSection>
+        <Offer>
+          <FormattedMessage
             id='forgotPasswordText'
             defaultMessage='Forgot your password?'
           />{' '}
@@ -152,7 +177,7 @@ export default function SignInModal() {
             <FormattedMessage id='resetText' defaultMessage='Reset It' />
           </LinkButton>
         </Offer>
-      </OfferSection>
+      </OfferSection>*/}
     </Wrapper>
   );
 }

@@ -175,7 +175,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
   const [appliedCoupon] = useMutation(GET_COUPON);
 
-  const selectedAddress = delivery_address.find(
+  const selectedAddress = delivery_address && delivery_address.find(
     (item) => item.is_primary === true
   );
   const selectedContact= phones.find(
@@ -188,11 +188,11 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     setHasCoupon(false);
     setSubmitResult({
       ...submitResult,
-      delivery_address:  `Title: ${selectedAddress.title}, 
-      District: ${selectedAddress.district},  
-      Division: ${selectedAddress.division},  
-      Region: ${selectedAddress.region},  
-      Division: ${selectedAddress.address}
+      delivery_address: `Title: ${delivery_address && selectedAddress.title}, 
+      District: ${delivery_address && selectedAddress.district},  
+      Division: ${delivery_address && selectedAddress.division},  
+      Region: ${delivery_address && selectedAddress.region},  
+      Division: ${delivery_address && selectedAddress.address}
       `,
       products: cartProduct,
       contact_number: selectedContact.number
@@ -200,7 +200,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     if (
       calculatePrice() > 0 &&
       cartItemsCount > 0 &&
-      delivery_address.length &&
+        (delivery_address && delivery_address.length) &&
       phones.length &&
       paymentMethods.length &&
       deliveryMethods.length
@@ -675,27 +675,17 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
 
               {/* CheckoutSubmit */}
               <CheckoutSubmit>
-                {/* <Button
-                  onClick={handleSubmit}
-                  type='button'
-                  disabled={!isValid}
-                  title='Proceed to Checkout'
-                  intlButtonId='proceesCheckout'
-                  loader={<Loader />}
-                  isLoading={loading}
-                /> */}
-
                 <Button
-                  type='button'
-                  onClick={handleSubmit}
-                  disabled={!isValid}
-                  size='big'
-                  loading={loading}
-                  style={{ width: '100%' }}
+                    type='button'
+                    onClick={handleSubmit}
+                    disabled={!isValid}
+                    size='big'
+                    loading={loading}
+                    style={{ width: '100%' }}
                 >
                   <FormattedMessage
-                    id='processCheckout'
-                    defaultMessage='Proceed to Checkout'
+                      id='processCheckout'
+                      defaultMessage='Proceed to Checkout'
                   />
                 </Button>
               </CheckoutSubmit>

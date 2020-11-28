@@ -5,25 +5,19 @@ import { useMutation } from '@apollo/react-hooks';
 import { Input } from 'components/forms/input';
 import {
   Button,
-  IconWrapper,
   Wrapper,
   Container,
-  LogoWrapper,
   Heading,
   SubHeading,
   HelperText,
   Offer,
-  // Input,
-  Divider,
   LinkButton,
 } from './authentication-form.style';
-import { closeModal } from '@redq/reuse-modal';
-import { Facebook } from 'assets/icons/Facebook';
-import { Google } from 'assets/icons/Google';
 import { AuthContext } from 'contexts/auth/auth.context';
 import { FormattedMessage, useIntl } from 'react-intl';
-
 import { SIGNUP_MUTATION } from 'graphql/mutation/signup';
+import PhoneInput from 'react-phone-input-2'
+import startsWith from 'lodash.startswith';
 
 export default function SignOutModal() {
   const intl = useIntl();
@@ -31,6 +25,12 @@ export default function SignOutModal() {
   const toggleSignInForm = () => {
     authDispatch({
       type: 'SIGNIN',
+    });
+  };
+
+  const toggleOtpForm = () => {
+    authDispatch({
+      type: 'OTP_VERIFICATION',
     });
   };
 
@@ -46,14 +46,9 @@ export default function SignOutModal() {
     }
   ] = useMutation(SIGNUP_MUTATION,{
     onCompleted: (data) => {
-      const { access_token, user } = data.signUp;
       if (typeof window !== 'undefined') {
-        localStorage.setItem('access_token', `${access_token}`);
-        authDispatch({ 
-          type: 'SIGNIN_SUCCESS',
-          user
-      });
-        closeModal();
+        localStorage.setItem('phone_number', `${phone}`);
+        toggleOtpForm();
       }
     },
     onError: (error) => {
@@ -63,6 +58,9 @@ export default function SignOutModal() {
     }
   });
 
+  const handlePhoneChange = (value, data, event, formattedValue) => {
+    setPhone(value)
+  }
 
 
   return (
@@ -86,18 +84,17 @@ export default function SignOutModal() {
               }
             }
           >
-            <Input
-              type='text'
-              name="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder={intl.formatMessage({
-                id: 'emailAddressPlaceholder',
-                defaultMessage: 'Email Address or Contact No.',
-              })}
-              height='48px'
-              backgroundColor='#F7F7F7'
-              mb='10px'
+            <PhoneInput
+                inputProps={{
+                  name: 'phone',
+                  required: true,
+                  autoFocus: true
+                }}
+                containerStyle={{textAlign: "left"}}
+                inputStyle={{backgroundColor: "#F7F7F7", height: "48px", marginBottom: "10px", width: "100%"}}
+                country={'bd'}
+                value={phone}
+                onChange={handlePhoneChange}
             />
             <Input
               type='password'
@@ -111,10 +108,11 @@ export default function SignOutModal() {
               height='48px'
               backgroundColor='#F7F7F7'
               mb='10px'
+              required
             />
             <HelperText style={{ padding: '20px 0 30px' }}>
               <FormattedMessage
-                id='signUpText'
+                id='tramsText'
                 defaultMessage="By signing up, you agree to Mahdi Fashion's"
               />
               &nbsp;
@@ -135,7 +133,8 @@ export default function SignOutModal() {
             marginTop: "15px"
           }}>Loading...</p>}
           {error && <p style={{
-            marginTop: "15px"
+            marginTop: "15px",
+            color: "red"
           }}>Please try again</p>}
         <Offer style={{ padding: '20px 0' }}>
           <FormattedMessage

@@ -56,6 +56,7 @@ export const PROFILE_MENU_ITEM = {
 };
 export const AUTHORIZED_MENU_ITEMS = [
   PROFILE_MENU_ITEM,
+  ORDER_MENU_ITEM,
   /*{
     id: 'nav.checkout',
     defaultMessage: 'Checkout',
@@ -167,7 +168,6 @@ export const CATEGORY_MENU_ITEMS = [
 
 export const MOBILE_DRAWER_MENU = [
   HOME_MENU_ITEM,
-  ...AUTHORIZED_MENU_ITEMS,
   HELP_MENU_ITEM,
   OFFER_MENU_ITEM,
 ];
