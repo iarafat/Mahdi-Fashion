@@ -30,14 +30,10 @@ export const homeCardsResolvers: IResolvers = {
             }
         },
         getHomeCards: async (
-            { type, limit, offset, searchText }: {
-                type: string,
-                limit: ICommonPaginationArgs["limit"],
-                offset: ICommonPaginationArgs["offset"],
-                searchText: ICommonPaginationArgs["searchText"]
-            },
+            _root: undefined,
+            {type}: { type: string},
             {db, req}: { db: Database, req: Request }
-        ): Promise<ICommonPaginationReturnType> => {
+        ): Promise<IHomeCard[]> => {
             let data = await db.home_cards.find({status: true}).sort({_id: -1}).toArray();
 
             if (type) {
@@ -48,14 +44,7 @@ export const homeCardsResolvers: IResolvers = {
                 );
             }
 
-            data = search(data, ['name', 'url'], searchText);
-            const hasMore = data.length > offset + limit;
-
-            return {
-                items: limit == 0 ? data : data.slice(offset, offset + limit),
-                totalCount: data.length,
-                hasMore,
-            }
+            return data;
         }
     },
 

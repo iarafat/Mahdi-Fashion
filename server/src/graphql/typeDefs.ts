@@ -360,7 +360,7 @@ export const typeDefs = gql`
         validateCoupon(code: String!): CouponValid!
         userAuthCheck: DefaultMessageType!
         homeCards(limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
-        getHomeCards(type: String, limit: Int = 12, offset: Int = 0, searchText: String): HomeCardPaginationType!
+        getHomeCards(type: String!): [HomeCard]!
     }
     
     type Mutation {

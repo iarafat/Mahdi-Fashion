@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Modal } from '@redq/reuse-modal';
 import { useQuery } from '@apollo/react-hooks';
 import StoreNav from 'components/store-nav/store-nav';
-import Carousel from 'components/carousel/carousel';
+import HomeCardsCarousel from 'components/carousel/homecards-carousel';
 import { Banner } from 'components/banner/banner';
 import {
   MainContentArea,
@@ -23,6 +23,7 @@ import { initializeApollo } from 'utils/apollo';
 import { GET_PRODUCTS } from 'graphql/query/products.query';
 import { GET_CATEGORIES } from 'graphql/query/category.query';
 import { GET_TYPE } from 'graphql/query/type.query';
+import { GET_TYPE_HOMECARDS } from 'graphql/query/type.homecards.query';
 import { CATEGORY_MENU_ITEMS } from 'site-settings/site-navigation';
 import ErrorMessage from 'components/error-message/error-message';
 import { SHOP_IMAGE_HOST } from 'utils/images-path';
@@ -50,21 +51,31 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
   const page = sitePages[PAGE_TYPE];
 
 
+  const { data: homeCardsData, loading: homeCardsLoading, error: homeCardsError } = useQuery(GET_TYPE_HOMECARDS, {
+    variables: { 
+      type: PAGE_TYPE
+     },
+  });
 
   const { data, loading, error } = useQuery(GET_TYPE, {
-    variables: { 
+    variables: {
       searchText: PAGE_TYPE
      },
   });
 
 
-  if (loading) {
+  if (loading || homeCardsLoading) {
     return <ErrorMessage message={'Loading...'} />
   };
 
-  if (error) {
+  if (error || homeCardsError) {
     return (
-      <ErrorMessage message={error.message} />
+      error ? (
+          <ErrorMessage message={error.message} />
+
+      ) : (
+          <ErrorMessage message={homeCardsError.message} />
+      )
     );
   };
 
@@ -84,11 +95,12 @@ const CategoryPage: React.FC<any> = ({ deviceType }) => {
           <StoreNav items={CATEGORY_MENU_ITEMS} />
           <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
         </MobileCarouselDropdown>
-        <OfferSection>
-          <div style={{ margin: '0 -10px' }}>
-            <Carousel deviceType={deviceType} data={siteOffers} />
+        {homeCardsData.getHomeCards.length > 0 ? (<OfferSection>
+          <div style={{margin: '0 -10px'}}>
+            <HomeCardsCarousel deviceType={deviceType} data={homeCardsData.getHomeCards}/>
           </div>
-        </OfferSection>
+        </OfferSection>) : (<div></div>)
+        }
         <MainContentArea>
           <SidebarSection>
             <Sidebar type={PAGE_TYPE} deviceType={deviceType} />
