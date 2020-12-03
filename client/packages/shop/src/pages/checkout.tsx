@@ -27,7 +27,7 @@ type Props = {
     };
 };
 
-const LoginMessageDiv = styled.div({
+const LoginMessageDiv = styled.aside({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -44,7 +44,6 @@ const CheckoutPage: NextPage<Props> = ({deviceType}) => {
 
     const {authDispatch} = useContext<any>(AuthContext);
     const toggleSignInForm = () => {
-        console.log('clicked')
         authDispatch({
             type: 'SIGNIN',
         });

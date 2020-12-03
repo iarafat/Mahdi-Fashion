@@ -188,11 +188,11 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     setHasCoupon(false);
     setSubmitResult({
       ...submitResult,
-      delivery_address: `Title: ${delivery_address && selectedAddress.title}, 
-      District: ${delivery_address && selectedAddress.district},  
-      Division: ${delivery_address && selectedAddress.division},  
-      Region: ${delivery_address && selectedAddress.region},  
-      Division: ${delivery_address && selectedAddress.address}
+      delivery_address: `Title: ${selectedAddress && selectedAddress.title}, 
+      District: ${selectedAddress && selectedAddress.district},  
+      Division: ${selectedAddress && selectedAddress.division},  
+      Region: ${selectedAddress && selectedAddress.region},  
+      Division: ${selectedAddress && selectedAddress.address}
       `,
       products: cartProduct,
       contact_number: selectedContact.number
