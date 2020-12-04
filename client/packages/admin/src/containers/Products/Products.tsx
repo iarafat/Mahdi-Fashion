@@ -168,18 +168,6 @@ export default function Products() {
       [dispatch]
   );
 
-  if(!loading) {
-    refetch();
-  }
-
-  if(!categoryLoading) {
-    categoryRefetch();
-  }
-
-  if(!typeLoading) {
-    typeRefetch();
-  }
-
   if (error) {
     return <div>Error! {error.message}</div>;
   }

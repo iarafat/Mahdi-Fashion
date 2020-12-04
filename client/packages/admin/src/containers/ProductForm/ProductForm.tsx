@@ -140,8 +140,16 @@ const CREATE_PRODUCT = gql`
 type Props = any;
 
 const AddProduct: React.FC<Props> = props => {
-  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
-  const { data: categoryData, error: categoryError, refetch: categoryRefetch } = useQuery(GET_CATEGORIES);
+  const { data: typeData, error: typeError, refetch: typeRefetch, loading: typeLoading } = useQuery(GET_TYPES);
+  const { data: categoryData, error: categoryError, refetch: categoryRefetch, loading: categoryLoading } = useQuery(GET_CATEGORIES);
+
+  if(!categoryLoading) {
+    categoryRefetch();
+  }
+
+  if(!typeLoading) {
+    typeRefetch();
+  }
 
   const dispatch = useDrawerDispatch();
   const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [
