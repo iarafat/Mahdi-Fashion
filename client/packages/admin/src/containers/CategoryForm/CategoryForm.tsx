@@ -125,9 +125,12 @@ const AddCategory: React.FC<Props> = props => {
     register({ name: 'meta_description' });
   }, [register]);
 
-  const { data: typeData, error: typeError, refetch: typeRefetch } = useQuery(GET_TYPES);
+  const { data: typeData, error: typeError, refetch: typeRefetch, loading: typeLoading } = useQuery(GET_TYPES);
   const { data, error, refetch } = useQuery(GET_CATEGORIES_FOR_LIST);
 
+  if (!typeLoading) {
+    typeRefetch()
+  }
 
   React.useEffect(() => {
     data && data.shopCategories && data.shopCategories.items
