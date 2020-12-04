@@ -23,7 +23,7 @@ const mount = async (app: Application) => {
     app.use("/images", express.static(dir));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    app.use(cors("*"));
+    app.use(cors());
 
     server.applyMiddleware({
         app,
