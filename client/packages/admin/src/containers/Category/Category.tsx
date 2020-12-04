@@ -119,10 +119,6 @@ export default function Category() {
   }
 
 
-  if (!typeLoading) {
-    typeRefetch()
-  }
-
   function handleSearch(event) {
     const value = event.currentTarget.value;
     setSearch(value);
