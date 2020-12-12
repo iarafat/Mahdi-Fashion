@@ -379,30 +379,32 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     }
     
 
-    await setOrderMutation({
-      variables: {input:{ 
-        customer_id,
-        contact_number,
-        payment_option_id,
-        delivery_method_id,
-        delivery_address,
-        sub_total,
-        total,
-        coupon_code,
-        discount_amount,
-        products
-      }}
-    });
+    if (confirm('Are you sure? You want to place this order?')) {
+      await setOrderMutation({
+        variables: {input:{
+            customer_id,
+            contact_number,
+            payment_option_id,
+            delivery_method_id,
+            delivery_address,
+            sub_total,
+            total,
+            coupon_code,
+            discount_amount,
+            products
+          }}
+      });
 
-   setLoading(true);
-    if (isValid) {
-      clearCart();
-      removeCoupon();
-      setHasCoupon(false);
-      Router.push('/profile');
+      setLoading(true);
+      if (isValid) {
+        clearCart();
+        removeCoupon();
+        setHasCoupon(false);
+        Router.push('/order');
+      }
+      setLoading(false);
+      setIsValid(false);
     }
-    setLoading(false);
-    setIsValid(false);
 
   };
 
