@@ -134,7 +134,9 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       unit: item.unit,
       quantity: Number(item.quantity),
       sale_price: item.sale_price,
-      price: item.price
+      price: item.price,
+      image: item.images[0],
+      name: item.name,
     }))
   }
   const [loading, setLoading] = useState(false);
