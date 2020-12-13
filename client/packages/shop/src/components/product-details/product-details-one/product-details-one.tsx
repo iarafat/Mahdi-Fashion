@@ -127,43 +127,51 @@ const ProductDetails: React.FunctionComponent<ProductDetailsProps> = ({
             <ReadMore character={600}>{product.description}</ReadMore>
           </ProductDescription>
 
-          <ProductCartWrapper style={{
+          {product.product_quantity != 0 ? (<ProductCartWrapper style={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center'
           }}>
             <ProductCartBtn style={{
-            display: 'flex'
-          }}>
+              display: 'flex'
+            }}>
               {!isInCart(data.id) ? (
-                <Button
-                  className="cart-button"
-                  variant="secondary"
-                  borderRadius={100}
-                  onClick={handleAddClick}
-                >
+                  <Button
+                      className="cart-button"
+                      variant="secondary"
+                      borderRadius={100}
+                      onClick={handleAddClick}
+                  >
                   <span style={{
-                      marginRight: "10px"
+                    marginRight: "10px"
                   }}>
-                  <CartIcon />
+                  <CartIcon/>
                   </span>
-                  <ButtonText>
-                    <FormattedMessage
-                      id="addCartButton"
-                      defaultMessage="Cart"
-                    />
-                  </ButtonText>
-                </Button>
+                    <ButtonText>
+                      <FormattedMessage
+                          id="addCartButton"
+                          defaultMessage="Cart"
+                      />
+                    </ButtonText>
+                  </Button>
               ) : (
-                <Counter
-                  value={getItem(data.id).quantity}
-                  onDecrement={handleRemoveClick}
-                  onIncrement={handleAddClick}
-                />
+                  <Counter
+                      value={getItem(data.id).quantity}
+                      onDecrement={handleRemoveClick}
+                      onIncrement={handleAddClick}
+                  />
               )}
             </ProductCartBtn>
-            <CartPopUp deviceType={deviceType} />
-          </ProductCartWrapper>
+            <CartPopUp deviceType={deviceType}/>
+          </ProductCartWrapper>) :
+              (<ProductCartWrapper style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+                <p style={{color: '#ff5e5e'}}>Out Of Stock</p>
+              </ProductCartWrapper>)
+          }
 
 
 
