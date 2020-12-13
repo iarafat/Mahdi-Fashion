@@ -173,7 +173,9 @@ export const StyledLink = styled.span `
   color: ${themeGet('colors.text.regular', '#77798c')};
   padding: 5px 15px;
   height: 36px;
-  border: 1px solid ${themeGet('colors.gray.700', '#e6e6e6')};
+   background-color: #009e7f;
+  border: 1px solid #009e7f;
+  color: #fff;
   border-radius: ${themeGet('radii.base', '6px')};
   position: relative;
   width: 150px;
@@ -187,8 +189,8 @@ export const StyledLink = styled.span `
   }
 
   &:hover {
-    background-color: ${themeGet('colors.primary.regular', '#009e7f')};
+    background-color: #fff;
     border-color: ${themeGet('colors.primary.regular', '#009e7f')};
-    color: ${themeGet('colors.white', '#ffffff')};
+    color: #009e7f;
   }
 `

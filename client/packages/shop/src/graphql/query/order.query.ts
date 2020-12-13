@@ -26,6 +26,13 @@ export const GET_ORDERS = gql`
         is_current
         step_competed
       }
+      order_products {
+        product_id
+        image
+        quantity
+        unit
+        price
+      }
     }
   }
 `;

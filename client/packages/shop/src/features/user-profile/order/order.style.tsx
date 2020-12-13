@@ -149,6 +149,14 @@ const ItemSize = styled('span')`
   color: ${themeGet('colors.text.regular', '#77798c')};
   margin-bottom: 5px;
 `;
+const ItemSalePrice = styled('span')`
+  font-family: ${themeGet('fonts.body', 'Lato')};
+  font-size: ${themeGet('fontSizes.sm', '13')}px;
+  font-weight: ${themeGet('fontWeights.regular', '400')};
+  color: ${themeGet('colors.text.regular', '#77798c')};
+  margin-bottom: 5px;
+  text-decoration: line-through;
+`;
 const ItemPrice = styled('span')`
   font-family: ${themeGet('fonts.body', 'Lato')};
   font-size: ${themeGet('fontSizes.sm', '13')}px;
@@ -187,6 +195,7 @@ export {
   ItemDetails,
   ItemName,
   ItemSize,
+  ItemSalePrice,
   ItemPrice,
   TotalPrice,
   NoOrderFound,

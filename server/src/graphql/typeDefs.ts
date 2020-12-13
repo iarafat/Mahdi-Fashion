@@ -216,6 +216,8 @@ export const typeDefs = gql`
     # Orders
     input OrderProductInput {
         product_id: String!
+        name: String
+        image: String
         quantity: Int!
         unit: String
         price: Float!
@@ -244,6 +246,8 @@ export const typeDefs = gql`
 
     type OrderProducts {
         product_id: String!
+        name: String
+        image: String
         quantity: Int!
         unit: String
         price: Float

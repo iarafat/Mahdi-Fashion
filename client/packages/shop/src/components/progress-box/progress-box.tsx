@@ -20,7 +20,7 @@ const ProgressBox: React.FC<ProgressProps> = ({ status, data }) => {
     <>
       {data.map((item, index) => (
         <ProgressStep key={index}>
-          <ProgressBarWrapper className={status >= index + 1 ? 'checked' : ''}>
+          <ProgressBarWrapper className={item.step_competed && item.ordering >= index + 1 ? 'checked' : ''}>
             <StatusBox>
               {status >= index + 1 ? (
                 <CheckMarkWrapper>
@@ -33,7 +33,7 @@ const ProgressBox: React.FC<ProgressProps> = ({ status, data }) => {
             <ProgressBar />
           </ProgressBarWrapper>
           <StatusDetails>
-            {item ? <StatusTitle>{item}</StatusTitle> : ''}
+            {item ? <StatusTitle>{item.status}</StatusTitle> : ''}
           </StatusDetails>
         </ProgressStep>
       ))}

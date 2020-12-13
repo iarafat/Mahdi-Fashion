@@ -16,6 +16,7 @@ import {
   ItemDetails,
   ItemName,
   ItemSize,
+  ItemSalePrice,
   ItemPrice,
   NoOrderFound,
 } from './order.style';
@@ -25,6 +26,7 @@ import OrderCard from './order-card/order-card';
 import OrderCardMobile from './order-card/order-card-mobile';
 import useComponentSize from 'utils/useComponentSize';
 import { FormattedMessage } from 'react-intl';
+import {SHOP_IMAGE_HOST} from "../../../utils/images-path";
 
 const progressData = ['Order Received', 'Order On The Way', 'Order Delivered'];
 
@@ -40,13 +42,14 @@ const orderTableColumns = [
       return (
         <ItemWrapper>
           <ImageWrapper>
-            <img src={record.image} alt={record.title} />
+            <img src={SHOP_IMAGE_HOST+record.image} alt={record.name} />
           </ImageWrapper>
 
           <ItemDetails>
-            <ItemName>{record.title}</ItemName>
-            <ItemSize>{record.weight}</ItemSize>
+            <ItemName>{record.name}</ItemName>
+            <ItemSize>{record.unit}</ItemSize>
             <ItemPrice>${record.price}</ItemPrice>
+            {record.sale_price ? <ItemSalePrice>${record.sale_price}</ItemSalePrice> : "" }
           </ItemDetails>
         </ItemWrapper>
       );
@@ -68,7 +71,7 @@ const orderTableColumns = [
     align: 'right',
     width: 100,
     render: (text, record) => {
-      return <p>${record.total}</p>;
+      return <p>${record.price * record.quantity}</p>;
     },
   },
 ];
@@ -97,6 +100,8 @@ const OrdersContent: React.FC<{}> = () => {
         <ErrorMessage message={error.message} />
       );
     };
+
+    console.dir(order)
 
   const myOrder = data.getUserOrders;
 
@@ -128,7 +133,7 @@ const OrdersContent: React.FC<{}> = () => {
                   <OrderCard
                     key={index}
                     orderId={current.order_code}
-                    className={index === active ? 'active' : ''}
+                    className={current.id === active ? 'active' : ''}
                     status={current.status}
                     date={current.datetime.split('2020').shift()}
                     amount={current.total}
@@ -160,13 +165,13 @@ const OrdersContent: React.FC<{}> = () => {
             <OrderDetails
               id={order.id}
               progressStatus={order.status}
-              progressData={progressData}
+              progressData={order.order_tracking}
               number={order.contact_number}
               address={order.delivery_address}
               subtotal={order.sub_total}
               discount={order.discount_amount}
               grandTotal={order.total}
-              tableData={order.products}
+              tableData={order.order_products}
               columns={orderTableColumns}
               deliveryMethod={order.delivery_method}
             />
