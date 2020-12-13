@@ -18,6 +18,7 @@ import {
 import Progress from 'components/progress-box/progress-box';
 import { CURRENCY } from 'utils/constant';
 import { FormattedMessage } from 'react-intl';
+import {Title} from "../order.style";
 
 type OrderDetailsProps = {
   id?: any;
@@ -115,10 +116,13 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           </PriceRow>
         </CostCalculation>
       </DeliveryInfo>
-      <StyledLink onClick={handleInvocie}>
-        Get Invoice
-      </StyledLink>
-     {/* <ProgressWrapper>
+      {/*<Title style={{ padding: '0 20px' }}>
+        <FormattedMessage
+            id="orderTrackingText"
+            defaultMessage="Order Tracking"
+        />
+      </Title>*/}
+      <ProgressWrapper>
         <Progress data={progressData} status={progressStatus} />
       </ProgressWrapper>
 
@@ -131,7 +135,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           className="orderDetailsTable"
           // scroll={{ y: 350 }}
         />
-     </OrderTableWrapper>*/}
+     </OrderTableWrapper>
+      <StyledLink onClick={handleInvocie}>
+        Get Invoice
+      </StyledLink>
      </>
   );
 };

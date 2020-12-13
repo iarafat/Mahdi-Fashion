@@ -108,6 +108,7 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
   const [hasCoupon, setHasCoupon] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setError] = useState('');
+  const [orderError, setOrderError] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
   const { state, dispatch } = useContext(ProfileContext);
   const { isRtl } = useLocale();
@@ -134,7 +135,9 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
       unit: item.unit,
       quantity: Number(item.quantity),
       sale_price: item.sale_price,
-      price: item.price
+      price: item.price,
+      image: item.images[0],
+      name: item.name,
     }))
   }
   const [loading, setLoading] = useState(false);
@@ -379,30 +382,40 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
     }
     
 
-    await setOrderMutation({
-      variables: {input:{ 
-        customer_id,
-        contact_number,
-        payment_option_id,
-        delivery_method_id,
-        delivery_address,
-        sub_total,
-        total,
-        coupon_code,
-        discount_amount,
-        products
-      }}
-    });
+    if (confirm('Are you sure? You want to place this order?')) {
+        const {errors: orderCreateError} = await setOrderMutation({
+            variables: {
+                input: {
+                    customer_id,
+                    contact_number,
+                    payment_option_id,
+                    delivery_method_id,
+                    delivery_address,
+                    sub_total,
+                    total,
+                    coupon_code,
+                    discount_amount,
+                    products
+                }
+            }
+        });
 
-   setLoading(true);
-    if (isValid) {
-      clearCart();
-      removeCoupon();
-      setHasCoupon(false);
-      Router.push('/profile');
+        if (!orderCreateError) {
+            setLoading(true);
+            if (isValid) {
+                clearCart();
+                removeCoupon();
+                setHasCoupon(false);
+                Router.push('/order');
+            }
+            setLoading(false);
+            setIsValid(false);
+        }
+
+        if (orderCreateError) {
+            setOrderError(orderCreateError[0].message)
+        }
     }
-    setLoading(false);
-    setIsValid(false);
 
   };
 
@@ -689,14 +702,22 @@ const CheckoutWithSidebar: React.FC<MyFormProps> = ({ token, deviceType }) => {
                   />
                 </Button>
               </CheckoutSubmit>
-              {checkoutError && (
-                <ErrorMsg>
-                  <FormattedMessage
-                    id='checkoutError'
-                    defaultMessage={checkoutError}
-                  />
-                </ErrorMsg>
-              )}
+                <div>
+                    {checkoutError && (
+                        <ErrorMsg>
+                            <FormattedMessage
+                                id='checkoutError'
+                                defaultMessage={checkoutError}
+                            />
+                        </ErrorMsg>
+                    )}
+
+                    {orderError && (
+                        <ErrorMsg>
+                            <p>{orderError}</p>
+                        </ErrorMsg>
+                    )}
+                </div>
             </InformationBox>
           </CheckoutInformation>
 

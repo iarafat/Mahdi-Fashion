@@ -158,6 +158,8 @@ export interface IOrderTracker {
 
 export interface OrderProducts {
     product_id: string;
+    name?: string;
+    image?: string;
     quantity: number;
     unit?: string;
     price: number;

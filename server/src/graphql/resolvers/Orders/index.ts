@@ -1,7 +1,14 @@
 import {ObjectId} from 'mongodb';
 import {IResolvers} from 'apollo-server-express';
 import {Request} from "express";
-import {Database, ICommonPaginationArgs, ICommonPaginationReturnType, IOrder, IOrderTracker} from "../../../lib/types";
+import {
+    Database,
+    ICommonPaginationArgs,
+    ICommonPaginationReturnType,
+    IOrder,
+    IOrderTracker,
+    IProduct
+} from "../../../lib/types";
 import {authorize} from "../../../lib/utils";
 import {IOrderInputArgs, IOrderProductInput} from "./types";
 import {search} from "../../../lib/utils/search";
@@ -126,14 +133,26 @@ export const ordersResolvers: IResolvers = {
             _root: undefined,
             {input}: IOrderInputArgs,
             {db, req}: { db: Database, req: Request }
-        ): Promise<IOrder> => {
+        )/*: Promise<IOrder>*/ => {
             await authorize(req, db);
 
             const paymentOption = await db.payment_options.findOne({_id: new ObjectId(input.payment_option_id)});
 
             // Products quantity substation
+            const products: Array<IProduct> = await db.products.find({ _id: {$in: makeObjectIds(input.products)}}).toArray();
 
-            //const products = await db.products.find({ _id: {$in: makeObjectIds(input.products)}})
+            for (let i = 0; i < products.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                if (products[i]._id.toString() != input.products[i].product_id) {
+                    throw new Error("Something went wrong! Please contact support to resolve this problem.");
+                }
+
+                if (products[i].product_quantity < input.products[i].quantity) {
+                    throw new Error(`'${input.products[i].name}', This product do not have enough product quantity. Available quantity: ${products[i].product_quantity}`);
+                }
+            }
+
 
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -168,6 +187,16 @@ export const ordersResolvers: IResolvers = {
             };
 
             const insertResult = await db.orders.insertOne(insertData);
+
+            if (insertResult.ops[0]) {
+                for (let i = 0; i < products.length; i++) {
+                    await db.products.updateOne(
+                        {_id: products[i]._id},
+                        {$set: {product_quantity: products[i].product_quantity - input.products[i].quantity}}
+                    )
+                }
+            }
+
             return insertResult.ops[0];
         },
         updateOrderStatus: async (

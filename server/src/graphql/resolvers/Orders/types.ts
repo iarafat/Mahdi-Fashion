@@ -1,5 +1,7 @@
 export interface IOrderProductInput {
     product_id: string;
+    name?: string;
+    image?: string;
     quantity: number;
     unit?: string;
     price: number;

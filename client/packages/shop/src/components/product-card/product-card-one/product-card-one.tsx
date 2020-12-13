@@ -7,6 +7,7 @@ import {
   ProductImageWrapper,
   ProductInfo,
   DiscountPercent,
+  OutOfStock,
   ButtonText,
 } from '../product-card.style';
 import { useCart } from 'contexts/cart/use-cart';
@@ -84,6 +85,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         ) : (
           ''
         )}
+        {data.product_quantity == 0 ? (
+          <>
+            <OutOfStock>Out Of Stock</OutOfStock>
+          </>
+        ) : (
+          ''
+        )}
       </ProductImageWrapper>
       <ProductInfo>
         <h3 className="product-title">{title}</h3>
@@ -105,25 +113,42 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
 
-          {!isInCart(data.id) ? (
-            <Button
-              className="cart-button"
-              variant="secondary"
-              borderRadius={100}
-              onClick={handleAddClick}
-            >
-              <CartIcon/>
-              <ButtonText>
-                <FormattedMessage id="addCartButton" defaultMessage="Cart" />
-              </ButtonText>
-            </Button>
+          { data.product_quantity != 0 ? (!isInCart(data.id) ? (
+                <Button
+                    className="cart-button"
+                    variant="secondary"
+                    borderRadius={100}
+                    onClick={handleAddClick}
+                >
+                  <CartIcon/>
+                  <ButtonText>
+                    <FormattedMessage id="addCartButton" defaultMessage="Cart"/>
+                  </ButtonText>
+                </Button>
+            ) : (
+                <Counter
+                    value={getItem(data.id).quantity}
+                    onDecrement={handleRemoveClick}
+                    onIncrement={handleAddClick}
+                />
+            )
           ) : (
-            <Counter
-              value={getItem(data.id).quantity}
-              onDecrement={handleRemoveClick}
-              onIncrement={handleAddClick}
-            />
-          )}
+            <Button
+            className="cart-button"
+            variant="secondary"
+            borderRadius={100}
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+            disabled
+            >
+            <CartIcon/>
+            <ButtonText>
+            <FormattedMessage id="addCartButton" defaultMessage="Cart"/>
+            </ButtonText>
+            </Button>
+            )
+          }
         </div>
       </ProductInfo>
     </ProductCardWrapper>
